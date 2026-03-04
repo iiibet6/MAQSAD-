@@ -1,14 +1,52 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:model_viewer_plus/model_viewer_plus.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:url_launcher/url_launcher.dart';
+import '../models/place_model.dart';
 
 class PlaceDetailsScreen extends StatelessWidget {
-  final String title;
-  final String image;
+  final Place place;
 
   const PlaceDetailsScreen({
     super.key,
-    required this.title,
-    required this.image,
+    required this.place,
   });
+
+  /// 📸 التقاط صورة
+  Future<void> _captureAndUpload(BuildContext context) async {
+    
+  }
+
+  /// ⭐ تقييم
+  void _rateExperience(BuildContext context) {
+    
+  }
+
+  Future<void> _openMap() async {
+
+  Uri url;
+
+  if (place.plusCode != null && place.plusCode!.isNotEmpty) {
+    // يستخدم Plus Code
+    url = Uri.parse(
+      "https://www.google.com/maps/search/?api=1&query=${Uri.encodeComponent(place.plusCode!)}",
+    );
+  } else {
+    // يستخدم الإحداثيات
+    url = Uri.parse(
+      "https://www.google.com/maps/search/?api=1&query=${place.latitude},${place.longitude}",
+    );
+  }
+
+  await launchUrl(
+    url,
+    mode: LaunchMode.externalApplication,
+  );
+}
 
   @override
   Widget build(BuildContext context) {
@@ -23,66 +61,66 @@ class PlaceDetailsScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
 
-                /// 🔙 سهم + تقييم
-                Row(
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.arrow_back),
-                      onPressed: () => Navigator.pop(context),
-                    ),
-                    const Spacer(),
-                    const Text("4.5 ⭐"),
-                  ],
+                IconButton(
+                  icon: const Icon(Icons.arrow_back),
+                  onPressed: () => Navigator.pop(context),
                 ),
 
-                /// 🏷️ العنوان
                 Text(
-                  title,
+                  place.title,
                   style: const TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
+                      fontSize: 22, fontWeight: FontWeight.bold),
+                ),
+
+                const SizedBox(height: 16),
+                   /// الصورة + AR
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(18),
+                  child: SizedBox(
+                    height: 220,
+                    width: double.infinity,
+                    child: Stack(
+                      children: [
+                        Positioned.fill(
+                          child: Image.asset(
+                            place.image,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        Positioned(
+                          bottom: 10,
+                          left: 10,
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+
+MaterialPageRoute(
+                                  builder: (_) =>
+                                      ARViewPage(modelPath: place.modelPath),
+                                ),
+                              );
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 6),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: const Text("AR"),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
 
-                const SizedBox(height: 12),
-
-                /// 📷 الصورة
-                ClipRRect(
-  borderRadius: BorderRadius.circular(18),
-  child: SizedBox(
-    height: 220, // 👈 صغّري / كبّري حسب ذوقك
-    width: double.infinity,
-    child: Stack(
-      children: [
-        Positioned.fill(
-          child: Image.asset(
-            image,
-            fit: BoxFit.cover,
-          ),
-        ),
-        Positioned(
-          bottom: 10,
-          left: 10,
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: const Text("AR"),
-          ),
-        ),
-      ],
-    ),
-  ),
-),
                 const SizedBox(height: 20),
 
-                /// 📖 عن المكان
-                const Text(
-                  "عن المكان",
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
+                const Text("عن المكان",
+                    style: TextStyle(fontWeight: FontWeight.bold)),
                 const SizedBox(height: 8),
 
                 Container(
@@ -90,77 +128,104 @@ class PlaceDetailsScreen extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(14),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.05),
-                        blurRadius: 8,
-                      )
-                    ],
                   ),
-                  child: const Text(
-"تُعد منازل حاتم الطائي في قرية توارن -موطن الكرم العربي الأصيل وموطن حاتم الطائي- رمز الجود والسخاء في التراث العربي. بآثارها، وواديها، وجبالها المحيطة، تبقى شاهدًا حيًا على تاريخٍ خالد، ووجهة سياحية تعزز مكانة حائل كحاضنة للتراث والتاريخ."                  ),
+                  child: Text(place.description),
                 ),
 
                 const SizedBox(height: 20),
 
-                /// ⏰ أوقات العمل
-                const Text(
-                  "أوقات العمل",
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
+                const Text("أوقات العمل",
+                    style: TextStyle(fontWeight: FontWeight.bold)),
                 const SizedBox(height: 8),
 
                 Container(
-  width: double.infinity,
-  padding: const EdgeInsets.symmetric(vertical: 12),
-  decoration: BoxDecoration(
-    color: Colors.white,
-    borderRadius: BorderRadius.circular(14),
-  ),
-  child: const Center(
-    child: Text(
-      "مفتوح طوال الوقت",
-      style: TextStyle(fontWeight: FontWeight.w500),
-    ),
-  ),
-),
-
-                const SizedBox(height: 20),
-
-                /// 🗺️ الخريطة
-                Container(
-                  height: 150,
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(vertical: 12),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFE6DCD2),
-                    borderRadius: BorderRadius.circular(18),
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(14),
                   ),
-                  child: const Center(
-                    child: Text("خريطة الموقع"),
+                  child: Center(
+                    child: Text(place.workingHours),
                   ),
                 ),
 
                 const SizedBox(height: 20),
+        /// 📍 الموقع
+                const Text("موقع المكان",
+                    style: TextStyle(fontWeight: FontWeight.bold)),
+                const SizedBox(height: 8),
 
-                /// 🔘 شريط الأيقونات السفلي
+                Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("العنوان: ${place.locationName}"),
+                    const SizedBox(height: 6),
+                    Text("الإحداثيات: ${place.latitude}, ${place.longitude}"),
+                    const SizedBox(height: 12),
+
+                    /// زر فتح الخرائط 👇
+                    ElevatedButton.icon(
+                      onPressed: _openMap,
+                      icon: const Icon(Icons.location_on),
+                      label: const Text("فتح في خرائط Google"),
+                    ),
+                  ],
+                ),
+              ),
+                const SizedBox(height: 20),
+
+                /// الأزرار
                 Container(
                   padding: const EdgeInsets.symmetric(vertical: 12),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(18),
+                  ), child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      GestureDetector(
+                        onTap: () => _rateExperience(context),
+                        child: const _ActionIcon(
+                            Icons.star_border, "قيم تجربتك"),
+                      ),
+                      GestureDetector(
+                        onTap: () => _captureAndUpload(context),
+                        child: const _ActionIcon(
+
+Icons.photo_camera_outlined, "التقط"),
+                      ),
+                    ],
                   ),
-                  child: Row(
-  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-  children: const [
-    _ActionIcon(Icons.favorite_border, "أضف للمفضلة"),
-    _ActionIcon(Icons.star_border, "قيم تجربتك"),
-    _ActionIcon(Icons.photo_camera_outlined, "التقط"),
-  ],
-),
                 ),
               ],
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+class ARViewPage extends StatelessWidget {
+  final String modelPath;
+
+  const ARViewPage({super.key, required this.modelPath});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text("الواقع المعزز")),
+      body: ModelViewer(
+        src: modelPath,
+        ar: true,
+        autoRotate: true,
+        cameraControls: true,
       ),
     );
   }
@@ -178,11 +243,9 @@ class _ActionIcon extends StatelessWidget {
       children: [
         Icon(icon),
         const SizedBox(height: 4),
-        Text(
-          label,
-          style: const TextStyle(fontSize: 11),
-        ),
+        Text(label, style: const TextStyle(fontSize: 11)),
       ],
     );
   }
 }
+

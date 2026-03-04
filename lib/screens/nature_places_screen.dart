@@ -1,16 +1,105 @@
 import 'package:flutter/material.dart';
-import '../services/favorites_service.dart';
 import 'place_details_screen.dart';
+import '../models/place_model.dart';
+import '../services/favorites_service.dart';
 
 class NaturePlacesScreen extends StatelessWidget {
   const NaturePlacesScreen({super.key});
+
+  /// ============================
+  /// 📍 قائمة الأماكن (بيانات كاملة)
+  /// ============================
+  static final List<Place> _places = [
+    Place(
+      title: 'منازل حاتم الطائي',
+      image: 'assets/images/hatem_house.png',
+      description:
+          'رمز الكرم العربي في حائل، تقع في قرية توارن وتعد من أبرز المعالم التاريخية.',
+      workingHours: 'مفتوح طوال الوقت',
+      modelPath: 'assets/models/hatems_home.glb',
+      category: 'تاريخي',
+      locationName: 'قرية توارن - حائل',
+      latitude: 27.5600,
+      longitude: 41.6900,
+    ),
+    Place(
+      title: 'قلعة أعيرف',
+      image: 'assets/images/aref.png',
+      description:
+          'من أقدم القلاع في مدينة حائل، تقع على جبل يطل على المدينة وتعد معلمًا تاريخيًا بارزًا.',
+      workingHours: 'مفتوح طوال الوقت',
+      modelPath: 'assets/models/aref_castle.glb',
+      category: 'تاريخي',
+      locationName: 'جبل أعيرف - حائل',
+      latitude: 27.5219,
+      longitude: 41.6905,
+    ),
+    Place(
+      title: 'جبل محجة',
+      image: 'assets/images/mhaja.png',
+      description:
+          'موقع طبيعي مميز في حائل يتميز بتضاريسه الجميلة وأجوائه الهادئة.',
+      workingHours: 'مفتوح طوال الوقت',
+      modelPath: 'assets/models/example.glb',
+      category: 'طبيعي',
+      locationName: 'حائل',
+      latitude: 27.5114,
+      longitude: 41.7208,
+    ),
+    Place(
+      title: 'عقدة السياحية',
+      image: 'assets/images/oqda.png',
+      description:
+          'وجهة سياحية طبيعية تشتهر بالمناظر الجبلية والمسطحات الخضراء.',
+      workingHours: 'مفتوح طوال الوقت',
+      modelPath: 'assets/models/example.glb',
+      category: 'طبيعي',
+      locationName: 'حائل',
+      latitude: 27.5300,
+      longitude: 41.7000,
+    ),
+    Place(
+      title: 'مدينة فيد التاريخية',
+      image: 'assets/images/fayd.png',
+      description:
+          'مدينة تاريخية قديمة كانت محطة مهمة للحجاج عبر طريق زبيدة.',
+      workingHours: 'مفتوح طوال الوقت',
+      modelPath: 'assets/models/example.glb',
+      category: 'تاريخي',
+      locationName: 'فيد - حائل',
+      latitude: 27.4430,
+      longitude: 42.1040,
+    ),
+    Place(
+      title: 'منتزه مشار',
+      image: 'assets/images/mashar.png',
+      description:
+          'منتزه طبيعي جميل يقصده السكان للتنزه والاستجمام وسط الطبيعة.',
+      workingHours: '6 صباحًا - 12 منتصف الليل',
+      modelPath: 'assets/models/example.glb',
+      category: 'طبيعي',
+      locationName: 'حائل',
+      latitude: 27.5200,
+      longitude: 41.7500,
+    ),
+  ];
 
   @override
   Widget build(BuildContext context) {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        body: Container(
+        appBar: AppBar(
+          centerTitle: true,
+          title: const Text(
+            'أماكن طبيعية وسياحية',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+    body: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
               colors: [Color(0xFFE8EDF3), Color(0xFFD9E1EC)],
@@ -21,32 +110,10 @@ class NaturePlacesScreen extends StatelessWidget {
           child: SafeArea(
             child: Column(
               children: [
-                Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  child: Row(
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.arrow_back),
-                        onPressed: () => Navigator.pop(context),
-                      ),
-                      const Expanded(
-                        child: Center(
-                          child: Text(
-                            'أماكن طبيعية وسياحية',
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 48),
-                    ],
-                  ),
-                ),
+     /// 🔙 العنوان + رجوع
+               
 
-                /// Grid
+                /// 🟦 Grid الأماكن
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.all(16),
@@ -60,11 +127,7 @@ class NaturePlacesScreen extends StatelessWidget {
                         childAspectRatio: 0.85,
                       ),
                       itemBuilder: (context, index) {
-                        final place = _places[index];
-                        return _PlaceCard(
-                          title: place['title']!,
-                          image: place['image']!,
-                        );
+                        return _PlaceCard(place: _places[index]);
                       },
                     ),
                   ),
@@ -78,43 +141,13 @@ class NaturePlacesScreen extends StatelessWidget {
   }
 }
 
-/// بيانات الأماكن
-final List<Map<String, String>> _places = [
-  {
-    'title': 'منازل حاتم الطائي',
-    'image': 'assets/images/hatem_house.png',
-  },
-  {
-    'title': 'قلعة أعيرف',
-    'image': 'assets/images/aref.png',
-  },
-  {
-    'title': 'جبل محجة',
-    'image': 'assets/images/mhaja.png',
-  },
-  {
-    'title': 'عقدة السياحية',
-    'image': 'assets/images/oqda.png',
-  },
-  {
-    'title': 'مدينة فيد التاريخية',
-    'image': 'assets/images/fayd.png',
-  },
-  {
-    'title': 'منتزه مشار',
-    'image': 'assets/images/mashar.png',
-  },
-];
-
-/// كرت المكان
+/// ============================
+/// /// 🟫 كرت المكان
+/// ============================
 class _PlaceCard extends StatelessWidget {
-  final String title;
-  final String image;
+  final Place place;
 
-  const _PlaceCard({
-    required this.title,
-    required this.image,
-  });
+  const _PlaceCard({required this.place});
 
   @override
   Widget build(BuildContext context) {
@@ -123,10 +156,7 @@ class _PlaceCard extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (_) => PlaceDetailsScreen(
-              title: title,
-              image: image,
-            ),
+            builder: (_) => PlaceDetailsScreen(place: place),
           ),
         );
       },
@@ -147,12 +177,12 @@ class _PlaceCard extends StatelessWidget {
             children: [
               Positioned.fill(
                 child: Image.asset(
-                  image,
+                  place.image,
                   fit: BoxFit.cover,
                 ),
               ),
 
-              /// ❤️ القلب مع المفضلات
+              /// ❤️ القلب (مفضلة)
               Positioned(
                 top: 10,
                 left: 10,
@@ -160,7 +190,7 @@ class _PlaceCard extends StatelessWidget {
                   valueListenable: FavoritesService.favorites,
                   builder: (context, favs, _) {
                     final isFav =
-                        favs.any((item) => item['title'] == title);
+                        favs.any((item) => item['title'] == place.title);
 
                     return GestureDetector(
                       onTap: () {
@@ -168,11 +198,14 @@ class _PlaceCard extends StatelessWidget {
                           FavoritesService.favorites.value =
                               List.from(favs)
                                 ..removeWhere(
-                                    (item) => item['title'] == title);
+                                    (item) => item['title'] == place.title);
                         } else {
                           FavoritesService.favorites.value =
                               List.from(favs)
-                                ..add({'title': title, 'image': image});
+                                ..add({
+                                  'title': place.title,
+                                  'image': place.image
+                                });
                         }
                       },
                       child: Container(
@@ -200,11 +233,10 @@ class _PlaceCard extends StatelessWidget {
                 alignment: Alignment.bottomCenter,
                 child: Container(
                   width: double.infinity,
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 8),
+                  padding: const EdgeInsets.symmetric(vertical: 8),
                   color: Colors.white,
                   child: Text(
-                    title,
+                    place.title,
                     textAlign: TextAlign.center,
                     style: const TextStyle(
                       fontWeight: FontWeight.w600,

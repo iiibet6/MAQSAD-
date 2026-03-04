@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
-
-// ─────────────────────────────────────────────
-//  Decorative border strip at top of many screens
-// ─────────────────────────────────────────────
 class ArabicPatternBorder extends StatelessWidget {
   const ArabicPatternBorder({super.key});
 
@@ -315,6 +311,36 @@ class AppBottomNavBar extends StatelessWidget {
         BottomNavigationBarItem(
           icon: Icon(Icons.home_outlined),
           label: 'Home',
+        ),
+      ],
+    );
+  }
+}
+class OrDivider extends StatelessWidget {
+  const OrDivider({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        const Expanded(
+          child: Divider(
+            color: AppColors.divider,
+            thickness: 1,
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          child: Text(
+            'أو',
+            style: AppTextStyles.caption.copyWith(fontSize: 14),
+          ),
+        ),
+        const Expanded(
+          child: Divider(
+            color: AppColors.divider,
+            thickness: 1,
+          ),
         ),
       ],
     );

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../theme/app_theme.dart';
 import '../widgets/shared_widgets.dart';
 
@@ -7,10 +9,13 @@ class Interest {
   final String imageAsset;
   bool selected;
 
-  Interest({required this.label, required this.imageAsset, this.selected = false});
+  Interest({
+    required this.label,
+    required this.imageAsset,
+    this.selected = false,
+  });
 }
 
-/// Screen 5 – Interests Selection
 class InterestsScreen extends StatefulWidget {
   const InterestsScreen({super.key});
 
@@ -32,6 +37,33 @@ class _InterestsScreenState extends State<InterestsScreen> {
     Interest(label: 'التصوير', imageAsset: 'assets/images/interest_photography.jpg'),
   ];
 
+  void _toggle(int index) {
+    setState(() {
+      _interests[index].selected = !_interests[index].selected;
+    });
+  }
+
+  Future<void> _saveSelectedInterests() async {
+    String uid = FirebaseAuth.instance.currentUser!.uid;
+
+    List<String> selected = _interests
+        .where((interest) => interest.selected)
+        .map((interest) => interest.label)
+        .toList();
+
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(uid)
+        .update({
+      'interests': selected,
+    });
+  }
+
+  Future<void> _handleNext() async {
+    await _saveSelectedInterests();
+    Navigator.pushReplacementNamed(context, '/home');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Directionality(
@@ -41,15 +73,37 @@ class _InterestsScreenState extends State<InterestsScreen> {
           children: [
             const PatternBorderFallback(),
             const _InterestsHero(),
-            Expanded(child: _InterestsList(interests: _interests, onToggle: _toggle)),
+            Expanded(
+              child: Container(
+                color: Colors.white,
+                child: Column(
+                  children: [
+                    _InterestsHeader(onNext: _handleNext),
+                    Expanded(
+                      child: GridView.builder(
+                        padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 12,
+                          mainAxisSpacing: 12,
+                          childAspectRatio: 1.0,
+                        ),
+                        itemCount: _interests.length,
+                        itemBuilder: (ctx, i) => InterestCard(
+                          interest: _interests[i],
+                          onTap: () => _toggle(i),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ],
         ),
       ),
     );
-  }
-
-  void _toggle(int index) {
-    setState(() => _interests[index].selected = !_interests[index].selected);
   }
 }
 
@@ -65,56 +119,25 @@ class _InterestsHero extends StatelessWidget {
         image: DecorationImage(
           image: AssetImage('assets/images/auth_bg.jpg'),
           fit: BoxFit.cover,
-          colorFilter: ColorFilter.mode(Colors.black38, BlendMode.darken),
+          colorFilter:
+              ColorFilter.mode(Colors.black38, BlendMode.darken),
         ),
         color: Color(0xFF4A7B4A),
-      ),
-      child: Text(
+      ),child: Text(
         'علمنا وش تحب .. وأزهل الباقي',
-        style: AppTextStyles.headline2.copyWith(color: Colors.white, fontSize: 22),
+        style: AppTextStyles.headline2
+            .copyWith(color: Colors.white, fontSize: 22),
         textAlign: TextAlign.right,
-        textDirection: TextDirection.rtl,
-      ),
-    );
-  }
-}
-
-class _InterestsList extends StatelessWidget {
-  final List<Interest> interests;
-  final ValueChanged<int> onToggle;
-
-  const _InterestsList({required this.interests, required this.onToggle});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: Colors.white,
-      child: Column(
-        children: [
-          _InterestsHeader(),
-          Expanded(
-            child: GridView.builder(
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 12,
-                mainAxisSpacing: 12,
-                childAspectRatio: 1.0,
-              ),
-              itemCount: interests.length,
-              itemBuilder: (ctx, i) => InterestCard(
-                interest: interests[i],
-                onTap: () => onToggle(i),
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }
 }
 
 class _InterestsHeader extends StatelessWidget {
+  final VoidCallback onNext;
+
+  const _InterestsHeader({required this.onNext});
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -122,20 +145,30 @@ class _InterestsHeader extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          // Next button
           GestureDetector(
-            onTap: () => Navigator.pushReplacementNamed(context, '/home'),
+            onTap: onNext,
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               decoration: BoxDecoration(
                 color: AppColors.primary,
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Row(
                 children: const [
-                  Text('Next', style: TextStyle(color: Colors.white, fontFamily: 'Cairo')),
+                  Text(
+                    'Next',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontFamily: 'Cairo',
+                    ),
+                  ),
                   SizedBox(width: 4),
-                  Icon(Icons.arrow_forward, color: Colors.white, size: 16),
+                  Icon(
+                    Icons.arrow_forward,
+                    color: Colors.white,
+                    size: 16,
+                  ),
                 ],
               ),
             ),
@@ -143,7 +176,6 @@ class _InterestsHeader extends StatelessWidget {
           Text(
             'ماهي هواياتك المفضلة؟',
             style: AppTextStyles.sectionTitle,
-            textDirection: TextDirection.rtl,
           ),
         ],
       ),
@@ -155,7 +187,11 @@ class InterestCard extends StatelessWidget {
   final Interest interest;
   final VoidCallback onTap;
 
-  const InterestCard({super.key, required this.interest, required this.onTap});
+  const InterestCard({
+    super.key,
+    required this.interest,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -166,31 +202,36 @@ class InterestCard extends StatelessWidget {
         child: Stack(
           fit: StackFit.expand,
           children: [
-            // Background image
             Image.asset(
               interest.imageAsset,
               fit: BoxFit.cover,
               errorBuilder: (_, __, ___) => Container(
                 color: AppColors.border,
-                child: const Icon(Icons.image, color: AppColors.textSecondary, size: 40),
+                child: const Icon(
+                  Icons.image,
+                  color: AppColors.textSecondary,
+                  size: 40,
+                ),
               ),
             ),
-            // Dark overlay
             Container(color: Colors.black.withOpacity(0.15)),
-            // Selection overlay
             if (interest.selected)
               Container(
                 color: AppColors.accent.withOpacity(0.45),
                 child: const Center(
-                  child: Icon(Icons.check_circle, color: Colors.white, size: 36),
+                  child: Icon(
+                    Icons.check_circle,
+                    color: Colors.white,
+                    size: 36,
+                  ),
                 ),
               ),
-            // Label at bottom
             Align(
               alignment: Alignment.bottomCenter,
               child: Container(
                 width: double.infinity,
-                padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 8),
+                padding: const EdgeInsets.symmetric(
+                    vertical: 6, horizontal: 8),
                 color: Colors.black.withOpacity(0.35),
                 child: Text(
                   interest.label,

@@ -3,6 +3,10 @@ import '../theme/app_theme.dart';
 import '../widgets/shared_widgets.dart';
 import '../services/favorites_service.dart';
 import 'favorites_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'privacy_policy_screen.dart';
+import 'profile_info_screen.dart';
 /// Screen 7 – Account / Profile
 class AccountScreen extends StatefulWidget {
   const AccountScreen({super.key});
@@ -91,8 +95,18 @@ class _QuickActions extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-  const _QuickActionItem(icon: Icons.photo_library_outlined, label: 'ألبوم الذكريات'),
-  const _QuickActionItem(icon: Icons.map_outlined, label: 'سجل الزيارات'),
+_QuickActionItem(
+  icon: Icons.photo_library_outlined,
+  label: 'ألبوم الذكريات',
+  onTap: () {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => const _MemoriesScreen(),
+      ),
+    );
+  },
+),  const _QuickActionItem(icon: Icons.map_outlined, label: 'سجل الزيارات'),
 
   _QuickActionItem(
     icon: Icons.favorite_border,
@@ -165,8 +179,18 @@ class _SettingsSection extends StatelessWidget {
           const SizedBox(height: 16),
           _SectionLabel(label: 'حسابي'),
           const SizedBox(height: 8),
-          _SettingsTile(icon: Icons.person_outline, label: 'معلوماتي', onTap: () {}),
-
+          _SettingsTile(
+            icon: Icons.person_outline,
+            label: 'معلوماتي',
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const ProfileInfoScreen(),
+                ),
+              );
+            },
+          ),
           const SizedBox(height: 16),
           _SectionLabel(label: 'الإعدادات'),
           const SizedBox(height: 8),
@@ -189,6 +213,18 @@ class _SettingsSection extends StatelessWidget {
           const SizedBox(height: 8),
           _SettingsTile(icon: Icons.lightbulb_outline, label: 'الإقتراحات', onTap: () {}),
           const SizedBox(height: 8),
+          _SettingsTile(
+  icon: Icons.privacy_tip_outlined,
+  label: 'سياسة الخصوصية',
+  onTap: () {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => const PrivacyPolicyScreen(),
+      ),
+    );
+  },
+),
           _SettingsTile(icon: Icons.group_add_outlined, label: 'إنضم الى شركاء مقصد', onTap: () {}),
           const SizedBox(height: 8),
           _SettingsTile(icon: Icons.system_update_outlined, label: 'تحقق من أخر التحديثات', onTap: () {}),
@@ -311,6 +347,68 @@ class _LogoutButton extends StatelessWidget {
       child: PrimaryButton(
         label: 'تسجيل خروج',
         onPressed: () => Navigator.pushReplacementNamed(context, '/'),
+      ),
+    );
+  }
+}
+
+
+class _MemoriesScreen extends StatelessWidget {
+  const _MemoriesScreen();
+
+  @override
+  Widget build(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser;
+
+    if (user == null) {
+      return const Scaffold(
+        body: Center(child: Text("يجب تسجيل الدخول")),
+      );
+    }
+
+    return Scaffold(
+      appBar: AppBar(title: const Text("ألبوم الذكريات")),
+      body: StreamBuilder<QuerySnapshot>(
+        stream: FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .collection('photos')
+            .orderBy('createdAt', descending: true)
+            .snapshots(),
+        builder: (context, snapshot) {
+
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+            return const Center(child: Text("لا توجد صور بعد 📸"));
+          }
+
+          final photos = snapshot.data!.docs;
+
+          return GridView.builder(
+            padding: const EdgeInsets.all(12),
+            itemCount: photos.length,
+            gridDelegate:
+                const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              crossAxisSpacing: 8,
+              mainAxisSpacing: 8,
+            ),
+            itemBuilder: (context, index) {
+              final imageUrl = photos[index]['imageUrl'];
+
+              return ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Image.network(
+                  imageUrl,
+                  fit: BoxFit.cover,
+                ),
+              );
+            },
+          );
+        },
       ),
     );
   }

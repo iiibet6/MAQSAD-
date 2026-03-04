@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "603252764927",
+    "project_id": "maqsadfb",
+    "storage_bucket": "maqsadfb.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:603252764927:android:b31f4d1cf245d1ec3e5cca",
+        "android_client_info": {
+          "package_name": "com.example.maqsad"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAm5Ye7MBrCopThLL4HZVagRNyXw2-FGOU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
