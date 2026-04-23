@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../theme/app_theme.dart';
 import '../widgets/shared_widgets.dart';
 import '../models/place_model.dart';
 import 'place_details_screen.dart';
@@ -25,16 +24,36 @@ class ExploreScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
 
+                    /// العنوان
                     const Text(
-                      'اكتشف حائل',
+                      'اكتشف حائل !',
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
 
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 10),
 
+                    /// شريط البحث
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade200,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: const TextField(
+                        decoration: InputDecoration(
+                          hintText: "ابحث",
+                          border: InputBorder.none,
+                          icon: Icon(Icons.search),
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(height: 10),
+
+                    /// الأماكن المميزة
                     const Text(
                       'الأماكن المميزة',
                       style: TextStyle(
@@ -45,9 +64,6 @@ class ExploreScreen extends StatelessWidget {
 
                     const SizedBox(height: 12),
 
-                    /// ======================
-                    /// الأماكن الدائرية
-                    /// ======================
                     SizedBox(
                       height: 110,
                       child: ListView(
@@ -65,12 +81,12 @@ class ExploreScreen extends StatelessWidget {
                                     place: Place(
                                       title: "قلعة أعيرف",
                                       image: "assets/images/aref.png",
-                                      description: "تُعد قلعة أعيرف من أقدم المعالم التاريخية في حائل، وتقع على قمة جبل يطل على المدينة، وكانت تستخدم قديمًا للمراقبة وإطلاق المدفع في المناسبات.",
+                                      description:
+                                          "تُعد قلعة أعيرف من أقدم المعالم التاريخية في حائل.",
                                       workingHours: "مفتوح طوال الوقت",
                                       modelPath: "assets/models/aref_castle.glb",
                                       category: "تاريخي",
-
-                                      locationName: "جبل أعيرف - مدينة حائل",
+                                      locationName: "جبل أعيرف - حائل",
                                       latitude: 27.5219,
                                       longitude: 41.6905,
                                     ),
@@ -86,16 +102,14 @@ class ExploreScreen extends StatelessWidget {
                             onTap: () {
                               Navigator.push(
                                 context,
-                                MaterialPageRoute(
-                                  builder: (_) => PlaceDetailsScreen(
+                                MaterialPageRoute(builder: (_) => PlaceDetailsScreen(
                                     place: Place(
                                       title: "منازل حاتم الطائي",
                                       image: "assets/images/hatem_house.png",
-                                      description: "رمز الكرم العربي في حائل...",
+                                      description: "رمز الكرم العربي في حائل.",
                                       workingHours: "مفتوح طوال الوقت",
                                       modelPath: "assets/models/hatems_home.glb",
                                       category: "تاريخي",
-
                                       locationName: "قرية توارن - حائل",
                                       latitude: 27.5600,
                                       longitude: 41.6900,
@@ -103,19 +117,16 @@ class ExploreScreen extends StatelessWidget {
                                   ),
                                 ),
                               );
-
-},
+                            },
                           ),
 
                         ],
                       ),
                     ),
 
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 1),
 
-                    /// ======================
-                    /// التصنيفات (GRID)
-                    /// ======================
+                    /// التصنيفات الرئيسية
                     GridView.count(
                       crossAxisCount: 2,
                       shrinkWrap: true,
@@ -132,20 +143,20 @@ class ExploreScreen extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (_) =>
-                                    const RestaurantsScreen(),
+                                builder: (_) => const RestaurantsScreen(),
                               ),
                             );
                           },
-                        ),_CategoryCard(
+                        ),
+
+                        _CategoryCard(
                           title: 'أماكن طبيعية وسياحية',
                           image: 'assets/images/nature.png',
                           onTap: () {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (_) =>
-                                    const NaturePlacesScreen(),
+                                builder: (_) => const NaturePlacesScreen(),
                               ),
                             );
                           },
@@ -156,7 +167,7 @@ class ExploreScreen extends StatelessWidget {
                           image: 'assets/images/cafes.png',
                         ),
 
-                         _CategoryCard(
+                        _CategoryCard(
                           title: 'شاليهات ومنتجعات',
                           image: 'assets/images/chalets.png',
                           onTap: () {
@@ -168,13 +179,53 @@ class ExploreScreen extends StatelessWidget {
                             );
                           },
                         ),
+
                       ],
                     ),
+
+                    const SizedBox(height: 1),
+
+                    /// قسم أخرى
+                    const Text(
+                      'أخرى',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+
+                    const SizedBox(height: 10),
+
+                    GridView.count(
+                      crossAxisCount: 2,
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      crossAxisSpacing: 12,
+                      mainAxisSpacing: 12,
+                      childAspectRatio: 1,
+                      children: const [
+
+                        _CategoryCard(
+                          title: 'فنادق',
+
+image: 'assets/images/hotel.png',
+                        ),
+
+                        _CategoryCard(
+                          title: 'تسوق',
+                          image: 'assets/images/mall.png',
+                        ),
+
+                      ],
+                    ),
+
                   ],
                 ),
               ),
             ),
+
             const AppBottomNavBar(currentIndex: 2),
+
           ],
         ),
       ),
@@ -182,9 +233,7 @@ class ExploreScreen extends StatelessWidget {
   }
 }
 
-/// ======================
 /// كرت التصنيف
-/// ======================
 class _CategoryCard extends StatelessWidget {
   final String title;
   final String image;
@@ -214,18 +263,16 @@ class _CategoryCard extends StatelessWidget {
               ),
             ),
             Center(
-  child: Text(
-    title,
-    textAlign: TextAlign.center,
-    maxLines: 2,
-    overflow: TextOverflow.ellipsis,
-    style: const TextStyle(
-      color: Colors.white,
-      fontSize: 18,
-      fontWeight: FontWeight.bold,
-    ),
-  ),
-),
+              child: Text(
+                title,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
           ],
         ),
       ),
@@ -233,9 +280,7 @@ class _CategoryCard extends StatelessWidget {
   }
 }
 
-/// ======================
-/// الدائرة القابلة للضغط
-/// ======================
+/// الأماكن الدائرية
 class _CirclePlace extends StatelessWidget {
   final String title;
   final String image;
@@ -249,23 +294,24 @@ class _CirclePlace extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 12),
-      child: GestureDetector(
-        onTap: onTap,
+    return GestureDetector(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.only(left: 12),
         child: Column(
           children: [
             CircleAvatar(
               radius: 35,
               backgroundImage: AssetImage(image),
-
-),
+            ),
             const SizedBox(height: 6),
             SizedBox(
-              width: 80,
+              width: 70,
               child: Text(
                 title,
                 textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
                 style: const TextStyle(fontSize: 12),
               ),
             ),

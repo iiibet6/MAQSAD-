@@ -16,71 +16,81 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
+  final TextEditingController phoneController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController = TextEditingController();
 
   DateTime? selectedDate;
   bool isLoading = false;
 
+  String countryCode = '+966';
+
   Future<void> _register() async {
-
-    if (passwordController.text != confirmPasswordController.text) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('كلمتا المرور غير متطابقتين')),
-      );
-      return;
-    }
-
-    if (selectedDate == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('اختاري تاريخ الميلاد')),
-      );
-      return;
-    }
-
-    setState(() => isLoading = true);
-
-    try {
-
-      // 🔐 إنشاء الحساب في Authentication
-      final userCredential =
-          await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: emailController.text.trim(),
-        password: passwordController.text.trim(),
-      );
-
-      final uid = userCredential.user!.uid;
-
-      // 🗄 إنشاء document في Firestore
-      await FirebaseFirestore.instance
-          .collection('users')
-          .doc(uid)
-          .set({
-        'name': nameController.text.trim(),
-        'email': emailController.text.trim(),
-        'birthDate': Timestamp.fromDate(selectedDate!),
-        'interests': [],
-        'favorites': [],
-        'createdAt': FieldValue.serverTimestamp(),
-      });
-
-      // 🚀 الانتقال
-      Navigator.pushReplacementNamed(context, '/interests');
-
-    } on FirebaseAuthException catch (e) {
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.message ?? 'حدث خطأ')),
-      );
-
-    } catch (e) {
-  print(e.toString());
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(content: Text(e.toString())),
-  );
-}
-    setState(() => isLoading = false);
+  if (passwordController.text != confirmPasswordController.text) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('كلمتا المرور غير متطابقتين')),
+    );
+    return;
   }
+
+  if (selectedDate == null) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('اختر تاريخ الميلاد')),
+    );
+    return;
+  }
+
+  if (phoneController.text.trim().isEmpty) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('أدخل رقم الجوال')),
+    );
+    return;
+  }
+
+  setState(() => isLoading = true);
+
+  try {
+    final userCredential =
+        await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      email: emailController.text.trim(),
+      password: passwordController.text.trim(),
+    );
+
+    final user = userCredential.user;
+    final uid = user!.uid;
+
+    await user.updateDisplayName(nameController.text.trim());
+
+    await FirebaseFirestore.instance.collection('users').doc(uid).set({
+      'name': nameController.text.trim(),
+      'email': emailController.text.trim(),
+      'phone': '$countryCode${phoneController.text.trim()}',
+      'birthDate': Timestamp.fromDate(selectedDate!),
+      'interests': [],
+      'favorites': [],
+      'createdAt': FieldValue.serverTimestamp(),
+    });
+
+    await user.sendEmailVerification();
+
+    if (!mounted) return;
+    Navigator.pushReplacementNamed(context, '/email-verification');
+  } on FirebaseAuthException catch (e) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(e.message ?? 'حدث خطأ')),
+    );
+  } catch (e) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(e.toString())),
+    );
+  } finally {
+    if (mounted) {
+      setState(() => isLoading = false);
+    }
+  }
+}
 
   Future<void> _pickDate() async {
     final picked = await showDatePicker(
@@ -129,6 +139,30 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
 
                 const SizedBox(height: 16),
+                                LabeledTextField(
+                  label: 'رقم الجوال',
+                  hint: 'مثال: 5XXXXXXXX',
+                  controller: phoneController,
+                  keyboardType: TextInputType.phone,
+                  prefix: DropdownButtonHideUnderline(
+                    child: DropdownButton<String>(
+                      value: countryCode,
+                      items: const [
+                        DropdownMenuItem(value: '+966', child: Text('🇸🇦 +966')),
+                        DropdownMenuItem(value: '+971', child: Text('🇦🇪 +971')),
+                        DropdownMenuItem(value: '+965', child: Text('🇰🇼 +965')),
+                        DropdownMenuItem(value: '+20', child: Text('🇪🇬 +20')),
+                      ],
+                      onChanged: (value) {
+                        setState(() {
+                          countryCode = value!;
+                        });
+                      },
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 16),
 
                 /// تاريخ الميلاد
                 Column(
@@ -137,7 +171,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     const Text(
                       'تاريخ الميلاد',
                       style: AppTextStyles.bodyLarge,
-                    ),const SizedBox(height: 8),
+                    ),
+                    const SizedBox(height: 8),
                     GestureDetector(
                       onTap: _pickDate,
                       child: Container(

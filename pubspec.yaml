@@ -10,27 +10,37 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-
-  firebase_core: ^4.4.0
-  firebase_auth: ^6.1.4
-  cloud_firestore: ^6.1.2
-  model_viewer_plus: ^1.8.0
-  flutter_map: ^6.1.0
+  flutter_localizations:
+    sdk: flutter
+  intl: ^0.20.0
+  shared_preferences: ^2.2.3
+  arkit_plugin: ^1.2.1
+  firebase_core: ^4.7.0
+  firebase_auth: ^6.4.0
+  cloud_firestore: ^6.3.0
+  model_viewer_plus: ^1.10.0
+  flutter_map: ^8.3.0
   latlong2: ^0.9.0
-  geolocator: ^10.1.0
-  cupertino_icons: ^1.0.6
+  geolocator: ^14.0.2
+  cupertino_icons: ^1.0.9
   image_picker: ^1.0.7
-  firebase_storage: ^13.0.0
   url_launcher: ^6.2.6
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^3.0.0
+  flutter_launcher_icons: ^0.14.3
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/app_icon.jpg"
+  remove_alpha_ios: true
 
 flutter:
   uses-material-design: true
-
+  generate: true
   assets:
     - assets/images/
     - assets/icons/

@@ -19,7 +19,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     // Auto-navigate after 2.5s
     Future.delayed(const Duration(milliseconds: 2500), () {
       if (mounted) {
-        Navigator.pushReplacementNamed(context, '/auth-choice');
+        Navigator.pushReplacementNamed(context, '/onboarding');
       }
     });
   }

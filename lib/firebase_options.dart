@@ -54,7 +54,7 @@ class DefaultFirebaseOptions {
     appId: '1:603252764927:android:b31f4d1cf245d1ec3e5cca',
     messagingSenderId: '603252764927',
     projectId: 'maqsadfb',
-    storageBucket: 'maqsadfb.firebasestorage.app',
+    //storageBucket: 'maqsadfb.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
@@ -62,7 +62,7 @@ class DefaultFirebaseOptions {
     appId: '1:603252764927:ios:45be7cb74f451eea3e5cca',
     messagingSenderId: '603252764927',
     projectId: 'maqsadfb',
-    storageBucket: 'maqsadfb.firebasestorage.app',
+    //storageBucket: 'maqsadfb.firebasestorage.app',
     iosBundleId: 'com.example.maqsad',
   );
 
@@ -71,7 +71,7 @@ class DefaultFirebaseOptions {
     appId: '1:603252764927:ios:45be7cb74f451eea3e5cca',
     messagingSenderId: '603252764927',
     projectId: 'maqsadfb',
-    storageBucket: 'maqsadfb.firebasestorage.app',
+    //storageBucket: 'maqsadfb.firebasestorage.app',
     iosBundleId: 'com.example.maqsad',
   );
 
@@ -81,6 +81,6 @@ class DefaultFirebaseOptions {
     messagingSenderId: '603252764927',
     projectId: 'maqsadfb',
     authDomain: 'maqsadfb.firebaseapp.com',
-    storageBucket: 'maqsadfb.firebasestorage.app',
+    //storageBucket: 'maqsadfb.firebasestorage.app',
   );
 }

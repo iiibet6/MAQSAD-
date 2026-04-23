@@ -132,9 +132,7 @@ class OutlinedAppButton extends StatelessWidget {
       ),
     );
   }
-}
-
-// ─────────────────────────────────────────────
+}// ─────────────────────────────────────────────
 //  Labeled Text Field
 // ─────────────────────────────────────────────
 class LabeledTextField extends StatelessWidget {
@@ -143,6 +141,7 @@ class LabeledTextField extends StatelessWidget {
   final bool isPassword;
   final TextEditingController? controller;
   final TextInputType keyboardType;
+  final Widget? prefix; // 👈 جديد
 
   const LabeledTextField({
     super.key,
@@ -151,6 +150,7 @@ class LabeledTextField extends StatelessWidget {
     this.isPassword = false,
     this.controller,
     this.keyboardType = TextInputType.text,
+    this.prefix, // 👈 جديد
   });
 
   @override
@@ -167,6 +167,7 @@ class LabeledTextField extends StatelessWidget {
           isPassword: isPassword,
           controller: controller,
           keyboardType: keyboardType,
+          prefix: prefix, // 👈 نمرره
         ),
       ],
     );
@@ -178,12 +179,14 @@ class _PasswordAwareField extends StatefulWidget {
   final bool isPassword;
   final TextEditingController? controller;
   final TextInputType keyboardType;
+  final Widget? prefix; // 👈 جديد
 
   const _PasswordAwareField({
     required this.hint,
     this.isPassword = false,
     this.controller,
     this.keyboardType = TextInputType.text,
+    this.prefix, // 👈 جديد
   });
 
   @override
@@ -204,6 +207,9 @@ class _PasswordAwareFieldState extends State<_PasswordAwareField> {
       decoration: InputDecoration(
         hintText: widget.hint,
         hintTextDirection: TextDirection.rtl,
+
+        prefixIcon: widget.prefix, // 👈 هنا السحر ✨
+
         suffixIcon: widget.isPassword
             ? IconButton(
                 icon: Icon(

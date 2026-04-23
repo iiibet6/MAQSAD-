@@ -1,0 +1,240 @@
+import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import '../theme/app_theme.dart';
+import '../widgets/shared_widgets.dart';
+
+class Mood {
+  final String label;
+  final String imageAsset;
+  bool selected;
+
+  Mood({
+    required this.label,
+    required this.imageAsset,
+    this.selected = false,
+  });
+}
+
+class MoodScreen extends StatefulWidget {
+  const MoodScreen({super.key});
+
+  @override
+  State<MoodScreen> createState() => _MoodScreenState();
+}
+
+class _MoodScreenState extends State<MoodScreen> {
+  final List<Mood> _moods = [
+    Mood(label: 'أجواء هادئة', imageAsset: 'assets/images/mood_calm.jpg'),
+    Mood(label: 'أجواء عائلية', imageAsset: 'assets/images/mood_family.jpg'),
+    Mood(label: 'أجواء حيوية', imageAsset: 'assets/images/mood_lively.jpg'),
+    Mood(label: 'أجواء رومانسية', imageAsset: 'assets/images/mood_romantic.jpg'),
+    Mood(label: 'أجواء طبيعة', imageAsset: 'assets/images/mood_nature.jpg'),
+    Mood(label: 'أجواء مغامرة', imageAsset: 'assets/images/mood_adventure.jpg'),
+  ];
+void _toggle(int index) {
+    setState(() {
+      _moods[index].selected = !_moods[index].selected;
+    });
+  }
+
+  Future<void> _saveMoods() async {
+    String uid = FirebaseAuth.instance.currentUser!.uid;
+
+    List<String> selected = _moods
+        .where((mood) => mood.selected)
+        .map((mood) => mood.label)
+        .toList();
+
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(uid)
+        .update({
+      'moods': selected,
+    });
+  }
+
+  Future<void> _finish() async {
+    await _saveMoods();
+    Navigator.pushReplacementNamed(context, '/cuisine');
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: Scaffold(
+        body: Column(
+          children: [
+            const PatternBorderFallback(),
+            const _MoodHero(),
+            Expanded(
+              child: Container(
+                color: Colors.white,
+                child: Column(
+                  children: [
+                    _MoodHeader(onNext: _finish),
+                    Expanded(
+                      child: GridView.builder(
+                        padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 12,
+                          mainAxisSpacing: 12,
+                          childAspectRatio: 1,
+                        ),
+                        itemCount: _moods.length,
+                        itemBuilder: (ctx, i) => MoodCard(
+                          mood: _moods[i],
+                          onTap: () => _toggle(i),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _MoodHero extends StatelessWidget {
+  const _MoodHero();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.fromLTRB(20, 24, 20, 20),
+      decoration: const BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage('assets/images/auth_bg.png'),
+          fit: BoxFit.cover,
+          colorFilter:
+              ColorFilter.mode(Colors.black38, BlendMode.darken),
+        ),
+      ),
+      child: Text(
+        'وش الأجواء اللي تحبها؟',
+        style: AppTextStyles.headline2
+            .copyWith(color: Colors.white, fontSize: 22),
+        textAlign: TextAlign.right,
+      ),
+    );
+  }
+}
+
+class _MoodHeader extends StatelessWidget {
+  final VoidCallback onNext;
+
+  const _MoodHeader({required this.onNext});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+
+GestureDetector(
+            onTap: onNext,
+            child: Container(
+              padding: const EdgeInsets.symmetric(
+                  horizontal: 16, vertical: 8),
+              decoration: BoxDecoration(
+                color: AppColors.primary,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Row(
+                children: const [
+                  Text(
+                    'التالي',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontFamily: 'Cairo',
+                    ),
+                  ),
+                  SizedBox(width: 4),
+                  Icon(
+                    Icons.arrow_forward,
+                    color: Colors.white,
+                    size: 16,
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Text(     'اختر الأجواء التي تفضلها',
+            style: AppTextStyles.sectionTitle,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class MoodCard extends StatelessWidget {
+  final Mood mood;
+  final VoidCallback onTap;
+
+  const MoodCard({
+    super.key,
+    required this.mood,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            Image.asset(
+              mood.imageAsset,
+              fit: BoxFit.cover,
+            ),
+            Container(color: Colors.black.withOpacity(0.2)),
+            if (mood.selected)
+              Container(
+                color: AppColors.accent.withOpacity(0.45),
+                child: const Center(
+                  child: Icon(
+                    Icons.check_circle,
+                    color: Colors.white,
+                    size: 36,
+                  ),
+                ),
+              ),
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(
+                    vertical: 6, horizontal: 8),
+                color: Colors.black.withOpacity(0.35),
+                child: Text(
+                  mood.label,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontFamily: 'Cairo',
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

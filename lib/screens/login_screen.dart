@@ -11,7 +11,6 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
@@ -21,21 +20,48 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() => isLoading = true);
 
     try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
+      final userCredential =
+          await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: emailController.text.trim(),
         password: passwordController.text.trim(),
       );
 
-      // 🔥 هنا الانتقال لشاشة الاهتمامات
-      Navigator.pushReplacementNamed(context, '/interests');
+      final user = userCredential.user;
 
+      if (!mounted || user == null) return;
+
+      await user.reload();
+      final refreshedUser = FirebaseAuth.instance.currentUser;
+
+      if (refreshedUser != null && refreshedUser.emailVerified) {
+        Navigator.pushReplacementNamed(context, '/home');
+      } else {
+        Navigator.pushReplacementNamed(context, '/email-verification');
+      }
     } on FirebaseAuthException catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.message ?? 'حدث خطأ')),
-      );
-    }
+      if (!mounted) return;
 
-    setState(() => isLoading = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.message ?? 'حدث خطأ في تسجيل الدخول')),
+      );
+    } catch (e) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('حدث خطأ غير متوقع: $e')),
+      );
+    } finally {
+      if (mounted) {
+        setState(() => isLoading = false);
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
   }
 
   @override
@@ -50,44 +76,30 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-
                 const SizedBox(height: 40),
                 const Center(child: AppLogo(size: 60)),
                 const SizedBox(height: 40),
-
-                /// Email
                 LabeledTextField(
                   label: 'البريد الالكتروني',
                   hint: 'email@domain.com',
                   controller: emailController,
                   keyboardType: TextInputType.emailAddress,
                 ),
-
                 const SizedBox(height: 16),
-
-                /// Password
                 LabeledTextField(
                   label: 'الرمز السري',
                   hint: '',
                   controller: passwordController,
                   isPassword: true,
                 ),
-
                 const SizedBox(height: 30),
-
-                /// Login Button
                 PrimaryButton(
                   label: isLoading ? 'جاري الدخول...' : 'دخول',
                   onPressed: isLoading ? null : _login,
                 ),
-
                 const SizedBox(height: 20),
-
                 const OrDivider(),
-
                 const SizedBox(height: 20),
-
-                /// Register Button
                 PrimaryButton(
                   label: 'إنشاء حساب جديد',
                   onPressed: () {

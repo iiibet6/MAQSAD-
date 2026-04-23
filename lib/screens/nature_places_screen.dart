@@ -6,9 +6,6 @@ import '../services/favorites_service.dart';
 class NaturePlacesScreen extends StatelessWidget {
   const NaturePlacesScreen({super.key});
 
-  /// ============================
-  /// 📍 قائمة الأماكن (بيانات كاملة)
-  /// ============================
   static final List<Place> _places = [
     Place(
       title: 'منازل حاتم الطائي',
@@ -81,6 +78,18 @@ class NaturePlacesScreen extends StatelessWidget {
       locationName: 'حائل',
       latitude: 27.5200,
       longitude: 41.7500,
+    ),
+    Place(
+      title: 'شعيب توارن',
+      image: 'assets/images/Twarn.jpg',
+      description:
+          'شعيب توارن في حائل هو وجهة سياحية وطبيعية بارزة، يتميز بجمال طبيعته البكر وأشجار الطلح وجريان السيول، ويعد مقصداً لهواة التنزه والمغامرة. يقع بالقرب من قرية توارن التاريخية ومنازل حاتم الطائي، مما يجعله مزيجاً رائعاً بين جمال الطبيعة، التراث، والتاريخ، حيث يضم مخيمات وممرات طبيعية ساحرة',
+      workingHours: 'مفتوح طوال الوقت',
+      modelPath: 'assets/models/aref_castle.glb',
+      category: 'تاريخي',
+      locationName: '',
+      latitude: 27.5219,
+      longitude: 41.6905,
     ),
   ];
 

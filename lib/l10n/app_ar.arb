@@ -1,0 +1,20 @@
+{
+  "memories": "ألبوم الذكريات",
+  "visits": "سجل الزيارات",
+  "favorites": "المفضلات",
+  "contact": "تواصل معنا",
+  "myAccount": "حسابي",
+  "myInfo": "معلوماتي",
+  "settings": "الإعدادات",
+  "language": "اللغة",
+  "notifications": "إشعارات مقصد",
+  "other": "أخرى",
+  "suggestions": "الإقتراحات",
+  "privacy": "سياسة الخصوصية",
+  "partners": "إنضم الى شركاء مقصد",
+  "update": "تحقق من أخر التحديثات",
+  "deleteAccount": "حذف الحساب",
+  "logout": "تسجيل خروج",
+  "loginRequired": "يجب تسجيل الدخول",
+  "noPhotos": "لا توجد صور بعد 📸"
+}

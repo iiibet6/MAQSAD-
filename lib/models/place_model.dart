@@ -9,7 +9,7 @@ class Place {
   final double latitude;
   final double longitude;
 
-  final String? plusCode; // 👈 الجديد
+  final String? plusCode; 
 
   Place({
     required this.title,
@@ -21,6 +21,6 @@ class Place {
     required this.locationName,
     required this.latitude,
     required this.longitude,
-    this.plusCode, // 👈 الجديد
+    this.plusCode, 
   });
 }

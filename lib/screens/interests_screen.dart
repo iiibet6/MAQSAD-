@@ -61,7 +61,7 @@ class _InterestsScreenState extends State<InterestsScreen> {
 
   Future<void> _handleNext() async {
     await _saveSelectedInterests();
-    Navigator.pushReplacementNamed(context, '/home');
+    Navigator.pushReplacementNamed(context, '/mood');
   }
 
   @override
@@ -117,7 +117,7 @@ class _InterestsHero extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(20, 24, 20, 20),
       decoration: const BoxDecoration(
         image: DecorationImage(
-          image: AssetImage('assets/images/auth_bg.jpg'),
+          image: AssetImage('assets/images/auth_bg.png'),
           fit: BoxFit.cover,
           colorFilter:
               ColorFilter.mode(Colors.black38, BlendMode.darken),

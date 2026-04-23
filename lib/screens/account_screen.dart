@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
+import '../l10n/app_localizations.dart';
 import '../theme/app_theme.dart';
 import '../widgets/shared_widgets.dart';
-import '../services/favorites_service.dart';
 import 'favorites_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'privacy_policy_screen.dart';
 import 'profile_info_screen.dart';
-/// Screen 7 – Account / Profile
+import '../main.dart';
+
 class AccountScreen extends StatefulWidget {
   const AccountScreen({super.key});
 
@@ -21,34 +22,32 @@ class _AccountScreenState extends State<AccountScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Directionality(
-      textDirection: TextDirection.rtl,
-      child: Scaffold(
-        backgroundColor: AppColors.background,
-        body: Column(
-          children: [
-            const PatternBorderFallback(),
-            Expanded(
-              child: ListView(
-                children: [
-                  _ProfileHeader(),
-                  _QuickActions(),
-                  const SizedBox(height: 8),
-                  _SettingsSection(
-                    notificationsEnabled: _notificationsEnabled,
-                    onNotificationsChanged: (v) => setState(() => _notificationsEnabled = v),
-                  ),
-                  const SizedBox(height: 16),
-                  _LogoutButton(),
-                  const SizedBox(height: 24),
-                ],
-              ),
+    return Scaffold(
+      backgroundColor: AppColors.background,
+      body: Column(
+        children: [
+          const PatternBorderFallback(),
+          Expanded(
+            child: ListView(
+              children: [
+                const _ProfileHeader(),
+                const _QuickActions(),
+                const SizedBox(height: 8),
+                _SettingsSection(
+                  notificationsEnabled: _notificationsEnabled,
+                  onNotificationsChanged: (v) =>
+                      setState(() => _notificationsEnabled = v),
+                ),
+                const SizedBox(height: 16),
+                const _LogoutButton(),
+                const SizedBox(height: 24),
+              ],
             ),
-          ],
-        ),
-        bottomNavigationBar:AppBottomNavBar(
-  currentIndex: _navIndex,
-),
+          ),
+        ],
+      ),
+      bottomNavigationBar: AppBottomNavBar(
+        currentIndex: _navIndex,
       ),
     );
   }
@@ -56,6 +55,8 @@ class _AccountScreenState extends State<AccountScreen> {
 
 // ─── Profile Header ─────────────────────────────────────────────
 class _ProfileHeader extends StatelessWidget {
+  const _ProfileHeader();
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -71,13 +72,16 @@ class _ProfileHeader extends StatelessWidget {
               color: AppColors.border,
               border: Border.all(color: AppColors.divider, width: 2),
             ),
-            child: const Icon(Icons.person, size: 44, color: AppColors.textSecondary),
+            child: const Icon(
+              Icons.person,
+              size: 44,
+              color: AppColors.textSecondary,
+            ),
           ),
           const SizedBox(height: 12),
           const Text(
-            'البتول',
+            'Albatul',
             style: AppTextStyles.headline2,
-            textDirection: TextDirection.rtl,
           ),
         ],
       ),
@@ -85,44 +89,53 @@ class _ProfileHeader extends StatelessWidget {
   }
 }
 
-// ─── Quick Actions Row ──────────────────────────────────────────
+// ─── Quick Actions ─────────────────────────────────────────────
 class _QuickActions extends StatelessWidget {
+  const _QuickActions();
+
   @override
   Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
+
     return Container(
       color: Colors.white,
       padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-_QuickActionItem(
-  icon: Icons.photo_library_outlined,
-  label: 'ألبوم الذكريات',
-  onTap: () {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => const _MemoriesScreen(),
-      ),
-    );
-  },
-),  const _QuickActionItem(icon: Icons.map_outlined, label: 'سجل الزيارات'),
-
-  _QuickActionItem(
-    icon: Icons.favorite_border,
-    label: 'المفضلات',
-    onTap: () {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) => const FavoritesScreen(),
-        ),
-      );
-    },
-  ),
-
-  const _QuickActionItem(icon: Icons.help_outline, label: 'تواصل معنا'),
-],
+          _QuickActionItem(
+            icon: Icons.photo_library_outlined,
+            label: t.memories,
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const _MemoriesScreen(),
+                ),
+              );
+            },
+          ),
+          _QuickActionItem(
+            icon: Icons.map_outlined,
+            label: t.visits,
+          ),
+          _QuickActionItem(
+            icon: Icons.favorite_border,
+            label: t.favorites,
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const FavoritesScreen(),
+                ),
+              );
+            },
+          ),
+          _QuickActionItem(
+            icon: Icons.help_outline,
+            label: t.contact,
+          ),
+        ],
       ),
     );
   }
@@ -132,7 +145,6 @@ class _QuickActionItem extends StatelessWidget {
   final IconData icon;
   final String label;
   final VoidCallback? onTap;
-
   const _QuickActionItem({
     required this.icon,
     required this.label,
@@ -151,7 +163,6 @@ class _QuickActionItem extends StatelessWidget {
             label,
             style: AppTextStyles.caption.copyWith(fontSize: 11),
             textAlign: TextAlign.center,
-            textDirection: TextDirection.rtl,
           ),
         ],
       ),
@@ -159,7 +170,7 @@ class _QuickActionItem extends StatelessWidget {
   }
 }
 
-// ─── Settings Sections ──────────────────────────────────────────
+// ─── Settings ─────────────────────────────────────────────
 class _SettingsSection extends StatelessWidget {
   final bool notificationsEnabled;
   final ValueChanged<bool> onNotificationsChanged;
@@ -171,17 +182,20 @@ class _SettingsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
+    final currentLang = Localizations.localeOf(context).languageCode;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           const SizedBox(height: 16),
-          _SectionLabel(label: 'حسابي'),
+          _SectionLabel(label: t.myAccount),
           const SizedBox(height: 8),
           _SettingsTile(
             icon: Icons.person_outline,
-            label: 'معلوماتي',
+            label: t.myInfo,
             onTap: () {
               Navigator.push(
                 context,
@@ -192,46 +206,64 @@ class _SettingsSection extends StatelessWidget {
             },
           ),
           const SizedBox(height: 16),
-          _SectionLabel(label: 'الإعدادات'),
+          _SectionLabel(label: t.settings),
           const SizedBox(height: 8),
           _SettingsTile(
             icon: Icons.language,
-            label: 'اللغة',
-            trailing: const Text('English', style: AppTextStyles.caption),
-            onTap: () {},
+            label: t.language,
+            trailing: Text(
+              currentLang == 'ar' ? 'العربية' : 'English',
+              style: AppTextStyles.caption,
+            ),
+            onTap: () {
+              final app = MaqsadApp.of(context);
+              app?.changeLanguage(currentLang == 'ar' ? 'en' : 'ar');
+            },
           ),
           const SizedBox(height: 8),
           _SettingsTileToggle(
             icon: Icons.notifications_outlined,
-            label: 'إشعارات مقصد',
+            label: t.notifications,
             value: notificationsEnabled,
             onChanged: onNotificationsChanged,
           ),
-
           const SizedBox(height: 16),
-          _SectionLabel(label: 'أخرى'),
-          const SizedBox(height: 8),
-          _SettingsTile(icon: Icons.lightbulb_outline, label: 'الإقتراحات', onTap: () {}),
+          _SectionLabel(label: t.other),
           const SizedBox(height: 8),
           _SettingsTile(
-  icon: Icons.privacy_tip_outlined,
-  label: 'سياسة الخصوصية',
-  onTap: () {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => const PrivacyPolicyScreen(),
-      ),
-    );
-  },
-),
-          _SettingsTile(icon: Icons.group_add_outlined, label: 'إنضم الى شركاء مقصد', onTap: () {}),
+            icon: Icons.lightbulb_outline,
+            label: t.suggestions,
+            onTap: () {},
+          ),
           const SizedBox(height: 8),
-          _SettingsTile(icon: Icons.system_update_outlined, label: 'تحقق من أخر التحديثات', onTap: () {}),
+          _SettingsTile(
+            icon: Icons.privacy_tip_outlined,
+            label: t.privacy,
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const PrivacyPolicyScreen(),
+                ),
+              );
+            },
+          ),
+          const SizedBox(height: 8),
+          _SettingsTile(
+            icon: Icons.group_add_outlined,
+            label: t.partners,
+            onTap: () {},
+          ),
+          const SizedBox(height: 8),
+          _SettingsTile(
+            icon: Icons.system_update_outlined,
+            label: t.update,
+            onTap: () {},
+          ),
           const SizedBox(height: 8),
           _SettingsTile(
             icon: Icons.cancel_outlined,
-            label: 'حذف الحساب',
+            label: t.deleteAccount,
             labelColor: AppColors.deleteRed,
             onTap: () {},
           ),
@@ -243,6 +275,7 @@ class _SettingsSection extends StatelessWidget {
 
 class _SectionLabel extends StatelessWidget {
   final String label;
+
   const _SectionLabel({required this.label});
 
   @override
@@ -250,11 +283,9 @@ class _SectionLabel extends StatelessWidget {
     return Text(
       label,
       style: AppTextStyles.sectionTitle.copyWith(fontSize: 16),
-      textDirection: TextDirection.rtl,
     );
   }
 }
-
 class _SettingsTile extends StatelessWidget {
   final IconData icon;
   final String label;
@@ -284,14 +315,16 @@ class _SettingsTile extends StatelessWidget {
           children: [
             Icon(icon, size: 20, color: labelColor ?? AppColors.textSecondary),
             const Spacer(),
-            if (trailing != null) ...[trailing!, const SizedBox(width: 8)],
+            if (trailing != null) ...[
+              trailing!,
+              const SizedBox(width: 8),
+            ],
             Text(
               label,
               style: AppTextStyles.bodyLarge.copyWith(
                 fontSize: 14,
                 color: labelColor ?? AppColors.textPrimary,
               ),
-              textDirection: TextDirection.rtl,
             ),
           ],
         ),
@@ -331,27 +364,33 @@ class _SettingsTileToggle extends StatelessWidget {
           const Spacer(),
           Icon(icon, size: 20, color: AppColors.textSecondary),
           const SizedBox(width: 8),
-          Text(label, style: AppTextStyles.bodyLarge.copyWith(fontSize: 14)),
+          Text(
+            label,
+            style: AppTextStyles.bodyLarge.copyWith(fontSize: 14),
+          ),
         ],
       ),
     );
   }
 }
 
-// ─── Logout Button ──────────────────────────────────────────────
+// ─── Logout ─────────────────────────────────────────────
 class _LogoutButton extends StatelessWidget {
+  const _LogoutButton();
+
   @override
   Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 40),
       child: PrimaryButton(
-        label: 'تسجيل خروج',
+        label: t.logout,
         onPressed: () => Navigator.pushReplacementNamed(context, '/'),
       ),
     );
   }
 }
-
 
 class _MemoriesScreen extends StatelessWidget {
   const _MemoriesScreen();
@@ -359,15 +398,19 @@ class _MemoriesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;
+    final t = AppLocalizations.of(context)!;
 
     if (user == null) {
-      return const Scaffold(
-        body: Center(child: Text("يجب تسجيل الدخول")),
+      return Scaffold(
+        appBar: AppBar(title: Text(t.memories)),
+        body: Center(
+          child: Text(t.loginRequired),
+        ),
       );
     }
 
     return Scaffold(
-      appBar: AppBar(title: const Text("ألبوم الذكريات")),
+      appBar: AppBar(title: Text(t.memories)),
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
             .collection('users')
@@ -376,22 +419,21 @@ class _MemoriesScreen extends StatelessWidget {
             .orderBy('createdAt', descending: true)
             .snapshots(),
         builder: (context, snapshot) {
-
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }
 
           if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-            return const Center(child: Text("لا توجد صور بعد 📸"));
+            return Center(
+              child: Text(t.noPhotos),
+            );
           }
 
           final photos = snapshot.data!.docs;
-
           return GridView.builder(
             padding: const EdgeInsets.all(12),
             itemCount: photos.length,
-            gridDelegate:
-                const SliverGridDelegateWithFixedCrossAxisCount(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
               crossAxisSpacing: 8,
               mainAxisSpacing: 8,

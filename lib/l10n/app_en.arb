@@ -1,0 +1,20 @@
+{
+  "memories": "Memories",
+  "visits": "Visit History",
+  "favorites": "Favorites",
+  "contact": "Contact Us",
+  "myAccount": "My Account",
+  "myInfo": "My Information",
+  "settings": "Settings",
+  "language": "Language",
+  "notifications": "Notifications",
+  "other": "Other",
+  "suggestions": "Suggestions",
+  "privacy": "Privacy Policy",
+  "partners": "Join Partners",
+  "update": "Check for Updates",
+  "deleteAccount": "Delete Account",
+  "logout": "Logout",
+  "loginRequired": "You need to sign in",
+  "noPhotos": "No photos yet 📸"
+}
