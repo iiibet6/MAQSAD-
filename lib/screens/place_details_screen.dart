@@ -37,6 +37,7 @@ class PlaceDetailsScreen extends StatelessWidget {
     //     .ref()
     //     .child('users/${user.uid}/photos/$fileName.jpg');
     //
+    
     // await ref.putFile(file);
     // final imageUrl = await ref.getDownloadURL();
     //
@@ -51,7 +52,7 @@ class PlaceDetailsScreen extends StatelessWidget {
 
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        content: Text('ميزة التقاط ورفع الصور متاحة على الجهاز الحقيقي'),
+        content: Text('ميزة التقاط ورفع الصورغير  متاحة حاليا'),
       ),
     );
   }

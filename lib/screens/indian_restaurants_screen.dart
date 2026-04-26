@@ -1,0 +1,260 @@
+import 'package:flutter/material.dart';
+
+import '../models/restaurant_model.dart';
+import 'restaurant_menu_screen.dart';
+import '../services/favorites_service.dart';
+import '../l10n/app_localizations.dart';
+
+class IndianRestaurantsScreen extends StatelessWidget {
+  const IndianRestaurantsScreen({super.key});
+
+  static const List<Restaurant> restaurants = [
+    Restaurant(
+      name: 'مطعم تاج محل',
+      image: 'assets/images/taj_mahal.jpeg',
+      subtitle: 'مطعم هندي كلاسيكي ومأكولات بحرية',
+      type: 'مطاعم',
+      category: 'هندي',
+      tags: ['مطاعم', 'هندي', 'برياني', 'دجاج', 'روبيان', 'بهارات', 'حار'],
+      categories: ['المقبلات', 'الدجاج', 'البرياني', 'المشروبات'],
+      menu: [
+        MenuItem(name: 'كوكتيل روبيان', price: '55', image: 'assets/images/taj_shrimp_cocktail.png', category: 'المقبلات'),
+        MenuItem(name: 'روبيان كوليوادا', price: '45', image: 'assets/images/taj_shrimp_koliwada.png', category: 'المقبلات'),
+        MenuItem(name: 'دجاج شنغهاي', price: '28', image: 'assets/images/taj_shanghai_chicken.png', category: 'الدجاج'),
+        MenuItem(name: 'لولي بوب دجاج', price: '28', image: 'assets/images/taj_lollipop.png', category: 'الدجاج'),
+        MenuItem(name: 'دجاج 65', price: '0', image: 'assets/images/taj_chicken65.png', category: 'الدجاج'),
+      ],
+    ),
+    Restaurant(
+      name: 'مطعم بهارات المذاق الهندي',
+      image: 'assets/images/buharat.png',
+      subtitle: 'أطباق هندية ومشويات وفخار',
+      type: 'مطاعم',
+      category: 'هندي',
+      tags: ['مطاعم', 'هندي', 'بهارات', 'مشويات', 'فخار', 'كباب', 'حار'],
+      categories: ['المشويات', 'الفخار', 'الأطباق الرئيسية', 'الحلى'],
+      menu: [
+        MenuItem(name: 'طبق كباب الإمبراطور', price: '55.5', image: 'assets/images/buharat_emperor.png', category: 'المشويات'),
+        MenuItem(name: 'دجاج فخار', price: '46', image: 'assets/images/buharat_chicken_pot.png', category: 'الفخار'),
+        MenuItem(name: 'لحم فخار', price: '48.5', image: 'assets/images/buharat_meat_pot.png', category: 'الفخار'),
+        MenuItem(name: 'كباب دجاج عربي', price: '50', image: 'assets/images/buharat_chicken_kebab.png', category: 'المشويات'),
+        MenuItem(name: 'لحم كباب عربي', price: '58', image: 'assets/images/buharat_meat_kebab.png', category: 'المشويات'),
+        MenuItem(name: 'أم علي', price: '16', image: 'assets/images/um_ali.png', category: 'الحلى'),
+        MenuItem(name: 'جولاب جومون', price: '13', image: 'assets/images/gulab_jamun.png', category: 'الحلى'),
+      ],
+    ),
+    Restaurant(
+      name: 'مطعم عرفة دربار',
+      image: 'assets/images/arafa_darbar.jpeg',
+      subtitle: 'برياني وتندوري ومأكولات هندية',
+      type: 'مطاعم',
+      category: 'هندي',
+      tags: ['مطاعم', 'هندي', 'برياني', 'تندوري', 'كباب', 'نودلز', 'حار'],
+      categories: ['البرياني', 'التندوري', 'النودلز', 'المشويات'],
+      menu: [
+        MenuItem(name: 'وعاء برياني دجاج', price: '52', image: 'assets/images/arafa_chicken_biryani.png', category: 'البرياني'),
+        MenuItem(name: 'وعاء برياني لحم حيدر آباد', price: '0', image: 'assets/images/arafa_meat_biryani.png', category: 'البرياني'),
+        MenuItem(name: 'دجاج تندوري مشكل - كبير', price: '80', image: 'assets/images/arafa_tandoori_mix.png', category: 'التندوري'),
+        MenuItem(name: 'دجاج تندوري مشكل - صغير', price: '55', image: 'assets/images/arafa_tandoori_small.png', category: 'التندوري'),
+        MenuItem(name: 'دجاج كباب مالاي', price: '30.3', image: 'assets/images/arafa_malai_kebab.png', category: 'المشويات'),
+        MenuItem(name: 'دجاج تندوري لولي بوب', price: '26', image: 'assets/images/arafa_lollipop.png', category: 'التندوري'),
+        MenuItem(name: 'دجاج تكا', price: '28.7', image: 'assets/images/arafa_tikka.png', category: 'التندوري'),
+        MenuItem(name: 'المعكرونة بالخضار', price: '19', image: 'assets/images/arafa_veg_noodles.png', category: 'النودلز'),
+        MenuItem(name: 'المعكرونة المشكلة', price: '30', image: 'assets/images/arafa_mix_noodles.png', category: 'النودلز'),
+      ],
+    ),
+    Restaurant(
+      name: 'مطعم أنان',
+      image: 'assets/images/anaan.jpeg',subtitle: 'رولات تكا وبرياني بطريقة عصرية',
+      type: 'مطاعم',
+      category: 'هندي',
+      tags: ['مطاعم', 'هندي', 'رولات', 'تكا', 'برياني', 'سبايسي', 'عصري'],
+      categories: ['الرولات', 'البرياني', 'البروتين'],
+      menu: [
+        MenuItem(name: 'تكا رول عادي', price: '10.5', image: 'assets/images/anaan_tikka_roll.png', category: 'الرولات'),
+        MenuItem(name: 'تكا رول سبايسي', price: '10.5', image: 'assets/images/anaan_spicy_roll.png', category: 'الرولات'),
+        MenuItem(name: 'سيجنتشر تكا رول', price: '11.5', image: 'assets/images/anaan_signature_roll.png', category: 'الرولات'),
+        MenuItem(name: 'برياني دجاج - بارد', price: '19', image: 'assets/images/anaan_biryani_mild.png', category: 'البرياني'),
+        MenuItem(name: 'برياني دجاج - حار', price: '19', image: 'assets/images/anaan_biryani_spicy.png', category: 'البرياني'),
+        MenuItem(name: 'تكا بروتين - بارد', price: '19', image: 'assets/images/anaan_protein_mild.png', category: 'البروتين'),
+        MenuItem(name: 'تكا بروتين - حار', price: '19', image: 'assets/images/anaan_protein_spicy.png', category: 'البروتين'),
+      ],
+    ),
+    Restaurant(
+      name: 'مطعم كومار',
+      image: 'assets/images/kumar.jpeg',
+      subtitle: 'تجربة هندية عصرية وأطباق مميزة',
+      type: 'مطاعم',
+      category: 'هندي',
+      tags: ['مطاعم', 'هندي', 'عصري', 'دجاج بالزبدة', 'كباب', 'سلطات', 'تندوري'],
+      categories: ['المقبلات', 'الأطباق الرئيسية', 'السلطات', 'الإضافات'],
+      menu: [
+        MenuItem(name: 'سلطة الجرجير الخاصة بكومار', price: '45', image: 'assets/images/kumar_rocket_salad.png', category: 'السلطات'),
+        MenuItem(name: 'سلطة الذرة الخاصة من كومار', price: '40', image: 'assets/images/kumar_corn_salad.png', category: 'السلطات'),
+        MenuItem(name: 'سلطة كومار تشيكن سيزر', price: '40', image: 'assets/images/kumar_caesar.png', category: 'السلطات'),
+        MenuItem(name: 'رايتا', price: '10', image: 'assets/images/kumar_raita.png', category: 'الإضافات'),
+        MenuItem(name: 'مومباي بفز', price: '24', image: 'assets/images/kumar_mumbai_puffs.png', category: 'المقبلات'),
+        MenuItem(name: 'دجاج بالزبدة تاكو', price: '34', image: 'assets/images/kumar_butter_taco.png', category: 'المقبلات'),
+        MenuItem(name: 'كوبيدي تندوري كباب', price: '72', image: 'assets/images/kumar_kebab.png', category: 'الأطباق الرئيسية'),
+        MenuItem(name: 'دجاج بالزبدة سجنتشر', price: '67', image: 'assets/images/kumar_butter_chicken.png', category: 'الأطباق الرئيسية'),
+        MenuItem(name: 'الدجاج كاداي', price: '67', image: 'assets/images/kumar_kadai_chicken.png', category: 'الأطباق الرئيسية'),
+      ],
+    ),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
+    return Directionality(
+      textDirection: Directionality.of(context),
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(t.indianRestaurants),
+          centerTitle: true,
+        ),
+        body: ListView.separated(
+          padding: const EdgeInsets.all(16),
+          itemCount: restaurants.length,
+          separatorBuilder: (_, __) => const SizedBox(height: 16),
+          itemBuilder: (context, index) {
+            final restaurant = restaurants[index];
+
+            return _RestaurantCard(
+              restaurant: restaurant,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => RestaurantMenuScreen(
+                      restaurant: restaurant,
+                    ),
+                  ),
+                );
+              },
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
+
+class _RestaurantCard extends StatelessWidget {
+  final Restaurant restaurant;
+  final VoidCallback onTap;
+
+  const _RestaurantCard({
+    required this.restaurant,
+    required this.onTap,
+  });
+
+  void _toggleFavorite(List<Map<String, String>> favs) {
+    final isFav = favs.any((item) => item['title'] == restaurant.name);
+
+    if (isFav) {
+      FavoritesService.favorites.value = List.from(favs)
+        ..removeWhere((item) => item['title'] == restaurant.name);
+    } else {
+      FavoritesService.favorites.value = List.from(favs)
+        ..add({
+          'title': restaurant.name,
+          'image': restaurant.image,
+          'subtitle': restaurant.subtitle,
+          'type': restaurant.type,
+          'category': restaurant.category,
+          'tags': restaurant.tags.join(','),
+        });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(18),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.08),
+              blurRadius: 10,
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Stack(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: Image.asset(
+                    restaurant.image,
+                    width: 80,
+                    height: 80,
+                    fit: BoxFit.cover,
+                    errorBuilder: (_, __, ___) => Container(
+                      width: 80,
+                      height: 80,
+                      color: Colors.grey.shade200,
+                      child: const Icon(Icons.image_not_supported),
+                    ),
+                  ),
+                ),
+                Positioned(
+                  top: 4,
+                  left: 4,
+                  child: ValueListenableBuilder<List<Map<String, String>>>(
+                    valueListenable: FavoritesService.favorites,
+                    builder: (context, favs, _) {
+                      final isFav = favs.any(
+                        (item) => item['title'] == restaurant.name,
+                      );
+                      return GestureDetector(
+                        onTap: () => _toggleFavorite(favs),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.9),
+                            shape: BoxShape.circle,
+                          ),
+                          padding: const EdgeInsets.all(4),
+                          child: Icon(
+                            isFav ? Icons.favorite : Icons.favorite_border,
+                            size: 18,
+                            color: isFav ? Colors.red : Colors.grey,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    restaurant.name,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                    ),
+                    textAlign: TextAlign.right,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    restaurant.subtitle,
+                    textAlign: TextAlign.right,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

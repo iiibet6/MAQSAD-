@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../theme/app_theme.dart';
 import '../widgets/shared_widgets.dart';
+import '../l10n/app_localizations.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -17,6 +18,8 @@ class _LoginScreenState extends State<LoginScreen> {
   bool isLoading = false;
 
   Future<void> _login() async {
+    final t = AppLocalizations.of(context)!;
+
     setState(() => isLoading = true);
 
     try {
@@ -42,13 +45,13 @@ class _LoginScreenState extends State<LoginScreen> {
       if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.message ?? 'حدث خطأ في تسجيل الدخول')),
+        SnackBar(content: Text(e.message ?? t.loginError)),
       );
     } catch (e) {
       if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('حدث خطأ غير متوقع: $e')),
+        SnackBar(content: Text('${t.unexpectedError}: $e')),
       );
     } finally {
       if (mounted) {
@@ -66,6 +69,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
+
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
@@ -80,28 +85,28 @@ class _LoginScreenState extends State<LoginScreen> {
                 const Center(child: AppLogo(size: 60)),
                 const SizedBox(height: 40),
                 LabeledTextField(
-                  label: 'البريد الالكتروني',
+                  label: t.email,
                   hint: 'email@domain.com',
                   controller: emailController,
                   keyboardType: TextInputType.emailAddress,
                 ),
                 const SizedBox(height: 16),
                 LabeledTextField(
-                  label: 'الرمز السري',
+                  label: t.password,
                   hint: '',
                   controller: passwordController,
                   isPassword: true,
                 ),
                 const SizedBox(height: 30),
                 PrimaryButton(
-                  label: isLoading ? 'جاري الدخول...' : 'دخول',
+                  label: isLoading ? t.loggingIn : t.login,
                   onPressed: isLoading ? null : _login,
                 ),
                 const SizedBox(height: 20),
                 const OrDivider(),
                 const SizedBox(height: 20),
                 PrimaryButton(
-                  label: 'إنشاء حساب جديد',
+                  label: t.createNewAccount,
                   onPressed: () {
                     Navigator.pushNamed(context, '/register');
                   },

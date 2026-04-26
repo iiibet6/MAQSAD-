@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 
 class FavoritesService {
   static final ValueNotifier<List<Map<String, String>>> favorites =
-      ValueNotifier([]);
+      ValueNotifier<List<Map<String, String>>>([]);
 }

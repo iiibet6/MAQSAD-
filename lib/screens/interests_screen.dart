@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../theme/app_theme.dart';
 import '../widgets/shared_widgets.dart';
+import '../l10n/app_localizations.dart';
 
 class Interest {
   final String label;
@@ -24,18 +25,27 @@ class InterestsScreen extends StatefulWidget {
 }
 
 class _InterestsScreenState extends State<InterestsScreen> {
-  final List<Interest> _interests = [
-    Interest(label: 'ألعاب فيديو', imageAsset: 'assets/images/interest_videogames.png'),
-    Interest(label: 'شطرنج', imageAsset: 'assets/images/interest_chess.jpg'),
-    Interest(label: 'كرة السلة', imageAsset: 'assets/images/interest_basketball.jpg'),
-    Interest(label: 'كرة الطائرة', imageAsset: 'assets/images/interest_volleyball.jpg'),
-    Interest(label: 'كرة القدم', imageAsset: 'assets/images/interest_football.png'),
-    Interest(label: 'سباحة', imageAsset: 'assets/images/interest_swimming.jpg'),
-    Interest(label: 'الرسم', imageAsset: 'assets/images/interest_drawing.jpg'),
-    Interest(label: 'الفروسية', imageAsset: 'assets/images/interest_horses.jpg'),
-    Interest(label: 'الطبخ', imageAsset: 'assets/images/interest_cooking.jpg'),
-    Interest(label: 'التصوير', imageAsset: 'assets/images/interest_photography.jpg'),
-  ];
+  late List<Interest> _interests;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    final t = AppLocalizations.of(context)!;
+
+    _interests = [
+      Interest(label: t.videoGames, imageAsset: 'assets/images/interest_videogames.png'),
+      Interest(label: t.chess, imageAsset: 'assets/images/interest_chess.jpg'),
+      Interest(label: t.basketball, imageAsset: 'assets/images/interest_basketball.jpg'),
+      Interest(label: t.volleyball, imageAsset: 'assets/images/interest_volleyball.jpg'),
+      Interest(label: t.football, imageAsset: 'assets/images/interest_football.png'),
+      Interest(label: t.swimming, imageAsset: 'assets/images/interest_swimming.jpg'),
+      Interest(label: t.drawing, imageAsset: 'assets/images/interest_drawing.jpg'),
+      Interest(label: t.horseRiding, imageAsset: 'assets/images/interest_horses.jpg'),
+      Interest(label: t.cooking, imageAsset: 'assets/images/interest_cooking.jpg'),
+      Interest(label: t.photography, imageAsset: 'assets/images/interest_photography.jpg'),
+    ];
+  }
 
   void _toggle(int index) {
     setState(() {
@@ -51,10 +61,7 @@ class _InterestsScreenState extends State<InterestsScreen> {
         .map((interest) => interest.label)
         .toList();
 
-    await FirebaseFirestore.instance
-        .collection('users')
-        .doc(uid)
-        .update({
+    await FirebaseFirestore.instance.collection('users').doc(uid).update({
       'interests': selected,
     });
   }
@@ -67,7 +74,7 @@ class _InterestsScreenState extends State<InterestsScreen> {
   @override
   Widget build(BuildContext context) {
     return Directionality(
-      textDirection: TextDirection.rtl,
+      textDirection: Directionality.of(context),
       child: Scaffold(
         body: Column(
           children: [
@@ -112,6 +119,7 @@ class _InterestsHero extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.fromLTRB(20, 24, 20, 20),
@@ -119,14 +127,16 @@ class _InterestsHero extends StatelessWidget {
         image: DecorationImage(
           image: AssetImage('assets/images/auth_bg.png'),
           fit: BoxFit.cover,
-          colorFilter:
-              ColorFilter.mode(Colors.black38, BlendMode.darken),
+          colorFilter: ColorFilter.mode(Colors.black38, BlendMode.darken),
         ),
         color: Color(0xFF4A7B4A),
-      ),child: Text(
-        'علمنا وش تحب .. وأزهل الباقي',
-        style: AppTextStyles.headline2
-            .copyWith(color: Colors.white, fontSize: 22),
+      ),
+      child: Text(
+        t.interestsHeroTitle,
+        style: AppTextStyles.headline2.copyWith(
+          color: Colors.white,
+          fontSize: 22,
+        ),
         textAlign: TextAlign.right,
       ),
     );
@@ -140,6 +150,8 @@ class _InterestsHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
+
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
       child: Row(
@@ -148,23 +160,22 @@ class _InterestsHeader extends StatelessWidget {
           GestureDetector(
             onTap: onNext,
             child: Container(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               decoration: BoxDecoration(
                 color: AppColors.primary,
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Row(
-                children: const [
+                children: [
                   Text(
-                    'Next',
-                    style: TextStyle(
+                    t.next,
+                    style: const TextStyle(
                       color: Colors.white,
                       fontFamily: 'Cairo',
                     ),
                   ),
-                  SizedBox(width: 4),
-                  Icon(
+                  const SizedBox(width: 4),
+                  const Icon(
                     Icons.arrow_forward,
                     color: Colors.white,
                     size: 16,
@@ -174,7 +185,7 @@ class _InterestsHeader extends StatelessWidget {
             ),
           ),
           Text(
-            'ماهي هواياتك المفضلة؟',
+            t.favoriteHobbiesQuestion,
             style: AppTextStyles.sectionTitle,
           ),
         ],
@@ -230,8 +241,7 @@ class InterestCard extends StatelessWidget {
               alignment: Alignment.bottomCenter,
               child: Container(
                 width: double.infinity,
-                padding: const EdgeInsets.symmetric(
-                    vertical: 6, horizontal: 8),
+                padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 8),
                 color: Colors.black.withOpacity(0.35),
                 child: Text(
                   interest.label,

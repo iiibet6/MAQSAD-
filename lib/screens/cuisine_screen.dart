@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import '../l10n/app_localizations.dart';
 
 class Cuisine {
   final String label;
@@ -22,32 +23,37 @@ class CuisineScreen extends StatefulWidget {
 }
 
 class _CuisineScreenState extends State<CuisineScreen> {
+  late List<Cuisine> _cuisines;
 
-  final List<Cuisine> _cuisines = [
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
 
-    Cuisine(label: 'المطبخ السعودي', imageAsset: 'assets/images/cuisine_saudi.jpg'),
-    Cuisine(label: 'المطبخ الخليجي', imageAsset: 'assets/images/cuisine_gulf.jpg'),
-    Cuisine(label: 'المطبخ الشامي', imageAsset: 'assets/images/cuisine_syr.jpg'),
-    Cuisine(label: 'المطبخ التركي', imageAsset: 'assets/images/cuisine_turkish.jpg'),
-    Cuisine(label: 'المطبخ الإيطالي', imageAsset: 'assets/images/cuisine_italian.jpg'),
-    Cuisine(label: 'المطبخ الأمريكي', imageAsset: 'assets/images/cuisine_american.jpg'),
-    Cuisine(label: 'المطبخ الهندي', imageAsset: 'assets/images/cuisine_indian.jpg'),
-    Cuisine(label: 'المطبخ الصيني', imageAsset: 'assets/images/cuisine_chinese.jpg'),
-    Cuisine(label: 'المطبخ الياباني', imageAsset: 'assets/images/cuisine_japanese.jpg'),
-    Cuisine(label: 'المأكولات البحرية', imageAsset: 'assets/images/cuisine_seafood.jpg'),
-    Cuisine(label: 'الوجبات السريعة', imageAsset: 'assets/images/cuisine_fastfood.jpg'),
-    Cuisine(label: 'الحلويات والمقاهي', imageAsset: 'assets/images/cuisine_dessert.jpg'),
+    final t = AppLocalizations.of(context)!;
 
-  ];
+    _cuisines = [
+      Cuisine(label: t.saudiCuisine, imageAsset: 'assets/images/cuisine_saudi.jpg'),
+      Cuisine(label: t.gulfCuisine, imageAsset: 'assets/images/cuisine_gulf.jpg'),
+      Cuisine(label: t.levantineCuisine, imageAsset: 'assets/images/cuisine_syr.jpg'),
+      Cuisine(label: t.turkishCuisine, imageAsset: 'assets/images/cuisine_turkish.jpg'),
+      Cuisine(label: t.italianCuisine, imageAsset: 'assets/images/cuisine_italian.jpg'),
+      Cuisine(label: t.americanCuisine, imageAsset: 'assets/images/cuisine_american.jpg'),
+      Cuisine(label: t.indianCuisine, imageAsset: 'assets/images/cuisine_indian.jpg'),
+      Cuisine(label: t.chineseCuisine, imageAsset: 'assets/images/cuisine_chinese.jpg'),
+      Cuisine(label: t.japaneseCuisine, imageAsset: 'assets/images/cuisine_japanese.jpg'),
+      Cuisine(label: t.seafoodCuisine, imageAsset: 'assets/images/cuisine_seafood.jpg'),
+      Cuisine(label: t.fastFoodCuisine, imageAsset: 'assets/images/cuisine_fastfood.jpg'),
+      Cuisine(label: t.dessertsAndCafes, imageAsset: 'assets/images/cuisine_dessert.jpg'),
+    ];
+  }
 
-  void _toggle(int index){
+  void _toggle(int index) {
     setState(() {
       _cuisines[index].selected = !_cuisines[index].selected;
     });
   }
 
   Future<void> _saveCuisines() async {
-
     String uid = FirebaseAuth.instance.currentUser!.uid;
 
     List<String> selected = _cuisines
@@ -55,10 +61,7 @@ class _CuisineScreenState extends State<CuisineScreen> {
         .map((c) => c.label)
         .toList();
 
-    await FirebaseFirestore.instance
-        .collection('users')
-        .doc(uid)
-        .update({
+    await FirebaseFirestore.instance.collection('users').doc(uid).update({
       'favoriteCuisine': selected,
     });
   }
@@ -70,16 +73,15 @@ class _CuisineScreenState extends State<CuisineScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
 
     return Directionality(
-      textDirection: TextDirection.rtl,
+      textDirection: Directionality.of(context),
       child: Scaffold(
-
         appBar: AppBar(
-          title: const Text('اختر مطبخك المفضل'),
+          title: Text(t.chooseFavoriteCuisine),
           centerTitle: true,
         ),
-
         body: GridView.builder(
           padding: const EdgeInsets.all(16),
           itemCount: _cuisines.length,
@@ -89,30 +91,23 @@ class _CuisineScreenState extends State<CuisineScreen> {
             mainAxisSpacing: 12,
             childAspectRatio: 1,
           ),
- itemBuilder: (context, index) {
-
+          itemBuilder: (context, index) {
             final cuisine = _cuisines[index];
-
             return GestureDetector(
               onTap: () => _toggle(index),
-
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(12),
-
                 child: Stack(
                   fit: StackFit.expand,
                   children: [
-
                     Image.asset(
                       cuisine.imageAsset,
                       fit: BoxFit.cover,
                     ),
-
                     Container(
                       color: Colors.black.withOpacity(0.2),
                     ),
-
-                    if(cuisine.selected)
+                    if (cuisine.selected)
                       Container(
                         color: Colors.black.withOpacity(0.5),
                         child: const Center(
@@ -123,13 +118,11 @@ class _CuisineScreenState extends State<CuisineScreen> {
                           ),
                         ),
                       ),
-
                     Align(
                       alignment: Alignment.bottomCenter,
                       child: Container(
                         width: double.infinity,
-
-padding: const EdgeInsets.symmetric(
+                        padding: const EdgeInsets.symmetric(
                           vertical: 6,
                           horizontal: 8,
                         ),
@@ -144,21 +137,20 @@ padding: const EdgeInsets.symmetric(
                         ),
                       ),
                     ),
-
                   ],
                 ),
               ),
             );
           },
         ),
- bottomNavigationBar: Padding(
+        bottomNavigationBar: Padding(
           padding: const EdgeInsets.all(16),
           child: ElevatedButton(
             onPressed: _finish,
-            child: const Text("التالي"),
+            child: Text(t.next),
           ),
         ),
       ),
     );
   }
-}
+} 

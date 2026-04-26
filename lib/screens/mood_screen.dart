@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../theme/app_theme.dart';
 import '../widgets/shared_widgets.dart';
+import '../l10n/app_localizations.dart';
 
 class Mood {
   final String label;
@@ -24,15 +25,25 @@ class MoodScreen extends StatefulWidget {
 }
 
 class _MoodScreenState extends State<MoodScreen> {
-  final List<Mood> _moods = [
-    Mood(label: 'أجواء هادئة', imageAsset: 'assets/images/mood_calm.jpg'),
-    Mood(label: 'أجواء عائلية', imageAsset: 'assets/images/mood_family.jpg'),
-    Mood(label: 'أجواء حيوية', imageAsset: 'assets/images/mood_lively.jpg'),
-    Mood(label: 'أجواء رومانسية', imageAsset: 'assets/images/mood_romantic.jpg'),
-    Mood(label: 'أجواء طبيعة', imageAsset: 'assets/images/mood_nature.jpg'),
-    Mood(label: 'أجواء مغامرة', imageAsset: 'assets/images/mood_adventure.jpg'),
-  ];
-void _toggle(int index) {
+  late List<Mood> _moods;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    final t = AppLocalizations.of(context)!;
+
+    _moods = [
+      Mood(label: t.calmMood, imageAsset: 'assets/images/mood_calm.jpg'),
+      Mood(label: t.familyMood, imageAsset: 'assets/images/mood_family.jpg'),
+      Mood(label: t.livelyMood, imageAsset: 'assets/images/mood_lively.jpg'),
+      Mood(label: t.romanticMood, imageAsset: 'assets/images/mood_romantic.jpg'),
+      Mood(label: t.natureMood, imageAsset: 'assets/images/mood_nature.jpg'),
+      Mood(label: t.adventureMood, imageAsset: 'assets/images/mood_adventure.jpg'),
+    ];
+  }
+
+  void _toggle(int index) {
     setState(() {
       _moods[index].selected = !_moods[index].selected;
     });
@@ -46,10 +57,7 @@ void _toggle(int index) {
         .map((mood) => mood.label)
         .toList();
 
-    await FirebaseFirestore.instance
-        .collection('users')
-        .doc(uid)
-        .update({
+    await FirebaseFirestore.instance.collection('users').doc(uid).update({
       'moods': selected,
     });
   }
@@ -62,7 +70,7 @@ void _toggle(int index) {
   @override
   Widget build(BuildContext context) {
     return Directionality(
-      textDirection: TextDirection.rtl,
+      textDirection: Directionality.of(context),
       child: Scaffold(
         body: Column(
           children: [
@@ -107,6 +115,8 @@ class _MoodHero extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.fromLTRB(20, 24, 20, 20),
@@ -114,14 +124,15 @@ class _MoodHero extends StatelessWidget {
         image: DecorationImage(
           image: AssetImage('assets/images/auth_bg.png'),
           fit: BoxFit.cover,
-          colorFilter:
-              ColorFilter.mode(Colors.black38, BlendMode.darken),
+          colorFilter: ColorFilter.mode(Colors.black38, BlendMode.darken),
         ),
       ),
       child: Text(
-        'وش الأجواء اللي تحبها؟',
-        style: AppTextStyles.headline2
-            .copyWith(color: Colors.white, fontSize: 22),
+        t.moodHeroTitle,
+        style: AppTextStyles.headline2.copyWith(
+          color: Colors.white,
+          fontSize: 22,
+        ),
         textAlign: TextAlign.right,
       ),
     );
@@ -132,35 +143,34 @@ class _MoodHeader extends StatelessWidget {
   final VoidCallback onNext;
 
   const _MoodHeader({required this.onNext});
-
   @override
   Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
+
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-
-GestureDetector(
+          GestureDetector(
             onTap: onNext,
             child: Container(
-              padding: const EdgeInsets.symmetric(
-                  horizontal: 16, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               decoration: BoxDecoration(
                 color: AppColors.primary,
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Row(
-                children: const [
+                children: [
                   Text(
-                    'التالي',
-                    style: TextStyle(
+                    t.next,
+                    style: const TextStyle(
                       color: Colors.white,
                       fontFamily: 'Cairo',
                     ),
                   ),
-                  SizedBox(width: 4),
-                  Icon(
+                  const SizedBox(width: 4),
+                  const Icon(
                     Icons.arrow_forward,
                     color: Colors.white,
                     size: 16,
@@ -169,7 +179,8 @@ GestureDetector(
               ),
             ),
           ),
-          Text(     'اختر الأجواء التي تفضلها',
+          Text(
+            t.choosePreferredMood,
             style: AppTextStyles.sectionTitle,
           ),
         ],
@@ -217,8 +228,7 @@ class MoodCard extends StatelessWidget {
               alignment: Alignment.bottomCenter,
               child: Container(
                 width: double.infinity,
-                padding: const EdgeInsets.symmetric(
-                    vertical: 6, horizontal: 8),
+                padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 8),
                 color: Colors.black.withOpacity(0.35),
                 child: Text(
                   mood.label,

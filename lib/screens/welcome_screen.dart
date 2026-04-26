@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 import '../widgets/shared_widgets.dart';
+import '../l10n/app_localizations.dart';
 
-/// Screen 1 – Welcome / Splash
-/// Shows the app logo + Arabic tagline over a split layout:
-/// white top half with logo/text, full-bleed landscape photo bottom half.
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({super.key});
 
@@ -16,19 +14,19 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   @override
   void initState() {
     super.initState();
-    // Auto-navigate after 2.5s
+
     Future.delayed(const Duration(milliseconds: 2500), () {
       if (mounted) {
-        Navigator.pushReplacementNamed(context, '/onboarding');
+        Navigator.pushReplacementNamed(context, '/language');
       }
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return const Directionality(
-      textDirection: TextDirection.rtl,
-      child: Scaffold(
+    return Directionality(
+      textDirection: Directionality.of(context),
+      child: const Scaffold(
         backgroundColor: Colors.white,
         body: _WelcomeBody(),
       ),
@@ -60,10 +58,15 @@ class _WelcomeBody extends StatelessWidget {
 
 class _TopSection extends StatelessWidget {
   final double screenWidth;
-  const _TopSection({required this.screenWidth});
+
+  const _TopSection({
+    required this.screenWidth,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
+
     return Container(
       color: Colors.white,
       width: double.infinity,
@@ -74,10 +77,9 @@ class _TopSection extends StatelessWidget {
           const AppLogo(size: 200),
           const SizedBox(height: 24),
           Text(
-            'أهلاً بكم في حائل',
+            t.welcomeToHail,
             style: AppTextStyles.headline1.copyWith(fontSize: 32),
             textAlign: TextAlign.center,
-            textDirection: TextDirection.rtl,
           ),
         ],
       ),
@@ -100,11 +102,19 @@ class _BottomPhoto extends StatelessWidget {
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors: [Color(0xFF8B7355), Color(0xFF4A3728), Color(0xFF2D1A0A)],
+              colors: [
+                Color(0xFF8B7355),
+                Color(0xFF4A3728),
+                Color(0xFF2D1A0A),
+              ],
             ),
           ),
           child: const Center(
-            child: Icon(Icons.landscape, size: 80, color: Colors.white54),
+            child: Icon(
+              Icons.landscape,
+              size: 80,
+              color: Colors.white54,
+            ),
           ),
         ),
       ),

@@ -5,29 +5,38 @@ import 'place_details_screen.dart';
 import 'nature_places_screen.dart';
 import 'restaurants_screen.dart';
 import 'chalets_screen.dart';
+import 'cafes_screen.dart';
+import 'hotels_screen.dart';
+import 'shopping_screen.dart';
+import '../l10n/app_localizations.dart';
 
 class ExploreScreen extends StatelessWidget {
   const ExploreScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
+
     return Directionality(
-      textDirection: TextDirection.rtl,
+      textDirection: Directionality.of(context),
       child: Scaffold(
         body: Column(
           children: [
-            const PatternBorderFallback(),
+            Image.asset(
+              'assets/images/gh.png',
+              width: double.infinity,
+              height: 45,
+              fit: BoxFit.cover,
+            ),
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-
-                    /// العنوان
-                    const Text(
-                      'اكتشف حائل !',
-                      style: TextStyle(
+                    Text(
+                      t.discoverHail,
+                      style: const TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
                       ),
@@ -35,28 +44,26 @@ class ExploreScreen extends StatelessWidget {
 
                     const SizedBox(height: 10),
 
-                    /// شريط البحث
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 12),
                       decoration: BoxDecoration(
                         color: Colors.grey.shade200,
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: const TextField(
+                      child: TextField(
                         decoration: InputDecoration(
-                          hintText: "ابحث",
+                          hintText: t.search,
                           border: InputBorder.none,
-                          icon: Icon(Icons.search),
+                          icon: const Icon(Icons.search),
                         ),
                       ),
                     ),
 
                     const SizedBox(height: 10),
 
-                    /// الأماكن المميزة
-                    const Text(
-                      'الأماكن المميزة',
-                      style: TextStyle(
+                    Text(
+                      t.featuredPlaces,
+                      style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
@@ -69,9 +76,8 @@ class ExploreScreen extends StatelessWidget {
                       child: ListView(
                         scrollDirection: Axis.horizontal,
                         children: [
-
                           _CirclePlace(
-                            title: 'قلعة أعيرف',
+                            title: t.aerifCastle,
                             image: 'assets/images/aref.png',
                             onTap: () {
                               Navigator.push(
@@ -79,14 +85,13 @@ class ExploreScreen extends StatelessWidget {
                                 MaterialPageRoute(
                                   builder: (_) => PlaceDetailsScreen(
                                     place: Place(
-                                      title: "قلعة أعيرف",
+                                      title: t.aerifCastle,
                                       image: "assets/images/aref.png",
-                                      description:
-                                          "تُعد قلعة أعيرف من أقدم المعالم التاريخية في حائل.",
-                                      workingHours: "مفتوح طوال الوقت",
+                                      description: t.aerifCastleDescription,
+                                      workingHours: t.openAllDay,
                                       modelPath: "assets/models/aref_castle.glb",
-                                      category: "تاريخي",
-                                      locationName: "جبل أعيرف - حائل",
+                                      category: t.historical,
+                                      locationName: t.aerifCastleLocation,
                                       latitude: 27.5219,
                                       longitude: 41.6905,
                                     ),
@@ -94,23 +99,22 @@ class ExploreScreen extends StatelessWidget {
                                 ),
                               );
                             },
-                          ),
-
-                          _CirclePlace(
-                            title: 'منازل حاتم الطائي',
+                          ),_CirclePlace(
+                            title: t.hatimHouse,
                             image: 'assets/images/hatem_house.png',
                             onTap: () {
                               Navigator.push(
                                 context,
-                                MaterialPageRoute(builder: (_) => PlaceDetailsScreen(
+                                MaterialPageRoute(
+                                  builder: (_) => PlaceDetailsScreen(
                                     place: Place(
-                                      title: "منازل حاتم الطائي",
+                                      title: t.hatimHouse,
                                       image: "assets/images/hatem_house.png",
-                                      description: "رمز الكرم العربي في حائل.",
-                                      workingHours: "مفتوح طوال الوقت",
+                                      description: t.hatimHouseDescription,
+                                      workingHours: t.openAllDay,
                                       modelPath: "assets/models/hatems_home.glb",
-                                      category: "تاريخي",
-                                      locationName: "قرية توارن - حائل",
+                                      category: t.historical,
+                                      locationName: t.hatimHouseLocation,
                                       latitude: 27.5600,
                                       longitude: 41.6900,
                                     ),
@@ -119,14 +123,12 @@ class ExploreScreen extends StatelessWidget {
                               );
                             },
                           ),
-
                         ],
                       ),
                     ),
 
                     const SizedBox(height: 1),
 
-                    /// التصنيفات الرئيسية
                     GridView.count(
                       crossAxisCount: 2,
                       shrinkWrap: true,
@@ -135,9 +137,8 @@ class ExploreScreen extends StatelessWidget {
                       mainAxisSpacing: 12,
                       childAspectRatio: 1,
                       children: [
-
                         _CategoryCard(
-                          title: 'مطاعم',
+                          title: t.restaurants,
                           image: 'assets/images/restaurants.png',
                           onTap: () {
                             Navigator.push(
@@ -150,7 +151,7 @@ class ExploreScreen extends StatelessWidget {
                         ),
 
                         _CategoryCard(
-                          title: 'أماكن طبيعية وسياحية',
+                          title: t.natureAndTourismPlaces,
                           image: 'assets/images/nature.png',
                           onTap: () {
                             Navigator.push(
@@ -162,13 +163,21 @@ class ExploreScreen extends StatelessWidget {
                           },
                         ),
 
-                        const _CategoryCard(
-                          title: 'مقاهي',
+                        _CategoryCard(
+                          title: t.cafes,
                           image: 'assets/images/cafes.png',
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const CafesScreen(),
+                              ),
+                            );
+                          },
                         ),
 
                         _CategoryCard(
-                          title: 'شاليهات ومنتجعات',
+                          title: t.chaletsAndResorts,
                           image: 'assets/images/chalets.png',
                           onTap: () {
                             Navigator.push(
@@ -179,16 +188,12 @@ class ExploreScreen extends StatelessWidget {
                             );
                           },
                         ),
-
                       ],
                     ),
 
-                    const SizedBox(height: 1),
-
-                    /// قسم أخرى
-                    const Text(
-                      'أخرى',
-                      style: TextStyle(
+                    const SizedBox(height: 1),Text(
+                      t.other,
+                      style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
@@ -203,29 +208,40 @@ class ExploreScreen extends StatelessWidget {
                       crossAxisSpacing: 12,
                       mainAxisSpacing: 12,
                       childAspectRatio: 1,
-                      children: const [
-
+                      children: [
                         _CategoryCard(
-                          title: 'فنادق',
-
-image: 'assets/images/hotel.png',
+                          title: t.hotels,
+                          image: 'assets/images/hotel.png',
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const HotelsScreen(),
+                              ),
+                            );
+                          },
                         ),
 
                         _CategoryCard(
-                          title: 'تسوق',
+                          title: t.shopping,
                           image: 'assets/images/mall.png',
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const ShoppingScreen(),
+                              ),
+                            );
+                          },
                         ),
-
                       ],
                     ),
-
                   ],
                 ),
               ),
             ),
 
             const AppBottomNavBar(currentIndex: 2),
-
           ],
         ),
       ),
@@ -233,7 +249,6 @@ image: 'assets/images/hotel.png',
   }
 }
 
-/// كرت التصنيف
 class _CategoryCard extends StatelessWidget {
   final String title;
   final String image;
@@ -280,7 +295,6 @@ class _CategoryCard extends StatelessWidget {
   }
 }
 
-/// الأماكن الدائرية
 class _CirclePlace extends StatelessWidget {
   final String title;
   final String image;

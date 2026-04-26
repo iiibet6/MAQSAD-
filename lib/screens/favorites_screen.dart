@@ -1,24 +1,27 @@
 import 'package:flutter/material.dart';
 import '../services/favorites_service.dart';
-import 'favorites_screen.dart';
+import '../l10n/app_localizations.dart';
+
 class FavoritesScreen extends StatelessWidget {
   const FavoritesScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
+
     return Directionality(
-      textDirection: TextDirection.rtl,
+      textDirection: Directionality.of(context),
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('المفضلات'),
+          title: Text(t.favorites),
           centerTitle: true,
         ),
-        body: ValueListenableBuilder(
+        body: ValueListenableBuilder<List<Map<String, String>>>(
           valueListenable: FavoritesService.favorites,
           builder: (context, favs, _) {
             if (favs.isEmpty) {
-              return const Center(
-                child: Text('لا توجد مفضلات حالياً ❤️'),
+              return Center(
+                child: Text(t.noFavoritesYet),
               );
             }
 
@@ -26,6 +29,7 @@ class FavoritesScreen extends StatelessWidget {
               itemCount: favs.length,
               itemBuilder: (context, index) {
                 final item = favs[index];
+
                 return ListTile(
                   leading: ClipRRect(
                     borderRadius: BorderRadius.circular(8),

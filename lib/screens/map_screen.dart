@@ -5,8 +5,8 @@ import 'package:geolocator/geolocator.dart';
 
 import '../theme/app_theme.dart';
 import '../widgets/shared_widgets.dart';
+import '../l10n/app_localizations.dart';
 
-/// Screen 8 – Map View
 class MapScreen extends StatefulWidget {
   const MapScreen({super.key});
 
@@ -15,19 +15,33 @@ class MapScreen extends StatefulWidget {
 }
 
 class _MapScreenState extends State<MapScreen> {
-  int _navIndex = 1;
-  String _selectedFilter = 'مقترح لك';
+  final int _navIndex = 1;
+  String _selectedFilterKey = 'recommended';
 
-  static const _filters = ['مقترح لك', 'طبيعة', 'شاليهات', 'كافيهات', 'مطاعم'];
+  List<Map<String, String>> _filters(AppLocalizations t) => [
+        {'key': 'recommended', 'label': t.recommendedForYou},
+        {'key': 'nature', 'label': t.nature},
+        {'key': 'chalets', 'label': t.chalets},
+        {'key': 'cafes', 'label': t.cafes},
+        {'key': 'restaurants', 'label': t.restaurants},
+      ];
 
   @override
   Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
+    final filters = _filters(t);
+
     return Directionality(
-      textDirection: TextDirection.rtl,
+      textDirection: Directionality.of(context),
       child: Scaffold(
         body: Column(
           children: [
-            const PatternBorderFallback(),
+            Image.asset(
+              'assets/images/gh.png',
+              width: double.infinity,
+              height: 45,
+              fit: BoxFit.cover,
+            ),
             Expanded(
               child: Stack(
                 children: [
@@ -35,9 +49,13 @@ class _MapScreenState extends State<MapScreen> {
                   Align(
                     alignment: Alignment.bottomCenter,
                     child: _FilterChipsRow(
-                      filters: _filters,
-                      selected: _selectedFilter,
-                      onSelect: (f) => setState(() => _selectedFilter = f),
+                      filters: filters,
+                      selectedKey: _selectedFilterKey,
+                      onSelect: (key) {
+                        setState(() {
+                          _selectedFilterKey = key;
+                        });
+                      },
                     ),
                   ),
                 ],
@@ -53,9 +71,6 @@ class _MapScreenState extends State<MapScreen> {
   }
 }
 
-/// ===============================
-/// MAP VIEW
-/// ===============================
 class _MapView extends StatefulWidget {
   const _MapView();
 
@@ -96,8 +111,7 @@ class _MapViewState extends State<_MapView> {
       ).timeout(const Duration(seconds: 10));
 
       setState(() {
-        currentLocation =
-            LatLng(position.latitude, position.longitude);
+        currentLocation = LatLng(position.latitude, position.longitude);
       });
     } catch (e) {
       _setDefaultLocation();
@@ -106,8 +120,7 @@ class _MapViewState extends State<_MapView> {
 
   void _setDefaultLocation() {
     setState(() {
-      currentLocation =
-          const LatLng(27.5114, 41.7208); // 📍 حايل افتراضي
+      currentLocation = const LatLng(27.5114, 41.7208);
     });
   }
 
@@ -116,7 +129,6 @@ class _MapViewState extends State<_MapView> {
     if (currentLocation == null) {
       return const Center(child: CircularProgressIndicator());
     }
-
     return FlutterMap(
       options: MapOptions(
         initialCenter: currentLocation!,
@@ -124,8 +136,7 @@ class _MapViewState extends State<_MapView> {
       ),
       children: [
         TileLayer(
-          urlTemplate:
-              'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+          urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
           userAgentPackageName: 'com.example.maqsad',
         ),
         MarkerLayer(
@@ -147,17 +158,14 @@ class _MapViewState extends State<_MapView> {
   }
 }
 
-/// ===============================
-/// FILTER CHIPS
-/// ===============================
 class _FilterChipsRow extends StatelessWidget {
-  final List<String> filters;
-  final String selected;
+  final List<Map<String, String>> filters;
+  final String selectedKey;
   final ValueChanged<String> onSelect;
 
   const _FilterChipsRow({
     required this.filters,
-    required this.selected,
+    required this.selectedKey,
     required this.onSelect,
   });
 
@@ -172,14 +180,19 @@ class _FilterChipsRow extends StatelessWidget {
         itemCount: filters.length,
         separatorBuilder: (_, __) => const SizedBox(width: 8),
         itemBuilder: (ctx, i) {
-          final f = filters[i];
-          final isSelected = f == selected;
+          final filter = filters[i];
+          final key = filter['key']!;
+          final label = filter['label']!;
+          final isSelected = key == selectedKey;
+
           return GestureDetector(
-            onTap: () => onSelect(f),
+            onTap: () => onSelect(key),
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 200),
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 10,
+              ),
               decoration: BoxDecoration(
                 color: isSelected ? AppColors.primary : Colors.white,
                 borderRadius: BorderRadius.circular(20),
@@ -188,17 +201,16 @@ class _FilterChipsRow extends StatelessWidget {
                     color: Colors.black.withOpacity(0.12),
                     blurRadius: 6,
                     offset: const Offset(0, 2),
-                  )
+                  ),
                 ],
               ),
               child: Text(
-                f,
+                label,
                 style: TextStyle(
                   fontFamily: 'Cairo',
                   fontSize: 13,
                   fontWeight: FontWeight.w600,
-                  color:
-                      isSelected ? Colors.white : AppColors.textPrimary,
+                  color: isSelected ? Colors.white : AppColors.textPrimary,
                 ),
               ),
             ),

@@ -1,11 +1,13 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import '../l10n/app_localizations.dart';
 
 class EmailVerificationScreen extends StatefulWidget {
   const EmailVerificationScreen({super.key});
 
   @override
-  State<EmailVerificationScreen> createState() => _EmailVerificationScreenState();
+  State<EmailVerificationScreen> createState() =>
+      _EmailVerificationScreenState();
 }
 
 class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
@@ -19,6 +21,8 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
   }
 
   Future<void> _sendVerificationEmail() async {
+    final t = AppLocalizations.of(context)!;
+
     try {
       final user = FirebaseAuth.instance.currentUser;
       if (user == null) return;
@@ -34,17 +38,19 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
     } on FirebaseAuthException catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.message ?? 'فشل إرسال رابط التحقق')),
+        SnackBar(content: Text(e.message ?? t.verificationEmailFailed)),
       );
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('حدث خطأ: $e')),
+        SnackBar(content: Text('${t.generalError}: $e')),
       );
     }
   }
 
   Future<void> _checkEmailVerified() async {
+    final t = AppLocalizations.of(context)!;
+
     setState(() => isLoading = true);
 
     try {
@@ -60,15 +66,15 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
       } else {
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('لم يتم التحقق من البريد الإلكتروني بعد'),
+          SnackBar(
+            content: Text(t.emailNotVerifiedYet),
           ),
         );
       }
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('حدث خطأ: $e')),
+        SnackBar(content: Text('${t.generalError}: $e')),
       );
     } finally {
       if (mounted) {
@@ -85,12 +91,14 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final userEmail = FirebaseAuth.instance.currentUser?.email ?? 'email@domain.com';
-    return Directionality(
+    final t = AppLocalizations.of(context)!;
+    final userEmail =
+        FirebaseAuth.instance.currentUser?.email ?? 'email@domain.com';
+        return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('التحقق من البريد الإلكتروني'),
+          title: Text(t.emailVerification),
           automaticallyImplyLeading: false,
         ),
         body: Padding(
@@ -105,40 +113,40 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                 color: Colors.brown,
               ),
               const SizedBox(height: 24),
-              const Text(
-                'تحقق من بريدك الإلكتروني',
+              Text(
+                t.checkYourEmail,
                 textAlign: TextAlign.center,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               const SizedBox(height: 16),
               Text(
-                'أرسلنا رابط التحقق إلى:\n$userEmail',
+                '${t.verificationLinkSentTo}\n$userEmail',
                 textAlign: TextAlign.center,
                 style: const TextStyle(fontSize: 16),
               ),
               const SizedBox(height: 24),
-              const Text(
-                'افتح بريدك الإلكتروني واضغط على رابط التحقق، ثم ارجع واضغط على زر "تحققت".',
+              Text(
+                t.emailVerificationInstructions,
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 15, color: Colors.grey),
+                style: const TextStyle(fontSize: 15, color: Colors.grey),
               ),
               const SizedBox(height: 32),
               ElevatedButton(
                 onPressed: isLoading ? null : _checkEmailVerified,
-                child: Text(isLoading ? 'جاري التحقق...' : 'تحققت'),
+                child: Text(isLoading ? t.checking : t.verified),
               ),
               const SizedBox(height: 12),
               TextButton(
                 onPressed: canResendEmail ? _sendVerificationEmail : null,
-                child: const Text('إعادة إرسال رابط التحقق'),
+                child: Text(t.resendVerificationLink),
               ),
               const SizedBox(height: 12),
               TextButton(
                 onPressed: _goBackToLogin,
-                child: const Text('العودة لتسجيل الدخول'),
+                child: Text(t.backToLogin),
               ),
             ],
           ),

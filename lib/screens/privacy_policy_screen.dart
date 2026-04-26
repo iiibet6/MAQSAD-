@@ -1,39 +1,29 @@
 import 'package:flutter/material.dart';
+import '../l10n/app_localizations.dart';
 
 class PrivacyPolicyScreen extends StatelessWidget {
   const PrivacyPolicyScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
+
     return Directionality(
-      textDirection: TextDirection.rtl,
+      textDirection: Directionality.of(context),
       child: Scaffold(
         appBar: AppBar(
-          title: const Text("سياسة الخصوصية"),
+          title: Text(t.privacyPolicyTitle),
           centerTitle: true,
         ),
-        body: const Padding(
-          padding: EdgeInsets.all(16),
+        body: Padding(
+          padding: const EdgeInsets.all(16),
           child: SingleChildScrollView(
             child: Text(
-              '''
-سياسة الخصوصية
-
-توضح سياسة الخصوصية بأن حماية بياناتك الشخصية أمر في غاية الأهمية بالنسبة لنا، وندرك مسؤوليتنا في التعامل مع بياناتك الشخصية بعناية والحفاظ على أمانها.
-
-بالنسبة لمزودي الخدمة:
-تُستخدم بياناتك التي أدخلتها أنت في التطبيق لتصل إلى عملائك.
-
-بالنسبة للعملاء:
-تُستخدم بياناتك لحفظ معلوماتك مثل متاجر مزودي الخدمات المفضلة وكافة الطلبات، وتتاح البيانات فقط للمتاجر. وفيما عدا ذلك يلتزم "مقصد" بعدم الاستخدامات الأخرى لأي أطراف أخرى.
-
-يستخدم "مقصد" بيانات مزودي الخدمة والعملاء لتقديم خدمة أفضل حسب الموقع الجغرافي لتوضيح مواقع المتاجر وكافة الخدمات المجاورة والقريبة التي يخدمها التطبيق.
-
-يلتزم "مقصد" بعدم تقديم أو نشر المعلومات الخاصة لمزودي الخدمة والعملاء لأي طرف آخر لأي غرض كان.
-
-يوضح "مقصد" بأنه لا يلتقط من المتاجر والعملاء أي بيانات غير المفصح عنها من قبلهم، مثل الموقع الخاص بالجهاز (IP) ولا أنظمة التشغيل والإصدارات والبرمجيات واللغات ومعرفات البيانات الأخرى ولا بيانات الشبكة المحمولة.
-              ''',
-              style: TextStyle(fontSize: 16, height: 1.6),
+              t.privacyPolicyContent,
+              style: const TextStyle(
+                fontSize: 16,
+                height: 1.6,
+              ),
             ),
           ),
         ),

@@ -18,47 +18,59 @@ class AccountScreen extends StatefulWidget {
 
 class _AccountScreenState extends State<AccountScreen> {
   bool _notificationsEnabled = true;
-  int _navIndex = 0;
+  final int _navIndex = 0;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      body: Column(
-        children: [
-          const PatternBorderFallback(),
-          Expanded(
-            child: ListView(
-              children: [
-                const _ProfileHeader(),
-                const _QuickActions(),
-                const SizedBox(height: 8),
-                _SettingsSection(
-                  notificationsEnabled: _notificationsEnabled,
-                  onNotificationsChanged: (v) =>
-                      setState(() => _notificationsEnabled = v),
-                ),
-                const SizedBox(height: 16),
-                const _LogoutButton(),
-                const SizedBox(height: 24),
-              ],
+    return Directionality(
+      textDirection: Directionality.of(context),
+      child: Scaffold(
+        backgroundColor: AppColors.background,
+        body: Column(
+          children: [
+            Image.asset(
+              'assets/images/gh.png',
+              width: double.infinity,
+              height: 45,
+              fit: BoxFit.cover,
             ),
-          ),
-        ],
-      ),
-      bottomNavigationBar: AppBottomNavBar(
-        currentIndex: _navIndex,
+            Expanded(
+              child: ListView(
+                children: [
+                  const _ProfileHeader(),
+                  const _QuickActions(),
+                  const SizedBox(height: 8),
+                  _SettingsSection(
+                    notificationsEnabled: _notificationsEnabled,
+                    onNotificationsChanged: (v) {
+                      setState(() {
+                        _notificationsEnabled = v;
+                      });
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  const _LogoutButton(),
+                  const SizedBox(height: 24),
+                ],
+              ),
+            ),
+          ],
+        ),
+        bottomNavigationBar: AppBottomNavBar(
+          currentIndex: _navIndex,
+        ),
       ),
     );
   }
 }
 
-// ─── Profile Header ─────────────────────────────────────────────
 class _ProfileHeader extends StatelessWidget {
   const _ProfileHeader();
 
   @override
   Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
+
     return Container(
       color: Colors.white,
       padding: const EdgeInsets.symmetric(vertical: 28),
@@ -79,9 +91,24 @@ class _ProfileHeader extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 12),
-          const Text(
-            'Albatul',
-            style: AppTextStyles.headline2,
+          FutureBuilder<DocumentSnapshot>(
+            future: FirebaseFirestore.instance
+                .collection('users')
+                .doc(FirebaseAuth.instance.currentUser?.uid)
+                .get(),
+            builder: (context, snapshot) {
+              String name = t.guestName;
+
+              if (snapshot.hasData && snapshot.data!.exists) {
+                final data = snapshot.data!.data() as Map<String, dynamic>;
+                name = data['name'] ?? t.guestName;
+              }
+
+              return Text(
+                name,
+                style: AppTextStyles.headline2,
+              );
+            },
           ),
         ],
       ),
@@ -89,15 +116,12 @@ class _ProfileHeader extends StatelessWidget {
   }
 }
 
-// ─── Quick Actions ─────────────────────────────────────────────
 class _QuickActions extends StatelessWidget {
   const _QuickActions();
 
   @override
   Widget build(BuildContext context) {
-    final t = AppLocalizations.of(context)!;
-
-    return Container(
+    final t = AppLocalizations.of(context)!;return Container(
       color: Colors.white,
       padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
       child: Row(
@@ -145,6 +169,7 @@ class _QuickActionItem extends StatelessWidget {
   final IconData icon;
   final String label;
   final VoidCallback? onTap;
+
   const _QuickActionItem({
     required this.icon,
     required this.label,
@@ -157,7 +182,11 @@ class _QuickActionItem extends StatelessWidget {
       onTap: onTap,
       child: Column(
         children: [
-          Icon(icon, color: AppColors.textSecondary, size: 26),
+          Icon(
+            icon,
+            color: AppColors.textSecondary,
+            size: 26,
+          ),
           const SizedBox(height: 6),
           Text(
             label,
@@ -170,7 +199,6 @@ class _QuickActionItem extends StatelessWidget {
   }
 }
 
-// ─── Settings ─────────────────────────────────────────────
 class _SettingsSection extends StatelessWidget {
   final bool notificationsEnabled;
   final ValueChanged<bool> onNotificationsChanged;
@@ -183,9 +211,7 @@ class _SettingsSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = AppLocalizations.of(context)!;
-    final currentLang = Localizations.localeOf(context).languageCode;
-
-    return Padding(
+    final currentLang = Localizations.localeOf(context).languageCode;return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.end,
@@ -276,7 +302,9 @@ class _SettingsSection extends StatelessWidget {
 class _SectionLabel extends StatelessWidget {
   final String label;
 
-  const _SectionLabel({required this.label});
+  const _SectionLabel({
+    required this.label,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -286,6 +314,7 @@ class _SectionLabel extends StatelessWidget {
     );
   }
 }
+
 class _SettingsTile extends StatelessWidget {
   final IconData icon;
   final String label;
@@ -299,9 +328,7 @@ class _SettingsTile extends StatelessWidget {
     this.labelColor,
     this.trailing,
     required this.onTap,
-  });
-
-  @override
+  });@override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
@@ -313,7 +340,11 @@ class _SettingsTile extends StatelessWidget {
         ),
         child: Row(
           children: [
-            Icon(icon, size: 20, color: labelColor ?? AppColors.textSecondary),
+            Icon(
+              icon,
+              size: 20,
+              color: labelColor ?? AppColors.textSecondary,
+            ),
             const Spacer(),
             if (trailing != null) ...[
               trailing!,
@@ -362,7 +393,11 @@ class _SettingsTileToggle extends StatelessWidget {
             activeColor: AppColors.successGreen,
           ),
           const Spacer(),
-          Icon(icon, size: 20, color: AppColors.textSecondary),
+          Icon(
+            icon,
+            size: 20,
+            color: AppColors.textSecondary,
+          ),
           const SizedBox(width: 8),
           Text(
             label,
@@ -374,7 +409,6 @@ class _SettingsTileToggle extends StatelessWidget {
   }
 }
 
-// ─── Logout ─────────────────────────────────────────────
 class _LogoutButton extends StatelessWidget {
   const _LogoutButton();
 
@@ -386,7 +420,12 @@ class _LogoutButton extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 40),
       child: PrimaryButton(
         label: t.logout,
-        onPressed: () => Navigator.pushReplacementNamed(context, '/'),
+        onPressed: () async {
+          await FirebaseAuth.instance.signOut();
+          if (context.mounted) {
+            Navigator.pushReplacementNamed(context, '/');
+          }
+        },
       ),
     );
   }
@@ -402,7 +441,9 @@ class _MemoriesScreen extends StatelessWidget {
 
     if (user == null) {
       return Scaffold(
-        appBar: AppBar(title: Text(t.memories)),
+        appBar: AppBar(
+          title: Text(t.memories),
+        ),
         body: Center(
           child: Text(t.loginRequired),
         ),
@@ -410,7 +451,9 @@ class _MemoriesScreen extends StatelessWidget {
     }
 
     return Scaffold(
-      appBar: AppBar(title: Text(t.memories)),
+      appBar: AppBar(
+        title: Text(t.memories),
+      ),
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
             .collection('users')
@@ -420,7 +463,9 @@ class _MemoriesScreen extends StatelessWidget {
             .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
           }
 
           if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
@@ -429,8 +474,7 @@ class _MemoriesScreen extends StatelessWidget {
             );
           }
 
-          final photos = snapshot.data!.docs;
-          return GridView.builder(
+          final photos = snapshot.data!.docs;return GridView.builder(
             padding: const EdgeInsets.all(12),
             itemCount: photos.length,
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(

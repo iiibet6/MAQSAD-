@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../l10n/app_localizations.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -8,48 +9,49 @@ class OnboardingScreen extends StatefulWidget {
 }
 
 class _OnboardingScreenState extends State<OnboardingScreen> {
-
   final PageController _controller = PageController();
   int currentPage = 0;
 
-  final List<Map<String, String>> pages = [
-    {
-      "image": "assets/images/onboard1.jpg",
-      "title": "اكتشف أفضل الأماكن في حائل",
-      "desc":
-          "استعرض المقاهي والمطاعم والوجهات المميزة بسهولة في مكان واحد",
-    },
-    {
-      "image": "assets/images/onboard2.jpg",
-      "title": "توصيات تناسبك!",
-      "desc":
-          "مقصد يقترح لك أماكن بناءً على تقييمات المستخدمين واهتماماتك",
-    },
-    {
-      "image": "assets/images/onboard3.jpg",
-      "title": "اسأل حاتم",
-      "desc":
-          "تحدث مع حاتم، المساعد الذكي في مقصد، واحصل على اقتراحات لأفضل الأماكن في حائل",
-    },
-  ];
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
+
+    final pages = [
+      {
+        "image": "assets/images/onboard1.jpg",
+        "title": t.onboardingTitle1,
+        "desc": t.onboardingDesc1,
+      },
+      {
+        "image": "assets/images/onboard2.jpg",
+        "title": t.onboardingTitle2,
+        "desc": t.onboardingDesc2,
+      },
+      {
+        "image": "assets/images/onboard3.jpg",
+        "title": t.onboardingTitle3,
+        "desc": t.onboardingDesc3,
+      },
+    ];
+
     return Scaffold(
       backgroundColor: Colors.white,
-
       body: SafeArea(
         child: Column(
           children: [
-
-            /// زر تخطي
             Align(
               alignment: Alignment.topLeft,
               child: TextButton(
                 onPressed: () {
                   Navigator.pushReplacementNamed(context, "/auth-choice");
                 },
-                child: const Text("تخطي"),
+                child: Text(t.skip),
               ),
             ),
 
@@ -63,7 +65,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   });
                 },
                 itemBuilder: (context, index) {
-
                   final page = pages[index];
 
                   return Padding(
@@ -71,8 +72,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-
-                        /// الصورة
                         AnimatedContainer(
                           duration: const Duration(milliseconds: 500),
                           child: Image.asset(
@@ -82,6 +81,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         ),
 
                         const SizedBox(height: 40),
+
                         Text(
                           page["title"]!,
                           textAlign: TextAlign.center,
@@ -93,7 +93,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
                         const SizedBox(height: 16),
 
-                        /// الوصف
                         Text(
                           page["desc"]!,
                           textAlign: TextAlign.center,
@@ -109,7 +108,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               ),
             ),
 
-            /// المؤشرات
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: List.generate(
@@ -127,33 +125,30 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   ),
                 ),
               ),
-
-),
+            ),
 
             const SizedBox(height: 20),
-
-            /// زر التالي
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 40),
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xff3E2A1E),
- minimumSize: const Size(double.infinity, 50),
+                  minimumSize: const Size(double.infinity, 50),
                 ),
                 onPressed: () {
-
                   if (currentPage == pages.length - 1) {
                     Navigator.pushReplacementNamed(context, "/auth-choice");
                   } else {
                     _controller.nextPage(
-                        duration: const Duration(milliseconds: 400),
-                        curve: Curves.easeInOut);
+                      duration: const Duration(milliseconds: 400),
+                      curve: Curves.easeInOut,
+                    );
                   }
                 },
                 child: Text(
                   currentPage == pages.length - 1
-                      ? "ابدأ الآن"
-                      : "التالي",
+                      ? t.startNow
+                      : t.next,
                 ),
               ),
             ),

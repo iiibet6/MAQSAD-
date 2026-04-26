@@ -1,29 +1,23 @@
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 import '../widgets/shared_widgets.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import '../services/favorites_service.dart';
+import '../services/recommendation_service.dart';
+import '../l10n/app_localizations.dart';
 
-// ─── Data models ───────────────────────────────────────────────
 class OfferItem {
   final String imageAsset;
   final String title;
   const OfferItem({required this.imageAsset, required this.title});
 }
 
-class PlaceCard {
-  final String name;
-  final String subtitle;
-  final String imageAsset;
-  const PlaceCard({
-    required this.name,
-    required this.subtitle,
-    required this.imageAsset,
-  });
-}
-
 class NearbyPlace {
   final String name;
   final String distance;
   final String imageAsset;
+
   const NearbyPlace({
     required this.name,
     required this.distance,
@@ -31,79 +25,61 @@ class NearbyPlace {
   });
 }
 
-// ─── Sample data ────────────────────────────────────────────────
 const _offers = [
-  OfferItem(imageAsset: 'assets/images/offer_coffee.png', title: 'قهوة'),
-  OfferItem(imageAsset: 'assets/images/offer_restaurants.png', title: 'مطاعم'),
-  OfferItem(imageAsset: 'assets/images/offer_chalets.png', title: 'شاليهات'),
-];
-
-const _recommended = [
-  PlaceCard(
-      name: 'سفرة السعف',
-      subtitle: 'مأكولات سعودية حساوية',
-      imageAsset: 'assets/images/place1.png'),
-  PlaceCard(
-      name: 'القلعة القديمة',
-      subtitle: 'مأكولات إيطالية',
-      imageAsset: 'assets/images/place2.png'),
-  PlaceCard(
-      name: 'شاورما معلّم',
-      subtitle: 'مأكولات تركية',
-      imageAsset: 'assets/images/place3.png'),
-  PlaceCard(
-      name: 'تشاينيز تاون اكسبريس',
-      subtitle: 'صيني - صحي - نودلز',
-      imageAsset: 'assets/images/place4.png'),
+  OfferItem(imageAsset: 'assets/images/offer_coffee.png', title: 'coffee'),
+  OfferItem(imageAsset: 'assets/images/offer_restaurants.png', title: 'restaurants'),
+  OfferItem(imageAsset: 'assets/images/offer_chalets.png', title: 'chalets'),
 ];
 
 const _nearby = [
   NearbyPlace(
-      name: 'مطعم لوفت',
-      distance: '0.4 ك.م',
-      imageAsset: 'assets/images/nearby1.png'),
+    name: 'مطعم لوفت',
+    distance: '0.4 ك.م',
+    imageAsset: 'assets/images/nearby1.png',
+  ),
   NearbyPlace(
-      name: 'عنوان القهوة',
-      distance: '0.4 ك.م',
-      imageAsset: 'assets/images/nearby2.png'),
+    name: 'عنوان القهوة',
+    distance: '0.4 ك.م',
+    imageAsset: 'assets/images/nearby2.png',
+  ),
   NearbyPlace(
-      name: 'مطعم روقا روكو',
-      distance: '0.3 ك.م',
-      imageAsset: 'assets/images/nearby3.png'),
+    name: 'مطعم روقا روكو',
+    distance: '0.3 ك.م',
+    imageAsset: 'assets/images/nearby3.png',
+  ),
   NearbyPlace(
-  name: 'اوسول كوفي',
-  distance: '0.2 ك.م',
-  imageAsset: 'assets/images/nearby4.png', 
-),
+    name: 'اوسول كوفي',
+    distance: '0.2 ك.م',
+    imageAsset: 'assets/images/nearby4.png',
+  ),
 ];
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
+
 class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Directionality(
-      textDirection: TextDirection.rtl,
+      textDirection: Directionality.of(context),
       child: Scaffold(
         backgroundColor: AppColors.background,
-
         body: Column(
           children: [
             const ArabicPatternBorder(),
-            _HomeAppBar(),
+            const _HomeAppBar(),
             const Expanded(child: _HomeContent()),
           ],
         ),
-
-        /// 🤖 زر
         floatingActionButton: Container(
           width: 65,
           height: 65,
           decoration: BoxDecoration(
-            color: const Color.fromARGB(255, 255, 255, 255), // لون الخلفية المطلوب
+            color: Colors.white,
             shape: BoxShape.circle,
             boxShadow: [
               BoxShadow(
@@ -123,45 +99,83 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Padding(
                 padding: const EdgeInsets.all(12),
                 child: Image.asset(
-                  'assets/images/robot.png', // 👈 حطي اسم صورتك هنا
+                  'assets/images/robot.png',
                   fit: BoxFit.contain,
                 ),
               ),
             ),
           ),
         ),
-
-        floatingActionButtonLocation:
-            FloatingActionButtonLocation.endFloat,
-
+        floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
         bottomNavigationBar: const AppBottomNavBar(currentIndex: 3),
       ),
     );
   }
 }
 
-// ─── App Bar ────────────────────────────────────────────────────
 class _HomeAppBar extends StatelessWidget {
   const _HomeAppBar();
+
+  Future<String> _getUserName(BuildContext context) async {
+    final t = AppLocalizations.of(context)!;
+    final user = FirebaseAuth.instance.currentUser;
+
+    if (user == null) {
+      return t.guestName;
+    }
+
+    try {
+      final doc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .get();
+
+      final data = doc.data();
+
+      if (data != null &&
+          data['name'] != null &&
+          data['name'].toString().trim().isNotEmpty) {
+        return data['name'].toString().trim();
+      }
+
+      if (user.displayName != null && user.displayName!.trim().isNotEmpty) {
+        return user.displayName!.trim();
+      }
+
+      return t.guestName;
+    } catch (_) {
+      return user.displayName ?? t.guestName;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Container(
+    final t = AppLocalizations.of(context)!;return Container(
       color: Colors.white,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      padding: const EdgeInsets.fromLTRB(16, 28, 16, 18),
       child: Row(
         children: [
-          Row(
-            children: const [
+          const Row(
+            children: [
               _IconBadge(icon: Icons.local_offer_outlined),
               SizedBox(width: 8),
               _IconBadge(icon: Icons.notifications_outlined),
             ],
           ),
           const Spacer(),
-          const Text('! حيّاك الله البتول',
-              style: AppTextStyles.headline2),
-          SizedBox(width: 12),
-          Icon(Icons.menu, size: 26),
+          FutureBuilder<String>(
+            future: _getUserName(context),
+            builder: (context, snapshot) {
+              final name = snapshot.data ?? t.guestName;
+
+              return Text(
+                '${t.welcomeGreeting} $name!',
+                style: AppTextStyles.headline2,
+              );
+            },
+          ),
+          const SizedBox(width: 12),
+          const Icon(Icons.menu, size: 26),
         ],
       ),
     );
@@ -170,7 +184,9 @@ class _HomeAppBar extends StatelessWidget {
 
 class _IconBadge extends StatelessWidget {
   final IconData icon;
+
   const _IconBadge({required this.icon});
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -186,7 +202,6 @@ class _IconBadge extends StatelessWidget {
   }
 }
 
-// ─── Shadow Style (احترافي موحد) ──────────────────────────────
 BoxDecoration premiumShadow(double radius) {
   return BoxDecoration(
     borderRadius: BorderRadius.circular(radius),
@@ -205,9 +220,9 @@ BoxDecoration premiumShadow(double radius) {
   );
 }
 
-// ─── Content ────────────────────────────────────────────────────
 class _HomeContent extends StatelessWidget {
   const _HomeContent();
+
   @override
   Widget build(BuildContext context) {
     return ListView(
@@ -226,28 +241,29 @@ class _HomeContent extends StatelessWidget {
   }
 }
 
-// ─── Offers ─────────────────────────────────────────────────────
 class _OffersSection extends StatelessWidget {
   const _OffersSection();
+
   @override
   Widget build(BuildContext context) {
-    return Column(
+    final t = AppLocalizations.of(context)!;return Column(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16),
-          child: SectionHeader(title: 'عروض اليوم'),
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: SectionHeader(title: t.todayOffers),
         ),
-        SizedBox(height: 14),
+        const SizedBox(height: 14),
         SizedBox(
           height: 190,
           child: ListView.separated(
-            padding: EdgeInsets.symmetric(horizontal: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
             scrollDirection: Axis.horizontal,
             itemCount: _offers.length,
-            separatorBuilder: (_, __) => SizedBox(width: 18),
+            separatorBuilder: (_,__) => const SizedBox(width: 18),
             itemBuilder: (ctx, i) {
               final offer = _offers[i];
+
               return Container(
                 width: 175,
                 decoration: premiumShadow(22),
@@ -267,30 +283,41 @@ class _OffersSection extends StatelessWidget {
   }
 }
 
-// ─── Recommended ────────────────────────────────────────────────
 class _RecommendedSection extends StatelessWidget {
   const _RecommendedSection();
+
   @override
   Widget build(BuildContext context) {
-    return _horizontalPlaces(
-      title: 'أخترنا لك',
-      height: 190,
-      width: 125,
-      imageHeight: 115,
-      items: _recommended.map((e) => e.imageAsset).toList(),
-      names: _recommended.map((e) => e.name).toList(),
-      subtitles: _recommended.map((e) => e.subtitle).toList(),
+    final t = AppLocalizations.of(context)!;
+
+    return ValueListenableBuilder<List<Map<String, String>>>(
+      valueListenable: FavoritesService.favorites,
+      builder: (context, favs, _) {
+        final recommendations = RecommendationService.getRecommendations(favs);
+
+        return _horizontalPlaces(
+          title: t.pickedForYou,
+          height: 190,
+          width: 125,
+          imageHeight: 115,
+          items: recommendations.map((e) => e.image).toList(),
+          names: recommendations.map((e) => e.title).toList(),
+          subtitles: recommendations.map((e) => e.subtitle).toList(),
+        );
+      },
     );
   }
 }
 
-// ─── Nearby ─────────────────────────────────────────────────────
 class _NearbySection extends StatelessWidget {
   const _NearbySection();
+
   @override
   Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
+
     return _horizontalPlaces(
-      title: 'أماكن قريبة منك',
+      title: t.nearbyPlaces,
       height: 150,
       width: 115,
       imageHeight: 95,
@@ -301,27 +328,34 @@ class _NearbySection extends StatelessWidget {
   }
 }
 
-// ─── Trending ───────────────────────────────────────────────────
 class _TrendingSection extends StatelessWidget {
   const _TrendingSection();
+
   @override
   Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
+
     return _horizontalPlaces(
-      title: 'تهادوا تحّابوا',
+      title: t.giftSectionTitle,
       height: 170,
       width: 145,
       imageHeight: 115,
       items: const [
         'assets/images/trending1.png',
-        'assets/images/trending2.png'
+        'assets/images/trending2.png',
       ],
-      names: const ['نقوة ورد', 'مندوب هدايا'],
-      subtitles: const ['للورد والهدايا', 'توصيل بنفس اليوم!'],
+      names: [
+        t.flowerGift,
+        t.giftCourier,
+      ],
+      subtitles: [
+        t.flowersAndGifts,
+        t.sameDayDelivery,
+      ],
     );
   }
 }
 
-// ─── Reusable Section Builder ───────────────────────────────────
 Widget _horizontalPlaces({
   required String title,
   required double height,
@@ -356,21 +390,25 @@ Widget _horizontalPlaces({
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(18),
                       child: Image.asset(
-                        items[i],
-                        height: imageHeight,
+                        items[i],height: imageHeight,
                         width: width,
                         fit: BoxFit.fill,
                       ),
                     ),
                   ),
                   const SizedBox(height: 8),
-                  Text(names[i],
-                      style: AppTextStyles.body
-                          .copyWith(fontWeight: FontWeight.w600),
-                      textAlign: TextAlign.center),
-                  Text(subtitles[i],
-                      style: AppTextStyles.caption,
-                      textAlign: TextAlign.center),
+                  Text(
+                    names[i],
+                    style: AppTextStyles.body.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  Text(
+                    subtitles[i],
+                    style: AppTextStyles.caption,
+                    textAlign: TextAlign.center,
+                  ),
                 ],
               ),
             );

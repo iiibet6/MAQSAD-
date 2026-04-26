@@ -9,6 +9,7 @@ import 'firebase_options.dart';
 import 'theme/app_theme.dart';
 
 import 'screens/welcome_screen.dart';
+import 'screens/language_selection_screen.dart';
 import 'screens/onboarding_screen.dart';
 import 'screens/auth_choice_screen.dart';
 import 'screens/login_screen.dart';
@@ -21,6 +22,7 @@ import 'screens/explore_screen.dart';
 import 'screens/mood_screen.dart';
 import 'screens/cuisine_screen.dart';
 import 'screens/email_verification_screen.dart';
+import 'screens/chat_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -97,6 +99,7 @@ class _MaqsadAppState extends State<MaqsadApp> {
 
       routes: {
         '/': (_) => const WelcomeScreen(),
+        '/language': (_) => const LanguageSelectionScreen(),
         '/onboarding': (_) => const OnboardingScreen(),
         '/auth-choice': (_) => const AuthChoiceScreen(),
         '/login': (_) => const LoginScreen(),
@@ -109,6 +112,7 @@ class _MaqsadAppState extends State<MaqsadApp> {
         '/account': (_) => const AccountScreen(),
         '/map': (_) => const MapScreen(),
         '/explore': (_) => const ExploreScreen(),
+        '/chatbot': (_) => const ChatScreen(),
       },
     );
   }

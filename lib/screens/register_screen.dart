@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../theme/app_theme.dart';
 import '../widgets/shared_widgets.dart';
+import '../l10n/app_localizations.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -13,12 +14,12 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
-
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final TextEditingController confirmPasswordController = TextEditingController();
+  final TextEditingController confirmPasswordController =
+      TextEditingController();
 
   DateTime? selectedDate;
   bool isLoading = false;
@@ -26,71 +27,73 @@ class _RegisterScreenState extends State<RegisterScreen> {
   String countryCode = '+966';
 
   Future<void> _register() async {
-  if (passwordController.text != confirmPasswordController.text) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('كلمتا المرور غير متطابقتين')),
-    );
-    return;
-  }
+    final t = AppLocalizations.of(context)!;
 
-  if (selectedDate == null) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('اختر تاريخ الميلاد')),
-    );
-    return;
-  }
+    if (passwordController.text != confirmPasswordController.text) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(t.passwordsDoNotMatch)),
+      );
+      return;
+    }
 
-  if (phoneController.text.trim().isEmpty) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('أدخل رقم الجوال')),
-    );
-    return;
-  }
+    if (selectedDate == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(t.selectBirthDateMessage)),
+      );
+      return;
+    }
 
-  setState(() => isLoading = true);
+    if (phoneController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(t.enterPhoneMessage)),
+      );
+      return;
+    }
 
-  try {
-    final userCredential =
-        await FirebaseAuth.instance.createUserWithEmailAndPassword(
-      email: emailController.text.trim(),
-      password: passwordController.text.trim(),
-    );
+    setState(() => isLoading = true);
 
-    final user = userCredential.user;
-    final uid = user!.uid;
+    try {
+      final userCredential =
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: emailController.text.trim(),
+        password: passwordController.text.trim(),
+      );
 
-    await user.updateDisplayName(nameController.text.trim());
+      final user = userCredential.user;
+      final uid = user!.uid;
 
-    await FirebaseFirestore.instance.collection('users').doc(uid).set({
-      'name': nameController.text.trim(),
-      'email': emailController.text.trim(),
-      'phone': '$countryCode${phoneController.text.trim()}',
-      'birthDate': Timestamp.fromDate(selectedDate!),
-      'interests': [],
-      'favorites': [],
-      'createdAt': FieldValue.serverTimestamp(),
-    });
+      await user.updateDisplayName(nameController.text.trim());
 
-    await user.sendEmailVerification();
+      await FirebaseFirestore.instance.collection('users').doc(uid).set({
+        'name': nameController.text.trim(),
+        'email': emailController.text.trim(),
+        'phone': '$countryCode${phoneController.text.trim()}',
+        'birthDate': Timestamp.fromDate(selectedDate!),
+        'interests': [],
+        'favorites': [],
+        'createdAt': FieldValue.serverTimestamp(),
+      });
 
-    if (!mounted) return;
-    Navigator.pushReplacementNamed(context, '/email-verification');
-  } on FirebaseAuthException catch (e) {
-    if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(e.message ?? 'حدث خطأ')),
-    );
-  } catch (e) {
-    if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(e.toString())),
-    );
-  } finally {
-    if (mounted) {
-      setState(() => isLoading = false);
+      await user.sendEmailVerification();
+
+      if (!mounted) return;
+      Navigator.pushReplacementNamed(context, '/email-verification');
+    } on FirebaseAuthException catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.message ?? t.generalError)),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('${t.unexpectedError}: $e')),
+      );
+    } finally {
+      if (mounted) {
+        setState(() => isLoading = false);
+      }
     }
   }
-}
 
   Future<void> _pickDate() async {
     final picked = await showDatePicker(
@@ -108,7 +111,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   @override
+  void dispose() {
+    nameController.dispose();
+    emailController.dispose();
+    phoneController.dispose();
+    passwordController.dispose();
+    confirmPasswordController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
+
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
@@ -119,29 +134,27 @@ class _RegisterScreenState extends State<RegisterScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-
                 const Center(child: AppLogo(size: 70)),
-                const SizedBox(height: 32),
-
-                LabeledTextField(
-                  label: 'الأسم',
-                  hint: 'مثال: Albatul',
+                const SizedBox(height: 32),LabeledTextField(
+                  label: t.name,
+                  hint: t.nameExample,
                   controller: nameController,
                 ),
 
                 const SizedBox(height: 16),
 
                 LabeledTextField(
-                  label: 'البريد الالكتروني',
+                  label: t.email,
                   hint: 'email@domain.com',
                   controller: emailController,
                   keyboardType: TextInputType.emailAddress,
                 ),
 
                 const SizedBox(height: 16),
-                                LabeledTextField(
-                  label: 'رقم الجوال',
-                  hint: 'مثال: 5XXXXXXXX',
+
+                LabeledTextField(
+                  label: t.phoneNumber,
+                  hint: t.phoneExample,
                   controller: phoneController,
                   keyboardType: TextInputType.phone,
                   prefix: DropdownButtonHideUnderline(
@@ -164,12 +177,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                 const SizedBox(height: 16),
 
-                /// تاريخ الميلاد
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    const Text(
-                      'تاريخ الميلاد',
+                    Text(
+                      t.birthDate,
                       style: AppTextStyles.bodyLarge,
                     ),
                     const SizedBox(height: 8),
@@ -180,12 +192,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         decoration: BoxDecoration(
                           border: Border.all(
-                              color: AppColors.inputBorder, width: 1.5),
+                            color: AppColors.inputBorder,
+                            width: 1.5,
+                          ),
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Text(
                           selectedDate == null
-                              ? 'اختر التاريخ'
+                              ? t.selectDate
                               : "${selectedDate!.day}/${selectedDate!.month}/${selectedDate!.year}",
                           textAlign: TextAlign.center,
                         ),
@@ -197,7 +211,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 const SizedBox(height: 16),
 
                 LabeledTextField(
-                  label: 'كلمة المرور',
+                  label: t.password,
                   hint: '',
                   controller: passwordController,
                   isPassword: true,
@@ -206,7 +220,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 const SizedBox(height: 16),
 
                 LabeledTextField(
-                  label: 'تأكيد كلمة المرور',
+                  label: t.confirmPassword,
                   hint: '',
                   controller: confirmPasswordController,
                   isPassword: true,
@@ -215,7 +229,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 const SizedBox(height: 40),
 
                 PrimaryButton(
-                  label: isLoading ? 'جاري التسجيل...' : 'التالي',
+                  label: isLoading ? t.registering : t.next,
                   onPressed: isLoading ? null : _register,
                 ),
               ],
