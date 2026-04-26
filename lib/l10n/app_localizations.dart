@@ -1052,7 +1052,7 @@ abstract class AppLocalizations {
   /// No description provided for @privacyPolicyContent.
   ///
   /// In en, this message translates to:
-  /// **'Privacy Policy of Maqsad App'**
+  /// **'This Privacy Policy explains that protecting your personal data is extremely important to us, and we recognize our responsibility to handle your personal information carefully and securely.\n\nFor service providers: the data you enter into the application is used to reach your customers.\n\nFor customers: your data is used to save your information such as favorite stores and all orders. The data is only accessible to the stores. Maqsad is committed not to use the data for any other purposes or share it with other parties.\n\nMaqsad uses the data of service providers and customers to provide better services based on geographical location, including displaying nearby stores and services supported by the application.\n\nMaqsad is committed not to share or publish private information of service providers or customers with any third party for any purpose.\n\nMaqsad also clarifies that it does not collect undisclosed information from stores or customers such as device IP addresses, operating systems, versions, software details, languages, identifiers, or mobile network information.'**
   String get privacyPolicyContent;
 
   /// No description provided for @notAvailable.
