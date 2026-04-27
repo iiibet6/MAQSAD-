@@ -7,11 +7,11 @@ class ArabicPatternBorder extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       width: double.infinity,
-      height: 1, // عدليها حسب السماكة اللي تبين
+      height: 1, 
       child: Image.asset(
         'assets/images/pattern_border.png',
-        fit: BoxFit.fitWidth, // 👈 أهم سطر
-        alignment: Alignment.topCenter, // 👈 يوسّطها
+        fit: BoxFit.fitWidth, 
+        alignment: Alignment.topCenter, 
       ),
     );
   }
@@ -43,9 +43,6 @@ class PatternBorderFallback extends StatelessWidget {
   }
 }
 
-// ─────────────────────────────────────────────
-//  App Logo
-// ─────────────────────────────────────────────
 class AppLogo extends StatelessWidget {
   final double size;
   const AppLogo({super.key, this.size = 80});
@@ -65,9 +62,6 @@ class AppLogo extends StatelessWidget {
   }
 }
 
-// ─────────────────────────────────────────────
-//  Primary filled button
-// ─────────────────────────────────────────────
 class PrimaryButton extends StatelessWidget {
   final String label;
   final VoidCallback? onPressed;
@@ -108,9 +102,6 @@ class PrimaryButton extends StatelessWidget {
   }
 }
 
-// ─────────────────────────────────────────────
-//  Outlined button
-// ─────────────────────────────────────────────
 class OutlinedAppButton extends StatelessWidget {
   final String label;
   final VoidCallback? onPressed;
@@ -132,16 +123,14 @@ class OutlinedAppButton extends StatelessWidget {
       ),
     );
   }
-}// ─────────────────────────────────────────────
-//  Labeled Text Field
-// ─────────────────────────────────────────────
+}
 class LabeledTextField extends StatelessWidget {
   final String label;
   final String hint;
   final bool isPassword;
   final TextEditingController? controller;
   final TextInputType keyboardType;
-  final Widget? prefix; // 👈 جديد
+  final Widget? prefix; 
 
   const LabeledTextField({
     super.key,
@@ -150,7 +139,7 @@ class LabeledTextField extends StatelessWidget {
     this.isPassword = false,
     this.controller,
     this.keyboardType = TextInputType.text,
-    this.prefix, // 👈 جديد
+    this.prefix, 
   });
 
   @override
@@ -167,7 +156,7 @@ class LabeledTextField extends StatelessWidget {
           isPassword: isPassword,
           controller: controller,
           keyboardType: keyboardType,
-          prefix: prefix, // 👈 نمرره
+          prefix: prefix, 
         ),
       ],
     );
@@ -179,14 +168,14 @@ class _PasswordAwareField extends StatefulWidget {
   final bool isPassword;
   final TextEditingController? controller;
   final TextInputType keyboardType;
-  final Widget? prefix; // 👈 جديد
+  final Widget? prefix; 
 
   const _PasswordAwareField({
     required this.hint,
     this.isPassword = false,
     this.controller,
     this.keyboardType = TextInputType.text,
-    this.prefix, // 👈 جديد
+    this.prefix, 
   });
 
   @override
@@ -208,7 +197,7 @@ class _PasswordAwareFieldState extends State<_PasswordAwareField> {
         hintText: widget.hint,
         hintTextDirection: TextDirection.rtl,
 
-        prefixIcon: widget.prefix, // 👈 هنا السحر ✨
+        prefixIcon: widget.prefix, 
 
         suffixIcon: widget.isPassword
             ? IconButton(
@@ -227,9 +216,6 @@ class _PasswordAwareFieldState extends State<_PasswordAwareField> {
   }
 }
 
-// ─────────────────────────────────────────────
-//  Section Header
-// ─────────────────────────────────────────────
 class SectionHeader extends StatelessWidget {
   final String title;
   final Widget? trailing;
@@ -254,9 +240,6 @@ class SectionHeader extends StatelessWidget {
   }
 }
 
-// ─────────────────────────────────────────────
-//  Bottom Navigation Bar (FIXED VERSION)
-// ─────────────────────────────────────────────
 class AppBottomNavBar extends StatelessWidget {
   final int currentIndex;
 
