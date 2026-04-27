@@ -4,7 +4,7 @@ import '../widgets/shared_widgets.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../services/favorites_service.dart';
-import '../services/recommendation_service.dart';
+import '../services/content_based_recommendation_service.dart';
 import '../l10n/app_localizations.dart';
 
 class OfferItem {
@@ -293,7 +293,7 @@ class _RecommendedSection extends StatelessWidget {
     return ValueListenableBuilder<List<Map<String, String>>>(
       valueListenable: FavoritesService.favorites,
       builder: (context, favs, _) {
-        final recommendations = RecommendationService.getRecommendations(favs);
+        final recommendations =ContentBasedRecommendationService.getRecommendations(favs);
 
         return _horizontalPlaces(
           title: t.pickedForYou,
