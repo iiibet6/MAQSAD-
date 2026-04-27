@@ -27,7 +27,7 @@ class RecommendationItem {
   });
 }
 
-class RecommendationService {
+class ContentBasedRecommendationService {
   static List<RecommendationItem> get allItems {
     final items = <RecommendationItem>[];
 

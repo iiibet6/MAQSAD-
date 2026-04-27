@@ -23,14 +23,15 @@ import 'screens/mood_screen.dart';
 import 'screens/cuisine_screen.dart';
 import 'screens/email_verification_screen.dart';
 import 'screens/chat_screen.dart';
-
+import 'services/favorites_service.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-
+  await FavoritesService.loadFavorites();
+  
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
   ]);
