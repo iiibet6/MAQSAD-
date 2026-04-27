@@ -15,17 +15,15 @@ class RecommendationItem {
   final String title;
   final String image;
   final String subtitle;
-  final String type;
-  final String category;
-  final List<String> tags;
+  final String content;
+  final double rating;
 
   const RecommendationItem({
     required this.title,
     required this.image,
     required this.subtitle,
-    required this.type,
-    required this.category,
-    required this.tags,
+    required this.content,
+    this.rating = 5.0,
   });
 }
 
@@ -48,9 +46,8 @@ class RecommendationService {
           title: r.name,
           image: r.image,
           subtitle: r.subtitle,
-          type: r.type,
-          category: r.category,
-          tags: r.tags,
+          content:
+              '${r.name} ${r.subtitle} ${r.type} ${r.category} ${r.tags.join(" ")}',
         ),
       );
     }
@@ -61,9 +58,9 @@ class RecommendationService {
           title: h.name,
           image: h.image,
           subtitle: h.description,
-          type: 'فنادق',
-          category: h.category,
-          tags: h.tags,
+          rating: double.tryParse(h.rating) ?? 5.0,
+          content:
+              '${h.name} ${h.description} فنادق ${h.category} ${h.tags.join(" ")}',
         ),
       );
     }
@@ -74,9 +71,8 @@ class RecommendationService {
           title: s.name,
           image: s.image,
           subtitle: s.description,
-          type: 'تسوق',
-          category: s.category,
-          tags: s.tags,
+          content:
+              '${s.name} ${s.description} تسوق ${s.category} ${s.tags.join(" ")}',
         ),
       );
     }
@@ -89,9 +85,8 @@ class RecommendationService {
           subtitle: p.category == 'تاريخي'
               ? 'معلم تاريخي وسياحي في حائل'
               : 'وجهة طبيعية وسياحية في حائل',
-          type: 'سياحة',
-          category: p.category,
-          tags: _natureTags(p.title, p.category),
+          content:
+              '${p.title} ${p.description} سياحة ${p.category} ${p.locationName}',
         ),
       );
     }
@@ -101,12 +96,9 @@ class RecommendationService {
         RecommendationItem(
           title: c.title,
           image: c.image,
-          subtitle: c.title == 'الماسية'
-              ? 'شاليه فاخر مع مسبح'
-              : 'منتجع هادئ بأجواء طبيعية',
-          type: 'شاليهات',
-          category: 'منتجع',
-          tags: _chaletTags(c.title),
+          subtitle: c.description,
+          content:
+              '${c.title} ${c.description} شاليهات منتجع ${c.category} ${c.locationName}',
         ),
       );
     }
@@ -128,180 +120,158 @@ class RecommendationService {
         .where((title) => title.isNotEmpty)
         .toSet();
 
-    final vocabulary = _buildVocabulary(items, favorites);
-    final userVector = _buildUserVector(favorites, vocabulary);
+    final documents = items.map((e) => e.content).toList();
 
-    final scoredItems = items
-        .where((item) => !favoriteTitles.contains(item.title))
-        .map((item) {
-          final itemVector = _buildItemVector(item, vocabulary);
-          final score = _cosineSimilarity(userVector, itemVector);
+    final vocabulary = _buildVocabulary(documents);
+    final idf = _buildIdf(documents, vocabulary);
 
-          return {
-            'item': item,
-            'score': score,
-          };
-        })
+    final tfidfMatrix = documents
+        .map((doc) => _buildTfIdfVector(doc, vocabulary, idf))
         .toList();
+
+    final similarityMatrix = _buildSimilarityMatrix(tfidfMatrix);
+
+    final favoriteIndexes = <int>[];
+
+    for (final title in favoriteTitles) {
+      final index = items.indexWhere((item) => item.title == title);
+      if (index != -1) {
+        favoriteIndexes.add(index);
+      }
+    }
+
+    if (favoriteIndexes.isEmpty) {
+      return items.take(6).toList();
+    }
+
+    final scoredItems = <Map<String, dynamic>>[];
+
+    for (int i = 0; i < items.length; i++) {
+      if (favoriteIndexes.contains(i)) continue;
+
+      double totalSimilarity = 0;for (final favIndex in favoriteIndexes) {
+        totalSimilarity += similarityMatrix[favIndex][i];
+      }
+
+      double score = totalSimilarity / favoriteIndexes.length;
+
+      // نفس فكرة البنات: score * rating / 5
+      score = score * (items[i].rating / 5);
+
+      scoredItems.add({
+        'item': items[i],
+        'score': score,
+      });
+    }
 
     scoredItems.sort(
       (a, b) => (b['score'] as double).compareTo(a['score'] as double),
     );
 
-    final recommendations = scoredItems
+    return scoredItems
         .where((e) => (e['score'] as double) > 0)
-        .map((e) => e['item'] as RecommendationItem)
         .take(6)
+        .map((e) => e['item'] as RecommendationItem)
         .toList();
-if (recommendations.isEmpty) {
-      return items
-          .where((item) => !favoriteTitles.contains(item.title))
-          .take(6)
-          .toList();
-    }
-
-    return recommendations;
   }
 
-  static List<String> _buildVocabulary(
-    List<RecommendationItem> items,
-    List<Map<String, String>> favorites,
-  ) {
-    final vocabulary = <String>{};
-
-    for (final item in items) {
-      vocabulary.add(item.type);
-      vocabulary.add(item.category);
-      vocabulary.addAll(item.tags);
-    }
-
-    for (final fav in favorites) {
-      final type = fav['type'];
-      final category = fav['category'];
-      final tags = fav['tags'] ?? '';
-
-      if (type != null && type.trim().isNotEmpty) vocabulary.add(type.trim());
-      if (category != null && category.trim().isNotEmpty) {
-        vocabulary.add(category.trim());
-      }
-
-      vocabulary.addAll(
-        tags
-            .split(',')
-            .map((tag) => tag.trim())
-            .where((tag) => tag.isNotEmpty),
-      );
-    }
-
-    return vocabulary.toList();
+  static List<String> _tokenize(String text) {
+    return text
+        .toLowerCase()
+        .replaceAll(RegExp(r'[^\u0600-\u06FFa-zA-Z0-9\s]'), ' ')
+        .split(RegExp(r'\s+'))
+        .map((w) => w.trim())
+        .where((w) => w.isNotEmpty)
+        .toList();
   }
 
-  static List<double> _buildUserVector(
-    List<Map<String, String>> favorites,
+  static List<String> _buildVocabulary(List<String> documents) {
+    final vocab = <String>{};
+
+    for (final doc in documents) {
+      vocab.addAll(_tokenize(doc));
+    }
+
+    return vocab.toList();
+  }
+
+  static Map<String, double> _buildIdf(
+    List<String> documents,
     List<String> vocabulary,
   ) {
-    final vector = List<double>.filled(vocabulary.length, 0);
+    final idf = <String, double>{};
+    final totalDocs = documents.length;
 
-    for (final fav in favorites) {
-      final features = <String>[];
+    for (final word in vocabulary) {
+      int count = 0;
 
-      final type = fav['type'];
-      final category = fav['category'];
-      final tags = fav['tags'] ?? '';
-
-      if (type != null && type.trim().isNotEmpty) features.add(type.trim());
-      if (category != null && category.trim().isNotEmpty) {
-        features.add(category.trim());
-      }
-
-      features.addAll(
-        tags
-            .split(',')
-            .map((tag) => tag.trim())
-            .where((tag) => tag.isNotEmpty),
-      );
-
-      for (final feature in features) {
-        final index = vocabulary.indexOf(feature);
-        if (index != -1) {
-          vector[index] += 1;
+      for (final doc in documents) {
+        if (_tokenize(doc).toSet().contains(word)) {
+          count++;
         }
       }
+
+      idf[word] = log((totalDocs + 1) / (count + 1)) + 1;
+    }
+
+    return idf;
+  }
+
+  static List<double> _buildTfIdfVector(
+    String document,
+    List<String> vocabulary,
+    Map<String, double> idf,
+  ) {
+    final tokens = _tokenize(document);
+    final vector = List<double>.filled(vocabulary.length, 0);
+
+    for (int i = 0; i < vocabulary.length; i++) {
+      final word = vocabulary[i];
+
+      final tf = tokens.isEmpty
+          ? 0.0
+          : tokens.where((token) => token == word).length / tokens.length;
+
+      vector[i] = tf * (idf[word] ?? 0);
     }
 
     return vector;
   }
 
-  static List<double> _buildItemVector(
-    RecommendationItem item,
-    List<String> vocabulary,
+  static List<List<double>> _buildSimilarityMatrix(
+    List<List<double>> tfidfMatrix,
   ) {
-    final vector = List<double>.filled(vocabulary.length, 0);
+    final matrix = <List<double>>[];
 
-    final features = [
-      item.type,
-      item.category,
-      ...item.tags,
-    ];
+    for (int i = 0; i < tfidfMatrix.length; i++) {
+      final row = <double>[];
 
-    for (final feature in features) {
-      final index = vocabulary.indexOf(feature);
-      if (index != -1) {
-        vector[index] += 1;
+      for (int j = 0; j < tfidfMatrix.length; j++) {
+        row.add(_cosineSimilarity(tfidfMatrix[i], tfidfMatrix[j]));
       }
+
+      matrix.add(row);
     }
 
-    return vector;
+    return matrix;
   }
 
   static double _cosineSimilarity(
     List<double> vectorA,
     List<double> vectorB,
   ) {
-    double dotProduct = 0;
+    double dot = 0;
     double normA = 0;
     double normB = 0;
 
     for (int i = 0; i < vectorA.length; i++) {
-      dotProduct += vectorA[i] * vectorB[i];
+      dot += vectorA[i] * vectorB[i];
       normA += vectorA[i] * vectorA[i];
       normB += vectorB[i] * vectorB[i];
     }
 
     if (normA == 0 || normB == 0) return 0;
 
-    return dotProduct / (sqrt(normA) * sqrt(normB));
-  }
-
-  static List<String> _natureTags(String title, String category) {
-    switch (title) {
-      case 'منازل حاتم الطائي':
-        return ['سياحة', 'تاريخي', 'تراث', 'حاتم الطائي', 'توارن', 'معالم'];
-      case 'قلعة أعيرف':
-        return ['سياحة', 'تاريخي', 'قلعة', 'جبل', 'تراث', 'معالم'];
-      case 'جبل محجة':
-        return ['سياحة', 'طبيعة', 'جبل', 'هدوء', 'تصوير', 'مغامرة'];
-      case 'عقدة السياحية':
-        return ['سياحة', 'طبيعة', 'جبال', 'خضرة', 'تنزه', 'عوائل'];
-      case 'مدينة فيد التاريخية':
-        return ['سياحة', 'تاريخي', 'تراث', 'طريق زبيدة', 'آثار', 'معالم'];
-      case 'منتزه مشار':
-        return ['سياحة', 'طبيعة', 'منتزه', 'عوائل', 'تنزه', 'هدوء'];
-      case 'شعيب توارن':
-        return ['سياحة', 'طبيعة', 'توارن', 'مغامرة', 'تنزه', 'أشجار'];
-      default:
-        return ['سياحة', category];
-    }
-  }
-
-  static List<String> _chaletTags(String title) {
-    switch (title) {
-      case 'ريف الطوالة':
-        return ['شاليهات', 'منتجع', 'طبيعة', 'هدوء', 'عائلات', 'جلسات'];
-      case 'الماسية':
-        return ['شاليهات', 'فاخر', 'مسبح', 'عائلات', 'منتجع', 'استجمام'];
-      default:
-        return ['شاليهات', 'منتجع'];
-    }
+    return dot / (sqrt(normA) * sqrt(normB));
   }
 }
