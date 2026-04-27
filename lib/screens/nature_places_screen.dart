@@ -207,31 +207,31 @@ class _PlaceCard extends StatelessWidget {
   }
 
   void _toggleFavorite(
-    BuildContext context,
-    List<Map<String, String>> favs,
-  ) {
-    final isFav = favs.any(
-      (item) => item['title'] == place.title,
-    );
+  BuildContext context,
+  List<Map<String, String>> favs,
+) {
+  final isFav = favs.any(
+    (item) => item['title'] == place.title,
+  );
 
-    if (isFav) {
-      FavoritesService.favorites.value = List.from(favs)
-        ..removeWhere(
-          (item) => item['title'] == place.title,
-        );
-    } else {
-      FavoritesService.favorites.value = List.from(favs)
-        ..add({
-          'title': place.title,
-          'image': place.image,
-          'subtitle': _subtitle(context),
-          'type': AppLocalizations.of(context)!.tourism,
-          'category': place.category,
-          'tags':
-              '${AppLocalizations.of(context)!.tourism},${place.category}',
-        });
-    }
+  if (isFav) {
+    FavoritesService.favorites.value = List.from(favs)
+      ..removeWhere(
+        (item) => item['title'] == place.title,
+      );
+  } else {
+    FavoritesService.favorites.value = List.from(favs)
+      ..add({
+        'title': place.title,
+        'image': place.image,
+        'subtitle': _subtitle(context),
+        'type': AppLocalizations.of(context)!.tourism,
+        'category': place.category,
+        'tags':
+            '${AppLocalizations.of(context)!.tourism},${place.category}',
+      });
   }
+}
 
   @override
   Widget build(BuildContext context) {

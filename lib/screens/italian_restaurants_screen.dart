@@ -141,24 +141,28 @@ class _RestaurantCard extends StatelessWidget {
     required this.onTap,
   });
 
-  void _toggleFavorite(List<Map<String, String>> favs) {
-    final isFav = favs.any((item) => item['title'] == restaurant.name);
+  Future<void> _toggleFavorite(
+  List<Map<String, String>> favs,
+) async {
+  final isFav = favs.any(
+    (item) => item['title'] == restaurant.name,
+  );
 
-    if (isFav) {
-      FavoritesService.favorites.value = List.from(favs)
-        ..removeWhere((item) => item['title'] == restaurant.name);
-    } else {
-      FavoritesService.favorites.value = List.from(favs)
-        ..add({
-          'title': restaurant.name,
-          'image': restaurant.image,
-          'subtitle': restaurant.subtitle,
-          'type': restaurant.type,
-          'category': restaurant.category,
-          'tags': restaurant.tags.join(','),
-        });
-    }
+  if (isFav) {
+    await FavoritesService.removeFavorite(
+      restaurant.name,
+    );
+  } else {
+    await FavoritesService.addFavorite({
+      'title': restaurant.name,
+      'image': restaurant.image,
+      'subtitle': restaurant.subtitle,
+      'type': restaurant.type,
+      'category': restaurant.category,
+      'tags': restaurant.tags.join(','),
+    });
   }
+}
   @override
   Widget build(BuildContext context) {
     return GestureDetector(

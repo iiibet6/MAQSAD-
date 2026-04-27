@@ -110,24 +110,28 @@ class _HotelCard extends StatelessWidget {
     required this.hotel,
   });
 
-  void _toggleFavorite(List<Map<String, String>> favs) {
-    final isFav = favs.any((item) => item['title'] == hotel.name);
+  Future<void> _toggleFavorite(
+  List<Map<String, String>> favs,
+) async {
+  final isFav = favs.any(
+    (item) => item['title'] == hotel.name,
+  );
 
-    if (isFav) {
-      FavoritesService.favorites.value = List.from(favs)
-        ..removeWhere((item) => item['title'] == hotel.name);
-    } else {
-      FavoritesService.favorites.value = List.from(favs)
-        ..add({
-          'title': hotel.name,
-          'image': hotel.image,
-          'subtitle': hotel.description,
-          'type': 'فنادق',
-          'category': hotel.category,
-          'tags': hotel.tags.join(','),
-        });
-    }
+  if (isFav) {
+    await FavoritesService.removeFavorite(
+      hotel.name,
+    );
+  } else {
+    await FavoritesService.addFavorite({
+      'title': hotel.name,
+      'image': hotel.image,
+      'subtitle': hotel.description,
+      'type': 'فنادق',
+      'category': hotel.category,
+      'tags': hotel.tags.join(','),
+    });
   }
+}
 
   @override
   Widget build(BuildContext context) {

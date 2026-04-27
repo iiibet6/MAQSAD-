@@ -154,24 +154,28 @@ class _CafeCard extends StatelessWidget {
     required this.onTap,
   });
 
-  void _toggleFavorite(List<Map<String, String>> favs) {
-    final isFav = favs.any((item) => item['title'] == cafe.name);
+  Future<void> _toggleFavorite(
+  List<Map<String, String>> favs,
+) async {
+  final isFav = favs.any(
+    (item) => item['title'] == cafe.name,
+  );
 
-    if (isFav) {
-      FavoritesService.favorites.value = List.from(favs)
-        ..removeWhere((item) => item['title'] == cafe.name);
-    } else {
-      FavoritesService.favorites.value = List.from(favs)
-        ..add({
-          'title': cafe.name,
-          'image': cafe.image,
-          'subtitle': cafe.subtitle,
-          'type': cafe.type,
-          'category': cafe.category,
-          'tags': cafe.tags.join(','),
-        });
-    }
+  if (isFav) {
+    await FavoritesService.removeFavorite(
+      cafe.name,
+    );
+  } else {
+    await FavoritesService.addFavorite({
+      'title': cafe.name,
+      'image': cafe.image,
+      'subtitle': cafe.subtitle,
+      'type': cafe.type,
+      'category': cafe.category,
+      'tags': cafe.tags.join(','),
+    });
   }
+}
 
   @override
   Widget build(BuildContext context) {

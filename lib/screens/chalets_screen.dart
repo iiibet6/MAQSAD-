@@ -117,28 +117,28 @@ class _ChaletCard extends StatelessWidget {
     }
   }
 
-  void _toggleFavorite(List<Map<String, String>> favs) {
-    final isFav = favs.any(
-      (item) => item['title'] == place.title,
-    );
+  Future<void> _toggleFavorite(
+  List<Map<String, String>> favs,
+) async {
+  final isFav = favs.any(
+    (item) => item['title'] == place.title,
+  );
 
-    if (isFav) {
-      FavoritesService.favorites.value = List.from(favs)
-        ..removeWhere(
-          (item) => item['title'] == place.title,
-        );
-    } else {
-      FavoritesService.favorites.value = List.from(favs)
-        ..add({
-          'title': place.title,
-          'image': place.image,
-          'subtitle': _subtitle,
-          'type': 'شاليهات',
-          'category': 'منتجع',
-          'tags': _tags.join(','),
-        });
-    }
+  if (isFav) {
+    await FavoritesService.removeFavorite(
+      place.title,
+    );
+  } else {
+    await FavoritesService.addFavorite({
+      'title': place.title,
+      'image': place.image,
+      'subtitle': _subtitle,
+      'type': 'شاليهات',
+      'category': 'منتجع',
+      'tags': _tags.join(','),
+    });
   }
+}
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
