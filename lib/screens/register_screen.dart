@@ -26,8 +26,27 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   String countryCode = '+966';
 
+  bool _isStrongPassword(String password) {
+    final passwordRegex = RegExp(
+      r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&.#^_-]).{8,}$',
+    );
+
+    return passwordRegex.hasMatch(password);
+  }
+
   Future<void> _register() async {
     final t = AppLocalizations.of(context)!;
+
+    if (!_isStrongPassword(passwordController.text.trim())) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'كلمة المرور يجب أن تحتوي على 8 أحرف على الأقل، وحرف كبير، وحرف صغير، ورقم، ورمز خاص.',
+          ),
+        ),
+      );
+      return;
+    }
 
     if (passwordController.text != confirmPasswordController.text) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -119,7 +138,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
     confirmPasswordController.dispose();
     super.dispose();
   }
-
   @override
   Widget build(BuildContext context) {
     final t = AppLocalizations.of(context)!;
@@ -135,7 +153,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 const Center(child: AppLogo(size: 70)),
-                const SizedBox(height: 32),LabeledTextField(
+
+                const SizedBox(height: 32),
+
+                LabeledTextField(
                   label: t.name,
                   hint: t.nameExample,
                   controller: nameController,
@@ -161,10 +182,22 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     child: DropdownButton<String>(
                       value: countryCode,
                       items: const [
-                        DropdownMenuItem(value: '+966', child: Text('🇸🇦 +966')),
-                        DropdownMenuItem(value: '+971', child: Text('🇦🇪 +971')),
-                        DropdownMenuItem(value: '+965', child: Text('🇰🇼 +965')),
-                        DropdownMenuItem(value: '+20', child: Text('🇪🇬 +20')),
+                        DropdownMenuItem(
+                          value: '+966',
+                          child: Text('🇸🇦 +966'),
+                        ),
+                        DropdownMenuItem(
+                          value: '+971',
+                          child: Text('🇦🇪 +971'),
+                        ),
+                        DropdownMenuItem(
+                          value: '+965',
+                          child: Text('🇰🇼 +965'),
+                        ),
+                        DropdownMenuItem(
+                          value: '+20',
+                          child: Text('🇪🇬 +20'),
+                        ),
                       ],
                       onChanged: (value) {
                         setState(() {
@@ -184,7 +217,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       t.birthDate,
                       style: AppTextStyles.bodyLarge,
                     ),
+
                     const SizedBox(height: 8),
+
                     GestureDetector(
                       onTap: _pickDate,
                       child: Container(
@@ -217,9 +252,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   isPassword: true,
                 ),
 
-                const SizedBox(height: 16),
-
-                LabeledTextField(
+                const SizedBox(height: 16),LabeledTextField(
                   label: t.confirmPassword,
                   hint: '',
                   controller: confirmPasswordController,
