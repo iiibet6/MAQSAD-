@@ -1,10 +1,10 @@
-// import 'dart:io';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:model_viewer_plus/model_viewer_plus.dart';
-// import 'package:image_picker/image_picker.dart';
-// import 'package:firebase_auth/firebase_auth.dart';
-// import 'package:firebase_storage/firebase_storage.dart';
-// import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../models/place_model.dart';
@@ -17,50 +17,50 @@ class PlaceDetailsScreen extends StatelessWidget {
     required this.place,
   });
 
-  /// 📸 التقاط صورة
   Future<void> _captureAndUpload(BuildContext context) async {
-    // الكود الأصلي الخاص بالتقاط الصورة ورفعها إلى Firebase Storage
-    // موقوف مؤقتًا بسبب مشكلة iOS simulator مع firebase_storage.
-    //
-    // كان ممكن يكون فيه شيء مثل:
-    // final picker = ImagePicker();
-    // final pickedFile = await picker.pickImage(source: ImageSource.camera);
-    // if (pickedFile == null) return;
-    //
-    // final user = FirebaseAuth.instance.currentUser;
-    // if (user == null) return;
-    //
-    // final file = File(pickedFile.path);
-    // final fileName = DateTime.now().millisecondsSinceEpoch.toString();
-    //
-    // final ref = FirebaseStorage.instance
-    //     .ref()
-    //     .child('users/${user.uid}/photos/$fileName.jpg');
-    //
-    
-    // await ref.putFile(file);
-    // final imageUrl = await ref.getDownloadURL();
-    //
-    // await FirebaseFirestore.instance
-    //     .collection('users')
-    //     .doc(user.uid)
-    //     .collection('photos')
-    //     .add({
-    //   'imageUrl': imageUrl,
-    //   'createdAt': FieldValue.serverTimestamp(),
-    // });
+    try {
+      final picker = ImagePicker();
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('ميزة التقاط ورفع الصورغير  متاحة حاليا'),
-      ),
-    );
+      final pickedFile = await picker.pickImage(
+        source: ImageSource.camera,
+        imageQuality: 80,
+      );
+
+      if (pickedFile == null) return;
+
+      final appDir = await getApplicationDocumentsDirectory();
+      final fileName = '${DateTime.now().millisecondsSinceEpoch}.jpg';
+
+      final savedImage = await File(pickedFile.path).copy(
+        '${appDir.path}/$fileName',
+      );
+
+      final prefs = await SharedPreferences.getInstance();
+      final photos = prefs.getStringList('local_photos') ?? [];
+
+      photos.add(savedImage.path);
+
+      await prefs.setStringList('local_photos', photos);
+
+      if (!context.mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('تم حفظ الصورة في ألبوم الذكريات'),
+        ),
+      );
+    } catch (e) {
+      if (!context.mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('حدث خطأ أثناء حفظ الصورة: $e'),
+        ),
+      );
+    }
   }
 
-  /// ⭐️ تقييم
-  void _rateExperience(BuildContext context) {
-    // ضعي منطق التقييم هنا لاحقًا
-  }
+  void _rateExperience(BuildContext context) {}
 
   Future<void> _openMap() async {
     Uri url;
@@ -79,9 +79,7 @@ class PlaceDetailsScreen extends StatelessWidget {
       url,
       mode: LaunchMode.externalApplication,
     );
-  }
-
-  @override
+  }@override
   Widget build(BuildContext context) {
     return Directionality(
       textDirection: TextDirection.rtl,
@@ -97,7 +95,6 @@ class PlaceDetailsScreen extends StatelessWidget {
                   icon: const Icon(Icons.arrow_back),
                   onPressed: () => Navigator.pop(context),
                 ),
-
                 Text(
                   place.title,
                   style: const TextStyle(
@@ -105,9 +102,7 @@ class PlaceDetailsScreen extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-
                 const SizedBox(height: 16),
-                /// الصورة + AR
                 ClipRRect(
                   borderRadius: BorderRadius.circular(18),
                   child: SizedBox(
@@ -151,15 +146,12 @@ class PlaceDetailsScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-
                 const SizedBox(height: 20),
-
                 const Text(
                   "عن المكان",
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 8),
-
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
@@ -168,15 +160,12 @@ class PlaceDetailsScreen extends StatelessWidget {
                   ),
                   child: Text(place.description),
                 ),
-
                 const SizedBox(height: 20),
-
                 const Text(
                   "أوقات العمل",
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 8),
-
                 Container(
                   width: double.infinity,
                   padding: const EdgeInsets.symmetric(vertical: 12),
@@ -188,18 +177,13 @@ class PlaceDetailsScreen extends StatelessWidget {
                     child: Text(place.workingHours),
                   ),
                 ),
-
                 const SizedBox(height: 20),
-
-                /// 📍 الموقع
                 const Text(
                   "موقع المكان",
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 8),
-
-                Container(
-                  padding: const EdgeInsets.all(12),
+                Container(padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(14),
@@ -219,10 +203,7 @@ class PlaceDetailsScreen extends StatelessWidget {
                     ],
                   ),
                 ),
-
                 const SizedBox(height: 20),
-
-                /// الأزرار
                 Container(
                   padding: const EdgeInsets.symmetric(vertical: 12),
                   decoration: BoxDecoration(
