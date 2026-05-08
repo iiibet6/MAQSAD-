@@ -19,7 +19,14 @@ class CafesScreen extends StatelessWidget {
     Restaurant(
       name: 'ساكورا',
       image: 'assets/images/sakura.jpeg',
+      gallery: [
+    'assets/images/sakura1.jpg',
+    'assets/images/sakura2.jpg',
+    'assets/images/sakura3.jpg',
+  ],
+
       subtitle: 'قهوة مختصة ومخبوزات',
+
       type: 'مقاهي',
       category: 'قهوة مختصة',
       tags: ['مقاهي', 'قهوة', 'مختصة', 'مخبوزات', 'V60', 'هادئ', 'حلويات'],
@@ -38,6 +45,11 @@ class CafesScreen extends StatelessWidget {
     Restaurant(
       name: 'سنس',
       image: 'assets/images/sns.jpeg',
+      gallery: [
+  'assets/images/sns1.jpg',
+  'assets/images/sns2.jpg',
+  'assets/images/sns3.jpg',
+],
       subtitle: 'قهوة وحلويات وبوكسات',
       type: 'مقاهي',
       category: 'قهوة وحلويات',
@@ -57,6 +69,12 @@ class CafesScreen extends StatelessWidget {
     Restaurant(
       name: 'إلتون',
       image: 'assets/images/ltone.jpeg',
+      gallery: [
+  'assets/images/ltone1.jpg',
+  'assets/images/ltone2.jpg',
+    'assets/images/ltone3.jpg',
+
+],
       subtitle: 'محمصة وقهوة مختصة',
       type: 'مقاهي',
       category: 'قهوة مختصة',
@@ -72,6 +90,12 @@ class CafesScreen extends StatelessWidget {
     ),
     Restaurant( name: 'ناف',
       image: 'assets/images/naf.png',
+      gallery: [
+  'assets/images/naf1.jpg',
+  'assets/images/naf2.jpg',
+    'assets/images/naf3.jpg',
+
+],
       subtitle: 'قهوة مختصة ومنتجات',
       type: 'مقاهي',
       category: 'قهوة مختصة',
@@ -87,6 +111,12 @@ class CafesScreen extends StatelessWidget {
     Restaurant(
       name: 'ساوث',
       image: 'assets/images/south.png',
+      gallery: [
+  'assets/images/south1.jpg',
+  'assets/images/south2.jpg',
+    'assets/images/south3.jpg',
+
+],
       subtitle: 'قهوة وحلويات',
       type: 'مقاهي',
       category: 'قهوة وحلويات',
@@ -102,6 +132,11 @@ class CafesScreen extends StatelessWidget {
     Restaurant(
       name: 'رواية',
       image: 'assets/images/riwaya.png',
+      gallery: [
+  'assets/images/riwaya1.jpg',
+  'assets/images/riwaya2.jpg',
+  'assets/images/riwaya3.jpg',
+],
       subtitle: 'قهوة وأجواء هادئة',
       type: 'مقاهي',
       category: 'قهوة هادئة',
