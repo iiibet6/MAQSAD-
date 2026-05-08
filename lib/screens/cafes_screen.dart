@@ -321,9 +321,11 @@ class _CafeDetailsScreenState extends State<CafeDetailsScreen> {
   int _userRating = 0;
 
   List<String> get _images {
-    final menuImages = widget.cafe.menu.map((item) => item.image).toList();
-    return [widget.cafe.image, ...menuImages].take(6).toList();
-  }
+  return [
+    widget.cafe.image,
+    ...widget.cafe.gallery,
+  ];
+}
 
   Future<void> _openMap() async {
     final query = Uri.encodeComponent('${widget.cafe.name} حائل');

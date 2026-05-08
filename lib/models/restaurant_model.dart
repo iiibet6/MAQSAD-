@@ -21,6 +21,7 @@ class Restaurant {
   final List<String> tags;
   final List<String> categories;
   final List<MenuItem> menu;
+  final List<String> gallery;
 
   const Restaurant({
     required this.name,
@@ -31,5 +32,6 @@ class Restaurant {
     required this.tags,
     required this.categories,
     required this.menu,
+    this.gallery = const [],
   });
 }
