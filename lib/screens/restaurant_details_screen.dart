@@ -296,14 +296,14 @@ class _RestaurantDetailsScreenState extends State<RestaurantDetailsScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          const Text(
-                            '4.8  ',
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: darkColor,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+                          Text(
+  '${widget.restaurant.googleRating.toStringAsFixed(1)}  ',
+  style: const TextStyle(
+    fontSize: 16,
+    color: darkColor,
+    fontWeight: FontWeight.bold,
+  ),
+),
                           const Icon(Icons.star, color: Colors.amber, size: 21),
                           const Icon(Icons.star, color: Colors.amber, size: 21),
                           const Icon(Icons.star, color: Colors.amber, size: 21),
