@@ -45,7 +45,7 @@ const _nearby = [
   NearbyPlace(
     name: 'مطعم روقا روكو',
     distance: '0.3 ك.م',
-    imageAsset: 'assets/images/nearby3.png',
+    imageAsset: 'assets/images/rougaro.png',
   ),
   NearbyPlace(
     name: 'اوسول كوفي',

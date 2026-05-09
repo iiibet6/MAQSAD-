@@ -6,6 +6,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import '../models/place_model.dart';
 
@@ -60,7 +62,129 @@ class PlaceDetailsScreen extends StatelessWidget {
     }
   }
 
-  void _rateExperience(BuildContext context) {}
+  Future<void> _saveRating(BuildContext context, int rating) async {
+    final user = FirebaseAuth.instance.currentUser;
+
+    if (user == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('يجب تسجيل الدخول لحفظ التقييم'),
+        ),
+      );
+      return;
+    }
+
+    final userRef =
+        FirebaseFirestore.instance.collection('users').doc(user.uid);
+
+    final snapshot = await userRef.get();
+    final data = snapshot.data() ?? {};
+
+    List ratings = data['ratings'] ?? [];
+
+    ratings.removeWhere(
+      (item) => item['title'] == place.title,
+    );
+
+    ratings.add({
+      'title': place.title,
+      'type': place.category,
+      'category': place.category,
+      'tags': '${place.category},${place.locationName}',
+      'rating': rating,
+    });
+
+    await userRef.update({
+      'ratings': ratings,
+    });
+
+    if (!context.mounted) return;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('تم حفظ تقييمك: $rating نجوم'),
+      ),
+    );
+  }
+
+  void _rateExperience(BuildContext context) {
+    int selectedRating = 0;showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(28),
+        ),
+      ),
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setModalState) {
+            return Padding(
+              padding: const EdgeInsets.fromLTRB(20, 24, 20, 28),
+              child: Directionality(
+                textDirection: TextDirection.rtl,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      width: 55,
+                      height: 5,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade300,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                    ),
+                    const SizedBox(height: 22),
+                    const Text(
+                      'قيّم تجربتك',
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 18),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: List.generate(
+                        5,
+                        (index) => GestureDetector(
+                          onTap: () {
+                            setModalState(() {
+                              selectedRating = index + 1;
+                            });
+                          },
+                          child: Icon(
+                            index < selectedRating
+                                ? Icons.star_rounded
+                                : Icons.star_border_rounded,
+                            color: Colors.amber,
+                            size: 42,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 22),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: selectedRating == 0
+                            ? null
+                            : () async {
+                                Navigator.pop(context);
+                                await _saveRating(context, selectedRating);
+                              },
+                        child: const Text('حفظ التقييم'),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
 
   Future<void> _openMap() async {
     Uri url;
