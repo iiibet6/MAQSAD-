@@ -10,6 +10,8 @@ class Hotel {
   final String rating;
   final String category;
   final List<String> tags;
+  final double googleRating;
+
 
   const Hotel({
     required this.name,
@@ -19,6 +21,8 @@ class Hotel {
     required this.rating,
     required this.category,
     required this.tags,
+   this.googleRating = 5.0,
+
   });
 }
 
@@ -28,6 +32,8 @@ class HotelsScreen extends StatelessWidget {
   static const List<Hotel> hotels = [
     Hotel(
       name: 'فندق ميلينيوم حائل',
+            googleRating: 4.7,
+
       image: 'assets/images/millennium_hail.jpg',
       description:
           'فندق 5 نجوم مناسب للعائلات ورجال الأعمال، ويضم مرافق فندقية وخدمات راقية.',
@@ -38,6 +44,8 @@ class HotelsScreen extends StatelessWidget {
     ),
     Hotel(
       name: 'فندق سكناي رويال',
+            googleRating: 4.7,
+
       image: 'assets/images/suknai_royal.jpg',
       description:
           'فندق مميز قريب من جامعة حائل وبحيرة أجا، مناسب للإقامة الهادئة.',
@@ -48,6 +56,8 @@ class HotelsScreen extends StatelessWidget {
     ),
     Hotel(
       name: 'مستقر للشقق المخدومة - النقرة',
+            googleRating: 4.7,
+
       image: 'assets/images/mostaqar.jpeg',
       description:
           'شقق مخدومة قريبة من ملعب حائل وقلعة أعيرف، مناسبة للعائلات.',
@@ -58,6 +68,8 @@ class HotelsScreen extends StatelessWidget {
     ),
     Hotel(
       name: 'ديزرت روز',
+            googleRating: 4.7,
+
       image: 'assets/images/desert_rose.jpg',
       description:
           'إقامة فندقية توفر مطعماً وحديقة وخدمة غرف، قريبة نسبياً من مطار حائل.',
@@ -68,6 +80,8 @@ class HotelsScreen extends StatelessWidget {
     ),
     Hotel(
       name: 'دولف للشقق الفندقية',
+            googleRating: 4.7,
+
       image: 'assets/images/doolv.jpeg',
       description:
           'شقق فندقية مع مسبح خارجي ومواقف مجانية، مناسبة للإقامة الاقتصادية.',

@@ -11,6 +11,8 @@ class SaudiRestaurantsScreen extends StatelessWidget {
   static const List<Restaurant> restaurants = [
     Restaurant(
       name: 'مطعم سفرة السعف',
+            googleRating: 4.7,
+
       image: 'assets/images/sofra.png',
       gallery: [
     'assets/images/sofra1.png',
@@ -32,6 +34,8 @@ class SaudiRestaurantsScreen extends StatelessWidget {
     ),
     Restaurant(
       name: 'مطعم بخاري ناز',
+            googleRating: 4.7,
+
       image: 'assets/images/naz.png',
       gallery: [
     'assets/images/naz1.png',
@@ -52,6 +56,8 @@ class SaudiRestaurantsScreen extends StatelessWidget {
     ),
     Restaurant(
       name: 'مطعم نكهة ديرتنا',
+            googleRating: 4.7,
+
       image: 'assets/images/dayratna.png',
       gallery: [
     'assets/images/dayratna1.png',
@@ -72,6 +78,8 @@ class SaudiRestaurantsScreen extends StatelessWidget {
     ),
     Restaurant(
       name: 'مطعم ضيوف الأصالة',
+            googleRating: 4.7,
+
       image: 'assets/images/alasala.png',
       gallery: [
     'assets/images/alasala1.png',
@@ -92,6 +100,8 @@ class SaudiRestaurantsScreen extends StatelessWidget {
     ),
     Restaurant(
       name: 'مطعم السدة',
+            googleRating: 4.7,
+
       image: 'assets/images/alsaddah.png',
       gallery: [
     'assets/images/alsaddah1.png',
@@ -112,6 +122,8 @@ class SaudiRestaurantsScreen extends StatelessWidget {
     ),
     Restaurant(
       name: 'مطعم الوادي المبارك',
+            googleRating: 4.7,
+
       image: 'assets/images/alwadi.jpeg',
       gallery: [
     'assets/images/alwadi1.png',
@@ -132,6 +144,8 @@ class SaudiRestaurantsScreen extends StatelessWidget {
     ),
     Restaurant(
       name: 'مطعم القصرين',
+            googleRating: 4.7,
+
       image: 'assets/images/alqasrain.jpeg',
       gallery: [
     'assets/images/alqasrain1.png',

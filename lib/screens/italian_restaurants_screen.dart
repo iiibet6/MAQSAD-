@@ -32,6 +32,8 @@ class ItalianRestaurantsScreen extends StatelessWidget {
     ),
     Restaurant(
       name: 'روقا روكو',
+            googleRating: 4.7,
+
       image: 'assets/images/rougaro.png',
       gallery: [
   'assets/images/rougaro1.png',
@@ -52,6 +54,8 @@ class ItalianRestaurantsScreen extends StatelessWidget {
     ),
     Restaurant(
       name: 'أوبالو',
+            googleRating: 4.7,
+
       image: 'assets/images/opalo.jpeg',
        gallery: [
   'assets/images/opalo1.png',
@@ -73,6 +77,8 @@ class ItalianRestaurantsScreen extends StatelessWidget {
     ),
     Restaurant(
       name: 'روما وي',
+            googleRating: 4.7,
+
       image: 'assets/images/romaway.png',
        gallery: [
   'assets/images/romaway1.png',
@@ -97,6 +103,8 @@ class ItalianRestaurantsScreen extends StatelessWidget {
     ),
     Restaurant(
       name: 'مايسترو بيتزا',
+            googleRating: 4.7,
+
       image: 'assets/images/maestro.png',
       gallery: [
   'assets/images/maestro1.png',

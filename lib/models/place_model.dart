@@ -10,7 +10,7 @@ class Place {
   final double longitude;
 
   final String? plusCode; 
-
+final double googleRating;
   Place({
     required this.title,
     required this.image,
@@ -22,5 +22,6 @@ class Place {
     required this.latitude,
     required this.longitude,
     this.plusCode, 
+    this.googleRating = 5.0,
   });
 }

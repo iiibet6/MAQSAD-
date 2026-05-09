@@ -46,6 +46,7 @@ class ContentBasedRecommendationService {
           title: r.name,
           image: r.image,
           subtitle: r.subtitle,
+          rating: r.googleRating,
           content:
               '${r.name} ${r.subtitle} ${r.type} ${r.category} ${r.tags.join(" ")}',
         ),

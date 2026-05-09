@@ -11,6 +11,7 @@ class EgyptianRestaurantsScreen extends StatelessWidget {
   static const List<Restaurant> restaurants = [
     Restaurant(
       name: 'مطعم كوخ القاهرة',
+      googleRating: 4.7,
       image: 'assets/images/cairo_hut.jpeg',
       gallery: [
   'assets/images/cairo_hut1.png',
@@ -31,6 +32,7 @@ class EgyptianRestaurantsScreen extends StatelessWidget {
     ),
     Restaurant(
       name: 'مطعم ريف القاهرة',
+      googleRating: 4.7,
       image: 'assets/images/reef_cairo.png',
       gallery: [
   'assets/images/reef_cairo1.png',
@@ -53,6 +55,7 @@ class EgyptianRestaurantsScreen extends StatelessWidget {
     ),
     Restaurant(
       name: 'مطعم كشريتا',
+      googleRating: 4.7,
       image: 'assets/images/kosharita.jpeg',
        gallery: [
   'assets/images/kosharita1.png',
@@ -77,6 +80,7 @@ class EgyptianRestaurantsScreen extends StatelessWidget {
     ),
     Restaurant(
       name: 'مطعم كشري وحواوشي',
+      googleRating: 4.7,
       image: 'assets/images/koshary_hawawshi.jpeg',
        gallery: [
   'assets/images/koshary_hawawshi1.png',
@@ -98,6 +102,7 @@ class EgyptianRestaurantsScreen extends StatelessWidget {
     ),
     Restaurant(
       name: 'مطعم العمدة',
+      googleRating: 4.7,
       image: 'assets/images/omda.jpeg',
       gallery: [
   'assets/images/omda1.png',

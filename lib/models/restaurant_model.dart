@@ -22,6 +22,7 @@ class Restaurant {
   final List<String> categories;
   final List<MenuItem> menu;
   final List<String> gallery;
+  final double googleRating;
 
   const Restaurant({
     required this.name,
@@ -33,5 +34,6 @@ class Restaurant {
     required this.categories,
     required this.menu,
     this.gallery = const [],
+    this.googleRating = 5.0,
   });
 }

@@ -11,6 +11,8 @@ class IndianRestaurantsScreen extends StatelessWidget {
   static const List<Restaurant> restaurants = [
     Restaurant(
       name: 'مطعم تاج محل',
+            googleRating: 4.7,
+
       image: 'assets/images/taj_mahal.jpeg',
       gallery: [
   'assets/images/taj_mahal1.png',
@@ -32,6 +34,8 @@ class IndianRestaurantsScreen extends StatelessWidget {
     ),
     Restaurant(
       name: 'مطعم بهارات المذاق الهندي',
+            googleRating: 4.7,
+
       image: 'assets/images/buharat.png',
        gallery: [
   'assets/images/buharat1.png',
@@ -55,6 +59,8 @@ class IndianRestaurantsScreen extends StatelessWidget {
     ),
     Restaurant(
       name: 'مطعم عرفة دربار',
+            googleRating: 4.7,
+
       image: 'assets/images/arafa_darbar.jpeg',
        gallery: [
   'assets/images/arafa_darbar1.png',
@@ -80,6 +86,8 @@ class IndianRestaurantsScreen extends StatelessWidget {
     ),
     Restaurant(
       name: 'مطعم أنان',
+            googleRating: 4.7,
+
       image: 'assets/images/anaan.jpeg',
        gallery: [
   'assets/images/anaan1.png',
@@ -103,6 +111,8 @@ class IndianRestaurantsScreen extends StatelessWidget {
     ),
     Restaurant(
       name: 'مطعم كومار',
+            googleRating: 4.7,
+
       image: 'assets/images/kumar.jpeg',
       gallery: [
   'assets/images/kumar1.png',

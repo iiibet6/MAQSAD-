@@ -18,7 +18,9 @@ class CafesScreen extends StatelessWidget {
   static const List<Restaurant> cafes = [
     Restaurant(
       name: 'ساكورا',
+      googleRating: 4.7,
       image: 'assets/images/sakura.jpeg',
+
       gallery: [
         'assets/images/sakura1.jpg',
         'assets/images/sakura2.jpg',
@@ -42,6 +44,7 @@ class CafesScreen extends StatelessWidget {
     ),
     Restaurant(
       name: 'سنس',
+      googleRating: 4.7,
       image: 'assets/images/sns.jpeg',
       gallery: [
         'assets/images/sns1.jpg',
@@ -66,6 +69,7 @@ class CafesScreen extends StatelessWidget {
     ),
     Restaurant(
       name: 'إلتون',
+      googleRating: 4.7,
       image: 'assets/images/ltone.jpeg',
       gallery: [
         'assets/images/ltone1.jpg',
@@ -86,6 +90,7 @@ class CafesScreen extends StatelessWidget {
     ),
     Restaurant(
       name: 'ناف',
+      googleRating: 4.7,
       image: 'assets/images/naf.png',
       gallery: [
         'assets/images/naf1.jpg',
@@ -106,6 +111,7 @@ class CafesScreen extends StatelessWidget {
     ),
     Restaurant(
       name: 'ساوث',
+      googleRating: 4.7,
       image: 'assets/images/south.png',
       gallery: [
         'assets/images/south1.jpg',
@@ -126,6 +132,7 @@ class CafesScreen extends StatelessWidget {
     ),
     Restaurant(
       name: 'رواية',
+      googleRating: 4.7,
       image: 'assets/images/riwaya.png',
       gallery: [
         'assets/images/riwaya1.jpg',

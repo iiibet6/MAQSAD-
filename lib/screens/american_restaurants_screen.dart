@@ -10,6 +10,7 @@ class AmericanRestaurantsScreen extends StatelessWidget {
   static const List<Restaurant> restaurants = [
     Restaurant(
       name: 'مطعم أبل بيز',
+      googleRating: 4.7,
       image: 'assets/images/applebees.png',
       gallery: [
   'assets/images/applebees1.png',
@@ -39,6 +40,7 @@ class AmericanRestaurantsScreen extends StatelessWidget {
 
     Restaurant(
       name: 'كنتاكي',
+      googleRating: 4.5,
       image: 'assets/images/kfc.jpeg',
       gallery: [
   'assets/images/kfc1.png',
