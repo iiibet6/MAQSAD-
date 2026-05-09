@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 
 import '../models/restaurant_model.dart';
-import 'restaurant_menu_screen.dart';
 import '../services/favorites_service.dart';
 import '../l10n/app_localizations.dart';
-
+import 'restaurant_details_screen.dart';
 class AmericanRestaurantsScreen extends StatelessWidget {
   const AmericanRestaurantsScreen({super.key});
 
@@ -12,6 +11,11 @@ class AmericanRestaurantsScreen extends StatelessWidget {
     Restaurant(
       name: 'مطعم أبل بيز',
       image: 'assets/images/applebees.png',
+      gallery: [
+  'assets/images/applebees1.png',
+  'assets/images/applebees2.png',
+  'assets/images/applebees3.png',
+],
       subtitle: 'أمريكي، برجر، باستا وستيك',
       type: 'مطاعم',
       category: 'أمريكي',
@@ -36,6 +40,11 @@ class AmericanRestaurantsScreen extends StatelessWidget {
     Restaurant(
       name: 'كنتاكي',
       image: 'assets/images/kfc.jpeg',
+      gallery: [
+  'assets/images/kfc1.png',
+  'assets/images/kfc2.png',
+  'assets/images/kfc3.png',
+],
       subtitle: 'دجاج مقلي وسندويتشات',
       type: 'مطاعم',
       category: 'أمريكي',
@@ -76,7 +85,7 @@ class AmericanRestaurantsScreen extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => RestaurantMenuScreen(
+                    builder: (_) => RestaurantDetailsScreen(
                       restaurant: restaurant,
                     ),
                   ),

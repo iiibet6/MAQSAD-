@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../models/restaurant_model.dart';
-import 'restaurant_menu_screen.dart';
+import 'restaurant_details_screen.dart';
 import '../services/favorites_service.dart';
 import '../l10n/app_localizations.dart';
 
@@ -11,7 +11,12 @@ class SaudiRestaurantsScreen extends StatelessWidget {
   static const List<Restaurant> restaurants = [
     Restaurant(
       name: 'مطعم سفرة السعف',
-      image: 'assets/images/place1.png',
+      image: 'assets/images/sofra.png',
+      gallery: [
+    'assets/images/sofra1.png',
+    'assets/images/sofra2.png',
+    'assets/images/sofra3.png',
+  ],
       subtitle: 'مأكولات سعودية حساوية',
       type: 'مطاعم',
       category: 'سعودي',
@@ -28,6 +33,12 @@ class SaudiRestaurantsScreen extends StatelessWidget {
     Restaurant(
       name: 'مطعم بخاري ناز',
       image: 'assets/images/naz.png',
+      gallery: [
+    'assets/images/naz1.png',
+    'assets/images/naz2.png',
+    'assets/images/naz3.png',
+    'assets/images/naz4.png',
+  ],
       subtitle: 'بخاري ودجاج على الفحم',
       type: 'مطاعم',
       category: 'سعودي',
@@ -42,6 +53,12 @@ class SaudiRestaurantsScreen extends StatelessWidget {
     Restaurant(
       name: 'مطعم نكهة ديرتنا',
       image: 'assets/images/dayratna.png',
+      gallery: [
+    'assets/images/dayratna1.png',
+    'assets/images/dayratna2.png',
+    'assets/images/dayratna3.png',
+    'assets/images/dayratna4.png',
+  ],
       subtitle: 'أكلات شعبية سعودية',
       type: 'مطاعم',
       category: 'سعودي',
@@ -56,6 +73,12 @@ class SaudiRestaurantsScreen extends StatelessWidget {
     Restaurant(
       name: 'مطعم ضيوف الأصالة',
       image: 'assets/images/alasala.png',
+      gallery: [
+    'assets/images/alasala1.png',
+    'assets/images/alasala2.png',
+    'assets/images/alasala3.png',
+    'assets/images/alasala4.png',
+  ],
       subtitle: 'مأكولات تراثية وأرز',
       type: 'مطاعم',
       category: 'سعودي',
@@ -70,6 +93,12 @@ class SaudiRestaurantsScreen extends StatelessWidget {
     Restaurant(
       name: 'مطعم السدة',
       image: 'assets/images/alsaddah.png',
+      gallery: [
+    'assets/images/alsaddah1.png',
+    'assets/images/alsaddah2.png',
+    'assets/images/alsaddah3.png',
+    'assets/images/alsaddah4.png',
+  ],
       subtitle: 'أطباق سعودية شعبية',
       type: 'مطاعم',
       category: 'سعودي',
@@ -84,6 +113,12 @@ class SaudiRestaurantsScreen extends StatelessWidget {
     Restaurant(
       name: 'مطعم الوادي المبارك',
       image: 'assets/images/alwadi.jpeg',
+      gallery: [
+    'assets/images/alwadi1.png',
+    'assets/images/alwadi2.png',
+    'assets/images/alwadi3.png',
+    'assets/images/alwadi4.png',
+  ],
       subtitle: 'بخاري ومشويات',
       type: 'مطاعم',
       category: 'سعودي',
@@ -98,6 +133,12 @@ class SaudiRestaurantsScreen extends StatelessWidget {
     Restaurant(
       name: 'مطعم القصرين',
       image: 'assets/images/alqasrain.jpeg',
+      gallery: [
+    'assets/images/alqasrain1.png',
+    'assets/images/alqasrain2.png',
+    'assets/images/alqasrain3.png',
+    'assets/images/alqasrain4.png',
+  ],
       subtitle: 'مندي وكبسات',
       type: 'مطاعم',
       category: 'سعودي',
@@ -135,7 +176,7 @@ class SaudiRestaurantsScreen extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => RestaurantMenuScreen(
+                    builder: (_) => RestaurantDetailsScreen(
                       restaurant: restaurant,
                     ),
                   ),

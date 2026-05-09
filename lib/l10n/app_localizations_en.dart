@@ -520,4 +520,46 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get continueAsGuest => 'Continue as Guest';
+
+  @override
+  String get workingHours => 'Working Hours: 7:00 AM - 12:00 AM';
+
+  @override
+  String get aboutPlace => 'About Place';
+
+  @override
+  String get ratePlace => 'Rate This Place';
+
+  @override
+  String get contactPlace => 'Contact Place';
+
+  @override
+  String get writeComment => 'Write Your Comment';
+
+  @override
+  String get commentHint => 'Write your opinion about the place...';
+
+  @override
+  String get send => 'Send';
+
+  @override
+  String get menu => 'Menu';
+
+  @override
+  String get call => 'Call';
+
+  @override
+  String get share => 'Share';
+
+  @override
+  String get location => 'Location';
+
+  @override
+  String get commentSent => 'Your comment has been sent successfully';
+
+  @override
+  String get ratingSaved => 'Your rating has been saved';
+
+  @override
+  String get stars => 'Stars';
 }

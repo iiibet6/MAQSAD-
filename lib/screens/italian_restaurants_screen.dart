@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 import '../models/restaurant_model.dart';
-import 'restaurant_menu_screen.dart';
 import '../services/favorites_service.dart';
 import '../l10n/app_localizations.dart';
+import 'restaurant_details_screen.dart';
 
 class ItalianRestaurantsScreen extends StatelessWidget {
   const ItalianRestaurantsScreen({super.key});
@@ -12,6 +12,11 @@ class ItalianRestaurantsScreen extends StatelessWidget {
     Restaurant(
       name: 'بيكوال',
       image: 'assets/images/picual.jpeg',
+      gallery: [
+  'assets/images/picual1.png',
+  'assets/images/picual2.png',
+  'assets/images/picual3.png',
+],
       subtitle: 'نكهات إيطالية وباستا وبيتزا',
       type: 'مطاعم',
       category: 'إيطالي',
@@ -27,7 +32,12 @@ class ItalianRestaurantsScreen extends StatelessWidget {
     ),
     Restaurant(
       name: 'روقا روكو',
-      image: 'assets/images/nearby3.png',
+      image: 'assets/images/rougaro.png',
+      gallery: [
+  'assets/images/rougaro1.png',
+  'assets/images/rougaro2.png',
+  'assets/images/rougaro3.png',
+],
       subtitle: 'تجربة إيطالية بطابع حائلي',
       type: 'مطاعم',
       category: 'إيطالي',
@@ -43,6 +53,11 @@ class ItalianRestaurantsScreen extends StatelessWidget {
     Restaurant(
       name: 'أوبالو',
       image: 'assets/images/opalo.jpeg',
+       gallery: [
+  'assets/images/opalo1.png',
+  'assets/images/opalo2.png',
+  'assets/images/opalo3.png',
+],
       subtitle: 'بيتزا وباستا وروزيتو',
       type: 'مطاعم',
       category: 'إيطالي',
@@ -59,6 +74,11 @@ class ItalianRestaurantsScreen extends StatelessWidget {
     Restaurant(
       name: 'روما وي',
       image: 'assets/images/romaway.png',
+       gallery: [
+  'assets/images/romaway1.png',
+  'assets/images/romaway2.png',
+  'assets/images/romaway3.png',
+],
       subtitle: 'بيتزا وباستا ولازانيا',
       type: 'مطاعم',
       category: 'إيطالي',
@@ -78,6 +98,11 @@ class ItalianRestaurantsScreen extends StatelessWidget {
     Restaurant(
       name: 'مايسترو بيتزا',
       image: 'assets/images/maestro.png',
+      gallery: [
+  'assets/images/maestro1.png',
+  'assets/images/maestro2.png',
+  'assets/images/maestro3.png',
+],
       subtitle: 'بيتزا سريعة وعروض متنوعة',
       type: 'مطاعم',
       category: 'إيطالي',
@@ -118,7 +143,7 @@ class ItalianRestaurantsScreen extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => RestaurantMenuScreen(
+                    builder: (_) => RestaurantDetailsScreen(
                       restaurant: restaurant,
                     ),
                   ),

@@ -1120,6 +1120,90 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Continue as Guest'**
   String get continueAsGuest;
+
+  /// No description provided for @workingHours.
+  ///
+  /// In en, this message translates to:
+  /// **'Working Hours: 7:00 AM - 12:00 AM'**
+  String get workingHours;
+
+  /// No description provided for @aboutPlace.
+  ///
+  /// In en, this message translates to:
+  /// **'About Place'**
+  String get aboutPlace;
+
+  /// No description provided for @ratePlace.
+  ///
+  /// In en, this message translates to:
+  /// **'Rate This Place'**
+  String get ratePlace;
+
+  /// No description provided for @contactPlace.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact Place'**
+  String get contactPlace;
+
+  /// No description provided for @writeComment.
+  ///
+  /// In en, this message translates to:
+  /// **'Write Your Comment'**
+  String get writeComment;
+
+  /// No description provided for @commentHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Write your opinion about the place...'**
+  String get commentHint;
+
+  /// No description provided for @send.
+  ///
+  /// In en, this message translates to:
+  /// **'Send'**
+  String get send;
+
+  /// No description provided for @menu.
+  ///
+  /// In en, this message translates to:
+  /// **'Menu'**
+  String get menu;
+
+  /// No description provided for @call.
+  ///
+  /// In en, this message translates to:
+  /// **'Call'**
+  String get call;
+
+  /// No description provided for @share.
+  ///
+  /// In en, this message translates to:
+  /// **'Share'**
+  String get share;
+
+  /// No description provided for @location.
+  ///
+  /// In en, this message translates to:
+  /// **'Location'**
+  String get location;
+
+  /// No description provided for @commentSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Your comment has been sent successfully'**
+  String get commentSent;
+
+  /// No description provided for @ratingSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Your rating has been saved'**
+  String get ratingSaved;
+
+  /// No description provided for @stars.
+  ///
+  /// In en, this message translates to:
+  /// **'Stars'**
+  String get stars;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

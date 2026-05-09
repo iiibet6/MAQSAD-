@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 import '../models/restaurant_model.dart';
-import 'restaurant_menu_screen.dart';
 import '../services/favorites_service.dart';
 import '../l10n/app_localizations.dart';
+import 'restaurant_details_screen.dart';
 
 class EgyptianRestaurantsScreen extends StatelessWidget {
   const EgyptianRestaurantsScreen({super.key});
@@ -12,6 +12,11 @@ class EgyptianRestaurantsScreen extends StatelessWidget {
     Restaurant(
       name: 'مطعم كوخ القاهرة',
       image: 'assets/images/cairo_hut.jpeg',
+      gallery: [
+  'assets/images/cairo_hut1.png',
+  'assets/images/cairo_hut2.png',
+  'assets/images/cairo_hut3.png',
+],
       subtitle: 'أكلات مصرية وكشري وحواوشي',
       type: 'مطاعم',
       category: 'مصري',
@@ -27,6 +32,11 @@ class EgyptianRestaurantsScreen extends StatelessWidget {
     Restaurant(
       name: 'مطعم ريف القاهرة',
       image: 'assets/images/reef_cairo.png',
+      gallery: [
+  'assets/images/reef_cairo1.png',
+  'assets/images/reef_cairo2.png',
+  'assets/images/reef_cairo3.png',
+],
       subtitle: 'مشويات وأطباق مصرية',
       type: 'مطاعم',
       category: 'مصري',
@@ -44,6 +54,11 @@ class EgyptianRestaurantsScreen extends StatelessWidget {
     Restaurant(
       name: 'مطعم كشريتا',
       image: 'assets/images/kosharita.jpeg',
+       gallery: [
+  'assets/images/kosharita1.png',
+  'assets/images/kosharita2.png',
+  'assets/images/kosharita3.png',
+],
       subtitle: 'كشري مصري وطواجن',
       type: 'مطاعم',
       category: 'مصري',
@@ -63,6 +78,11 @@ class EgyptianRestaurantsScreen extends StatelessWidget {
     Restaurant(
       name: 'مطعم كشري وحواوشي',
       image: 'assets/images/koshary_hawawshi.jpeg',
+       gallery: [
+  'assets/images/koshary_hawawshi1.png',
+  'assets/images/koshary_hawawshi2.png',
+  'assets/images/koshary_hawawshi3.png',
+],
       subtitle: 'كشري وحواوشي وعصائر',
       type: 'مطاعم',
       category: 'مصري',
@@ -79,6 +99,11 @@ class EgyptianRestaurantsScreen extends StatelessWidget {
     Restaurant(
       name: 'مطعم العمدة',
       image: 'assets/images/omda.jpeg',
+      gallery: [
+  'assets/images/omda1.png',
+  'assets/images/omda2.png',
+  'assets/images/omda3.png',
+],
       subtitle: 'مشويات وأكلات مصرية',
       type: 'مطاعم',
       category: 'مصري',
@@ -118,7 +143,7 @@ class EgyptianRestaurantsScreen extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => RestaurantMenuScreen(
+                    builder: (_) => RestaurantDetailsScreen(
                       restaurant: restaurant,
                     ),
                   ),

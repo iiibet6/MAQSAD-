@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 import '../models/restaurant_model.dart';
-import 'restaurant_menu_screen.dart';
 import '../services/favorites_service.dart';
 import '../l10n/app_localizations.dart';
+import 'restaurant_details_screen.dart';
 
 class IndianRestaurantsScreen extends StatelessWidget {
   const IndianRestaurantsScreen({super.key});
@@ -12,6 +12,11 @@ class IndianRestaurantsScreen extends StatelessWidget {
     Restaurant(
       name: 'مطعم تاج محل',
       image: 'assets/images/taj_mahal.jpeg',
+      gallery: [
+  'assets/images/taj_mahal1.png',
+  'assets/images/taj_mahal2.png',
+  'assets/images/taj_mahal3.png',
+],
       subtitle: 'مطعم هندي كلاسيكي ومأكولات بحرية',
       type: 'مطاعم',
       category: 'هندي',
@@ -28,6 +33,11 @@ class IndianRestaurantsScreen extends StatelessWidget {
     Restaurant(
       name: 'مطعم بهارات المذاق الهندي',
       image: 'assets/images/buharat.png',
+       gallery: [
+  'assets/images/buharat1.png',
+  'assets/images/buharat2.png',
+  'assets/images/buharat3.png',
+],
       subtitle: 'أطباق هندية ومشويات وفخار',
       type: 'مطاعم',
       category: 'هندي',
@@ -46,6 +56,11 @@ class IndianRestaurantsScreen extends StatelessWidget {
     Restaurant(
       name: 'مطعم عرفة دربار',
       image: 'assets/images/arafa_darbar.jpeg',
+       gallery: [
+  'assets/images/arafa_darbar1.png',
+  'assets/images/arafa_darbar2.png',
+  'assets/images/arafa_darbar3.png',
+],
       subtitle: 'برياني وتندوري ومأكولات هندية',
       type: 'مطاعم',
       category: 'هندي',
@@ -65,7 +80,13 @@ class IndianRestaurantsScreen extends StatelessWidget {
     ),
     Restaurant(
       name: 'مطعم أنان',
-      image: 'assets/images/anaan.jpeg',subtitle: 'رولات تكا وبرياني بطريقة عصرية',
+      image: 'assets/images/anaan.jpeg',
+       gallery: [
+  'assets/images/anaan1.png',
+  'assets/images/anaan2.png',
+  'assets/images/anaan3.png',
+],
+      subtitle: 'رولات تكا وبرياني بطريقة عصرية',
       type: 'مطاعم',
       category: 'هندي',
       tags: ['مطاعم', 'هندي', 'رولات', 'تكا', 'برياني', 'سبايسي', 'عصري'],
@@ -83,6 +104,11 @@ class IndianRestaurantsScreen extends StatelessWidget {
     Restaurant(
       name: 'مطعم كومار',
       image: 'assets/images/kumar.jpeg',
+      gallery: [
+  'assets/images/kumar1.png',
+  'assets/images/kumar2.png',
+  'assets/images/kumar3.png',
+],
       subtitle: 'تجربة هندية عصرية وأطباق مميزة',
       type: 'مطاعم',
       category: 'هندي',
@@ -125,7 +151,7 @@ class IndianRestaurantsScreen extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => RestaurantMenuScreen(
+                    builder: (_) => RestaurantDetailsScreen(
                       restaurant: restaurant,
                     ),
                   ),

@@ -201,5 +201,19 @@
   "noFavoritesYet": "No favorites yet ❤️",
 
   "signInOrRegister": "Sign In or Register",
-  "continueAsGuest": "Continue as Guest"
+  "continueAsGuest": "Continue as Guest",
+  "workingHours": "Working Hours: 7:00 AM - 12:00 AM",
+"aboutPlace": "About Place",
+"ratePlace": "Rate This Place",
+"contactPlace": "Contact Place",
+"writeComment": "Write Your Comment",
+"commentHint": "Write your opinion about the place...",
+"send": "Send",
+"menu": "Menu",
+"call": "Call",
+"share": "Share",
+"location": "Location",
+"commentSent": "Your comment has been sent successfully",
+"ratingSaved": "Your rating has been saved",
+"stars": "Stars"
 }

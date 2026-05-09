@@ -520,4 +520,46 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get continueAsGuest => 'الدخول كضيف';
+
+  @override
+  String get workingHours => 'ساعات العمل: 07:00 ص - 12:00 ص';
+
+  @override
+  String get aboutPlace => 'عن المكان';
+
+  @override
+  String get ratePlace => 'قيّم المكان';
+
+  @override
+  String get contactPlace => 'تواصل مع المكان';
+
+  @override
+  String get writeComment => 'اكتب تعليقك';
+
+  @override
+  String get commentHint => 'اكتب رأيك عن المكان...';
+
+  @override
+  String get send => 'إرسال';
+
+  @override
+  String get menu => 'المنيو';
+
+  @override
+  String get call => 'اتصال';
+
+  @override
+  String get share => 'مشاركة';
+
+  @override
+  String get location => 'الموقع';
+
+  @override
+  String get commentSent => 'تم إرسال تعليقك بنجاح';
+
+  @override
+  String get ratingSaved => 'تم حفظ تقييمك';
+
+  @override
+  String get stars => 'نجوم';
 }

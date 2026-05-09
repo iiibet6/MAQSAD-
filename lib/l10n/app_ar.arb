@@ -201,5 +201,19 @@
   "noFavoritesYet": "لا توجد مفضلات حالياً ❤️",
 
   "signInOrRegister": "تسجيل دخول أو تسجيل جديد",
-  "continueAsGuest": "الدخول كضيف"
+  "continueAsGuest": "الدخول كضيف",
+"workingHours": "ساعات العمل: 07:00 ص - 12:00 ص",
+"aboutPlace": "عن المكان",
+"ratePlace": "قيّم المكان",
+"contactPlace": "تواصل مع المكان",
+"writeComment": "اكتب تعليقك",
+"commentHint": "اكتب رأيك عن المكان...",
+"send": "إرسال",
+"menu": "المنيو",
+"call": "اتصال",
+"share": "مشاركة",
+"location": "الموقع",
+"commentSent": "تم إرسال تعليقك بنجاح",
+"ratingSaved": "تم حفظ تقييمك",
+"stars": "نجوم"
 }
