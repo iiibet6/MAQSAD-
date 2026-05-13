@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+
 import '../models/restaurant_model.dart';
+import '../services/cart_service.dart';
+import 'cart_screen.dart';
 
 class RestaurantMenuScreen extends StatefulWidget {
   final Restaurant restaurant;
@@ -46,9 +49,32 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
   }
 
   @override
-  void initState() {
-    super.initState();
-    selectedCategory = 'عروض مقصد';
+void initState() {
+  super.initState();
+  selectedCategory = 'عروض مقصد';
+  CartService.setRestaurant(widget.restaurant.name);
+}
+
+  void _openCart() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => CartScreen(
+          restaurantName: widget.restaurant.name,
+        ),
+      ),
+    );
+  }
+
+  void _addToCart(MenuItem item) {
+    CartService.addToCart(item);
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('تمت إضافة ${item.name} إلى السلة'),
+        duration: const Duration(seconds: 1),
+      ),
+    );
   }
 
   @override
@@ -69,55 +95,95 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
           backgroundColor: Colors.white,
           elevation: 0,
           foregroundColor: Colors.black,
+          actions: [
+            ValueListenableBuilder(
+              valueListenable: CartService.cartItems,
+              builder: (context, cartItems, _) {
+                final count = cartItems.fold<int>(
+                  0,
+                  (sum, item) => sum + item.quantity,
+                );return Stack(
+                  children: [
+                    IconButton(
+                      onPressed: _openCart,
+                      icon: const Icon(Icons.shopping_bag_outlined),
+                    ),
+                    if (count > 0)
+                      Positioned(
+                        top: 8,
+                        right: 8,
+                        child: Container(
+                          padding: const EdgeInsets.all(4),
+                          decoration: const BoxDecoration(
+                            color: offerColor,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Text(
+                            count.toString(),
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                  ],
+                );
+              },
+            ),
+          ],
         ),
         body: Column(
           children: [
             SizedBox(
-              height: 62,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                itemCount: categories.length,
-                itemBuilder: (context, index) {
-                  final category = categories[index];
-                  final selected = category == selectedCategory;
+  height: 62,
+  child: SingleChildScrollView(
+    scrollDirection: Axis.horizontal,
+    padding: const EdgeInsets.symmetric(horizontal: 12),
+    child: Row(
+      children: categories.map((category) {
+        final selected = category == selectedCategory;
 
-                  return GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        selectedCategory = category;
-                      });
-                    },
-                    child: Container(
-                      margin: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 10,
-                      ),
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                      decoration: BoxDecoration(
-                        border: Border(
-                          bottom: BorderSide(
-                            color: selected ? Colors.black : Colors.transparent,
-                            width: 3,
-                          ),
-                        ),
-                      ),
-                      child: Center(
-                        child: Text(
-                          category,
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: selected ? Colors.black : Colors.grey,
-                          ),
-                        ),
-                      ),
-                    ),
-                  );
-                },
+        return InkWell(
+          onTap: () {
+            if (selectedCategory == category) return;
+
+            setState(() {
+              selectedCategory = category;
+            });
+          },
+          borderRadius: BorderRadius.circular(12),
+          child: Container(
+            margin: const EdgeInsets.symmetric(
+              horizontal: 8,
+              vertical: 10,
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            decoration: BoxDecoration(
+              border: Border(
+                bottom: BorderSide(
+                  color: selected ? Colors.black : Colors.transparent,
+                  width: 3,
+                ),
               ),
             ),
-
+            child: Center(
+              child: Text(
+                category,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: selected ? Colors.black : Colors.grey,
+                ),
+              ),
+            ),
+          ),
+        );
+      }).toList(),
+    ),
+  ),
+),
             if (selectedCategory != 'عروض مقصد')
               _MaqsedBanner(
                 onTap: () {
@@ -125,22 +191,24 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
                     selectedCategory = 'عروض مقصد';
                   });
                 },
-              ),Expanded(
+              ),
+            Expanded(
               child: GridView.builder(
                 padding: const EdgeInsets.all(16),
                 itemCount: filteredItems.length,
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 14,
-                  mainAxisSpacing: 14,
-                  childAspectRatio: 0.72,
-                ),
+  crossAxisCount: 2,
+  crossAxisSpacing: 14,
+  mainAxisSpacing: 14,
+  mainAxisExtent: 260,
+),
                 itemBuilder: (context, index) {
                   final item = filteredItems[index];
 
                   return _MenuCard(
                     item: item,
                     isOffer: selectedCategory == 'عروض مقصد',
+                    onAdd: () => _addToCart(item),
                   );
                 },
               ),
@@ -153,9 +221,7 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
 }
 
 class _MaqsedBanner extends StatelessWidget {
-  final VoidCallback onTap;
-
-  const _MaqsedBanner({
+  final VoidCallback onTap;const _MaqsedBanner({
     required this.onTap,
   });
 
@@ -175,7 +241,7 @@ class _MaqsedBanner extends StatelessWidget {
             icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 15),
             label: const Text('عرض العروض'),
             style: ElevatedButton.styleFrom(
-              backgroundColor: Color(0xFF8A5A35),
+              backgroundColor: const Color(0xFF8A5A35),
               foregroundColor: Colors.white,
               elevation: 0,
               shape: RoundedRectangleBorder(
@@ -220,11 +286,15 @@ class _MaqsedBanner extends StatelessWidget {
 class _MenuCard extends StatelessWidget {
   final MenuItem item;
   final bool isOffer;
+  final VoidCallback onAdd;
 
   const _MenuCard({
     required this.item,
     required this.isOffer,
-  });@override
+    required this.onAdd,
+  });
+
+  @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
@@ -283,8 +353,7 @@ class _MenuCard extends StatelessWidget {
                         horizontal: 10,
                         vertical: 5,
                       ),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF8A5A35),
+                      decoration: BoxDecoration(color: const Color(0xFF8A5A35),
                         borderRadius: BorderRadius.circular(14),
                       ),
                       child: const Text(
@@ -300,16 +369,19 @@ class _MenuCard extends StatelessWidget {
                 Positioned(
                   left: 10,
                   bottom: 10,
-                  child: Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Icon(
-                      isOffer ? Icons.redeem_rounded : Icons.add,
-                      color: Colors.black,
+                  child: GestureDetector(
+                    onTap: onAdd,
+                    child: Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Icon(
+                        isOffer ? Icons.redeem_rounded : Icons.add,
+                        color: Colors.black,
+                      ),
                     ),
                   ),
                 ),
@@ -324,7 +396,7 @@ class _MenuCard extends StatelessWidget {
                 Text(
                   item.name,
                   textAlign: TextAlign.right,
-                  maxLines: 2,
+                  maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
