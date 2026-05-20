@@ -8,7 +8,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'privacy_policy_screen.dart';
 import 'profile_info_screen.dart';
 import '../main.dart';
-
+import 'dart:io';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:share_plus/share_plus.dart';
 class AccountScreen extends StatefulWidget {
   const AccountScreen({super.key});
 
@@ -431,70 +433,292 @@ class _LogoutButton extends StatelessWidget {
   }
 }
 
-class _MemoriesScreen extends StatelessWidget {
+class _MemoriesScreen extends StatefulWidget {
   const _MemoriesScreen();
 
   @override
+  State<_MemoriesScreen> createState() => _MemoriesScreenState();
+}
+
+class _MemoriesScreenState extends State<_MemoriesScreen> {
+  Future<Map<String, List<String>>> _loadAlbums() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    final keys = prefs
+        .getKeys()
+        .where((key) => key.startsWith('local_photos_'))
+        .toList();
+
+    final Map<String, List<String>> albums = {};
+
+    for (final key in keys) {
+      final placeName = key.replaceFirst('local_photos_', '');
+      final photos = prefs.getStringList(key) ?? [];
+
+      if (photos.isNotEmpty) {
+        albums[placeName] = photos;
+      }
+    }
+
+    return albums;
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final user = FirebaseAuth.instance.currentUser;
     final t = AppLocalizations.of(context)!;
 
-    if (user == null) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(t.memories),
+      ),
+      body: FutureBuilder<Map<String, List<String>>>(
+        future: _loadAlbums(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+
+          final albums = snapshot.data!;
+
+          if (albums.isEmpty) {
+            return Center(
+              child: Text(t.noPhotos),
+            );
+          }
+
+          final places = albums.keys.toList();
+
+          return ListView.builder(
+            padding: const EdgeInsets.all(16),
+            itemCount: places.length,
+            itemBuilder: (context, index) {
+              final placeName = places[index];
+              final photos = albums[placeName]!;
+
+              return Card(
+                margin: const EdgeInsets.only(bottom: 12),
+                child: ListTile(
+                  leading: ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: Image.file(
+                      File(photos.first),
+                      width: 56,
+                      height: 56,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  title: Text(placeName),
+                  subtitle: Text('${photos.length} صورة'),
+                  trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => _PlaceAlbumScreen(
+                          placeName: placeName,
+                          photos: photos,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              );
+            },
+          );
+        },
+      ),
+    );
+  }
+}
+
+class _PlaceAlbumScreen extends StatefulWidget {
+  final String placeName;
+  final List<String> photos;
+
+  const _PlaceAlbumScreen({
+    required this.placeName,
+    required this.photos,
+  });
+
+  @override
+  State<_PlaceAlbumScreen> createState() => _PlaceAlbumScreenState();
+}
+
+class _PlaceAlbumScreenState extends State<_PlaceAlbumScreen> {
+  late List<String> photos;
+
+  @override
+  void initState() {
+    super.initState();
+    photos = List.from(widget.photos);
+  }
+
+  Future<void> _deletePhoto(String path) async {
+    final prefs = await SharedPreferences.getInstance();
+    final albumKey = 'local_photos_${widget.placeName}';
+
+    photos.remove(path);
+
+    await prefs.setStringList(albumKey, photos);
+
+    final file = File(path);
+    if (await file.exists()) {
+      await file.delete();
+    }
+
+    if (!mounted) return;
+
+    setState(() {});
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('تم حذف الصورة'),
+      ),
+    );
+  }
+
+  Future<void> _sharePhoto(String path) async {
+  final file = File(path);
+
+  if (!await file.exists()) {
+    if (!mounted) return;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('الصورة غير موجودة'),
+      ),
+    );
+    return;
+  }
+
+  await Share.shareXFiles(
+    [XFile(path)],
+    text: 'ذكرى من ${widget.placeName}',
+  );
+}
+
+  void _showPhotoOptions(String path) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return Directionality(
+          textDirection: TextDirection.rtl,
+          child: SafeArea(
+            child: Wrap(
+              children: [
+                ListTile(
+                  leading: const Icon(Icons.share),
+                  title: const Text('مشاركة الصورة'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    _sharePhoto(path);
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(
+                    Icons.delete_outline,
+                    color: Colors.red,
+                  ),
+                  title: const Text(
+                    'حذف الصورة',
+                    style: TextStyle(color: Colors.red),
+                  ),
+                  onTap: () {
+                    Navigator.pop(context);
+                    _deletePhoto(path);
+                  },
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (photos.isEmpty) {
       return Scaffold(
         appBar: AppBar(
-          title: Text(t.memories),
+          title: Text(widget.placeName),
         ),
-        body: Center(
-          child: Text(t.loginRequired),
+        body: const Center(
+          child: Text('لا توجد صور بعد 📸'),
         ),
       );
     }
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(t.memories),
+        title: Text(widget.placeName),
       ),
-      body: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance
-            .collection('users')
-            .doc(user.uid)
-            .collection('photos')
-            .orderBy('createdAt', descending: true)
-            .snapshots(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
+      body: GridView.builder(
+        padding: const EdgeInsets.all(12),
+        itemCount: photos.length,
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          crossAxisSpacing: 8,
+          mainAxisSpacing: 8,
+        ),
+        itemBuilder: (context, index) {
+  final path = photos[index];
 
-          if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-            return Center(
-              child: Text(t.noPhotos),
-            );
-          }
+  return ClipRRect(
+    borderRadius: BorderRadius.circular(12),
+    child: Stack(
+      children: [
+        Positioned.fill(
+          child: Image.file(
+            File(path),
+            fit: BoxFit.cover,
+          ),
+        ),
 
-          final photos = snapshot.data!.docs;return GridView.builder(
-            padding: const EdgeInsets.all(12),
-            itemCount: photos.length,
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              crossAxisSpacing: 8,
-              mainAxisSpacing: 8,
+        Positioned(
+          top: 8,
+          right: 8,
+          child: GestureDetector(
+            onTap: () => _sharePhoto(path),
+            child: Container(
+              padding: const EdgeInsets.all(6),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.9),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.share,
+                size: 18,
+              ),
             ),
-            itemBuilder: (context, index) {
-              final imageUrl = photos[index]['imageUrl'];
+          ),
+        ),
 
-              return ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: Image.network(
-                  imageUrl,
-                  fit: BoxFit.cover,
-                ),
-              );
-            },
-          );
-        },
+        Positioned(
+          top: 8,
+          left: 8,
+          child: GestureDetector(
+            onTap: () => _deletePhoto(path),
+            child: Container(
+              padding: const EdgeInsets.all(6),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.9),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.delete_outline,
+                color: Colors.red,
+                size: 18,
+              ),
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
+},
       ),
     );
   }

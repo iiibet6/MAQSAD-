@@ -8,6 +8,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:arkit_plugin/arkit_plugin.dart';
+import 'package:vector_math/vector_math_64.dart' as vector;
 
 import '../models/place_model.dart';
 
@@ -38,11 +40,13 @@ class PlaceDetailsScreen extends StatelessWidget {
       );
 
       final prefs = await SharedPreferences.getInstance();
-      final photos = prefs.getStringList('local_photos') ?? [];
 
-      photos.add(savedImage.path);
+final albumKey = 'local_photos_${place.title}';
+final photos = prefs.getStringList(albumKey) ?? [];
 
-      await prefs.setStringList('local_photos', photos);
+photos.add(savedImage.path);
+
+await prefs.setStringList(albumKey, photos);
 
       if (!context.mounted) return;
 
@@ -363,24 +367,59 @@ class PlaceDetailsScreen extends StatelessWidget {
   }
 }
 
-class ARViewPage extends StatelessWidget {
+class ARViewPage extends StatefulWidget {
   final String modelPath;
 
-  const ARViewPage({super.key, required this.modelPath});
+  const ARViewPage({
+    super.key,
+    required this.modelPath,
+  });
+
+  @override
+  State<ARViewPage> createState() => _ARViewPageState();
+}
+class _ARViewPageState extends State<ARViewPage> {
+  ARKitController? arkitController;
+
+  String get iosModelName {
+    return widget.modelPath
+        .split('/')
+        .last
+        .replaceAll('.glb', '.usdz');
+  }
+
+  void onARKitViewCreated(ARKitController controller) {
+  arkitController = controller;
+
+  final node = ARKitGltfNode(
+    assetType: AssetType.flutterAsset,
+    url: widget.modelPath,
+    position: vector.Vector3(0, -0.2, -0.7),
+    scale: vector.Vector3(1, 1, 1),
+  );
+
+  arkitController!.add(node);
+}
+  @override
+  void dispose() {
+    arkitController?.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("الواقع المعزز")),
-      body: ModelViewer(
-        src: modelPath,
-        ar: true,
-        autoRotate: true,
-        cameraControls: true,
+      appBar: AppBar(
+        title: const Text("الواقع المعزز"),
+      ),
+      body: ARKitSceneView(
+        onARKitViewCreated: onARKitViewCreated,
+        enableTapRecognizer: true,
       ),
     );
   }
 }
+
 
 class _ActionIcon extends StatelessWidget {
   final IconData icon;
