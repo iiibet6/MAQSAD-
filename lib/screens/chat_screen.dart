@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'dart:convert';
+import 'package:flutter_markdown/flutter_markdown.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
@@ -352,13 +353,44 @@ class _ChatScreenState extends State<ChatScreen> {
                             : Colors.grey.shade200,
                         borderRadius: BorderRadius.circular(14),
                       ),
-                      child: Text(
-                        msg['text'] ?? '',
-                        style: TextStyle(
-                          color: isUser ? Colors.white : Colors.black,
-                          fontSize: 14,
-                        ),
-                      ),
+                      child: MarkdownBody(
+  data: msg['text'] ?? '',
+  selectable: true,
+  styleSheet: MarkdownStyleSheet(
+    p: TextStyle(
+      color: isUser ? Colors.white : Colors.black,
+      fontSize: 14,
+      height: 1.5,
+    ),
+
+    strong: TextStyle(
+      color: isUser ? Colors.white : Colors.black,
+      fontWeight: FontWeight.bold,
+    ),
+
+    h1: TextStyle(
+      color: isUser ? Colors.white : Colors.black,
+      fontSize: 22,
+      fontWeight: FontWeight.bold,
+    ),
+
+    h2: TextStyle(
+      color: isUser ? Colors.white : Colors.black,
+      fontSize: 20,
+      fontWeight: FontWeight.bold,
+    ),
+
+    h3: TextStyle(
+      color: isUser ? Colors.white : Colors.black,
+      fontSize: 18,
+      fontWeight: FontWeight.bold,
+    ),
+
+    listBullet: TextStyle(
+      color: isUser ? Colors.white : Colors.black,
+    ),
+  ),
+),
                     ),
                   );
                 },
