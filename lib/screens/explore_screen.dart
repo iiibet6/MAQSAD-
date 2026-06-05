@@ -238,6 +238,9 @@ class _ExploreScreenState extends State<ExploreScreen> {
                                 ),
                         ),
                       ),),
+
+
+                      
                     if (_query.trim().isNotEmpty) ...[
                       const SizedBox(height: 14),
                       if (filteredResults.isEmpty)

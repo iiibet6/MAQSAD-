@@ -4,6 +4,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+import '../theme/app_theme.dart';
 import '../models/restaurant_model.dart';
 import 'restaurant_menu_screen.dart';
 import '../services/favorites_service.dart';
@@ -12,15 +13,11 @@ import '../l10n/app_localizations.dart';
 class CafesScreen extends StatelessWidget {
   const CafesScreen({super.key});
 
-  static const Color mainColor = Color(0xFF9DB8C8);
-  static const Color darkColor = Color(0xFF3F5F73);
-
   static const List<Restaurant> cafes = [
     Restaurant(
       name: 'ساكورا',
       googleRating: 4.7,
       image: 'assets/images/sakura.jpeg',
-
       gallery: [
         'assets/images/sakura1.jpg',
         'assets/images/sakura2.jpg',
@@ -82,14 +79,15 @@ class CafesScreen extends StatelessWidget {
       tags: ['مقاهي', 'قهوة', 'مختصة', 'محمصة', 'محاصيل', 'V60', 'بوكسات'],
       categories: ['القهوة', 'المحاصيل', 'البوكسات'],
       menu: [
-        MenuItem(name: 'قهوة اليوم', price: '0', image: 'assets/images/ltone_daily.png', category: 'القهوة'),MenuItem(name: 'V60', price: '0', image: 'assets/images/ltone_v60.png', category: 'القهوة'),
+        MenuItem(name: 'قهوة اليوم', price: '0', image: 'assets/images/ltone_daily.png', category: 'القهوة'),
+        MenuItem(name: 'V60', price: '0', image: 'assets/images/ltone_v60.png', category: 'القهوة'),
         MenuItem(name: 'كولومبيا لافريسا', price: '0', image: 'assets/images/ltone_colombia.png', category: 'المحاصيل'),
         MenuItem(name: 'إندونيسيا وانويا', price: '0', image: 'assets/images/ltone_indonesia.png', category: 'المحاصيل'),
         MenuItem(name: 'البوكس الفاكهي', price: '0', image: 'assets/images/ltone_fruity_box.png', category: 'البوكسات'),
       ],
     ),
     Restaurant(
-      name: 'ناف',
+      name: 'ناف | NAF',
       googleRating: 4.7,
       image: 'assets/images/naf.png',
       gallery: [
@@ -97,7 +95,7 @@ class CafesScreen extends StatelessWidget {
         'assets/images/naf2.jpg',
         'assets/images/naf3.jpg',
       ],
-      subtitle: 'قهوة مختصة ومنتجات',
+      subtitle: 'قهوة مختصة ',
       type: 'مقاهي',
       category: 'قهوة مختصة',
       tags: ['مقاهي', 'قهوة', 'مختصة', 'لاتيه', 'بارد', 'منتجات'],
@@ -155,22 +153,21 @@ class CafesScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final t = AppLocalizations.of(context)!;return Directionality(
+    final t = AppLocalizations.of(context)!;
+
+    return Directionality(
       textDirection: Directionality.of(context),
       child: Scaffold(
-        backgroundColor: mainColor,
+        backgroundColor: AppColors.background,
         appBar: AppBar(
-          backgroundColor: mainColor,
+          backgroundColor: AppColors.background,
+          foregroundColor: AppColors.textPrimary,
           elevation: 0,
+          centerTitle: true,
           title: Text(
             t.cafes,
-            style: const TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-            ),
+            style: AppTextStyles.headline2,
           ),
-          centerTitle: true,
-          iconTheme: const IconThemeData(color: Colors.white),
         ),
         body: ListView.separated(
           padding: const EdgeInsets.all(16),
@@ -225,113 +222,135 @@ class _CafeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.95),
-          borderRadius: BorderRadius.circular(24),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.08),
-              blurRadius: 14,
-              offset: const Offset(0, 8),
-            ),
-          ],
-        ),
-        child: Row(
-          children: [
-            Stack(
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(18),
-                  child: Image.asset(
-                    cafe.image,
-                    width: 105,
-                    height: 105,
-                    fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => Container(
-                      width: 105,
-                      height: 105,
-                      color: Colors.grey.shade200,
-                      child: const Icon(Icons.image_not_supported),
-                    ),
-                  ),
-                ),
-                Positioned(
-                  top: 8,
-                  left: 8,
-                  child: ValueListenableBuilder<List<Map<String, String>>>(
-                    valueListenable: FavoritesService.favorites,
-                    builder: (context, favs, _) {
-                      final isFav = favs.any(
-                        (item) => item['title'] == cafe.name,
-                      );return GestureDetector(
-                        onTap: () => _toggleFavorite(favs),
-                        child: Container(
-                          padding: const EdgeInsets.all(6),
-                          decoration: const BoxDecoration(
-                            color: Colors.white,
-                            shape: BoxShape.circle,
-                          ),
-                          child: Icon(
-                            isFav ? Icons.favorite : Icons.favorite_border,
-                            size: 20,
-                            color: isFav ? Colors.red : Colors.grey,
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(width: 14),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
+    return Material(
+      color: AppColors.surface,
+      borderRadius: BorderRadius.circular(22),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(22),
+        child: Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: AppColors.surface,
+            borderRadius: BorderRadius.circular(22),
+            border: Border.all(color: AppColors.divider),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.primary.withOpacity(0.07),
+                blurRadius: 14,
+                offset: const Offset(0, 6),
+              ),
+            ],
+          ),
+          child: Row(
+            children: [
+              Stack(
                 children: [
-                  Text(
-                    cafe.name,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20,
-                      color: CafesScreen.darkColor,
-                    ),
-                    textAlign: TextAlign.right,
-                  ),
-                  const SizedBox(height: 6),
-                  Text(
-                    cafe.subtitle,
-                    textAlign: TextAlign.right,
-                    style: TextStyle(
-                      color: Colors.grey.shade700,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: const [
-                      Text(
-                        '4.8',
-                        style: TextStyle(
-                          color: CafesScreen.darkColor,
-                          fontWeight: FontWeight.bold,
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(16),
+                    child: Image.asset(
+                      cafe.image,
+                      width: 88,
+                      height: 88,
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, __, ___) => Container(
+                        width: 88,
+                        height: 88,
+                        color: AppColors.background,
+                        child: const Icon(
+                          Icons.image_not_supported,
+                          color: AppColors.primary,
                         ),
                       ),
-                      SizedBox(width: 4),
-                      Icon(Icons.star, color: Colors.amber, size: 18),
-                      Icon(Icons.star, color: Colors.amber, size: 18),
-                      Icon(Icons.star, color: Colors.amber, size: 18),
-                      Icon(Icons.star, color: Colors.amber, size: 18),
-                      Icon(Icons.star_half, color: Colors.amber, size: 18),
-                    ],
+                    ),
+                  ),
+                  Positioned(
+                    top: 6,
+                    left: 6,
+                    child: ValueListenableBuilder<List<Map<String, String>>>(
+                      valueListenable: FavoritesService.favorites,
+                      builder: (context, favs, _) {
+                        final isFav = favs.any(
+                          (item) => item['title'] == cafe.name,
+                        );
+
+                        return GestureDetector(
+                          onTap: () => _toggleFavorite(favs),
+                          child: Container(
+                            padding: const EdgeInsets.all(5),
+                            decoration: BoxDecoration(
+                              color: AppColors.surface.withOpacity(0.92),
+                              shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: AppColors.primary.withOpacity(0.10),
+                                  blurRadius: 8,
+                                  offset: const Offset(0, 3),
+                                ),
+                              ],
+                            ),
+                            child: Icon(
+                              isFav ? Icons.favorite : Icons.favorite_border,
+                              size: 18,
+                              color: isFav
+                                  ? AppColors.deleteRed
+                                  : AppColors.textSecondary,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
                   ),
                 ],
               ),
-            ),
-          ],
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      cafe.name,
+                      style: AppTextStyles.bodyLarge.copyWith(
+                        fontWeight: FontWeight.w700,
+                      ),
+                      textAlign: TextAlign.right,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      cafe.subtitle,
+                      textAlign: TextAlign.right,
+                      style: AppTextStyles.body.copyWith(
+                        color: AppColors.textSecondary,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 10),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Text(
+                          cafe.googleRating.toString(),
+                          style: AppTextStyles.caption.copyWith(
+                            color: AppColors.textSecondary,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(width: 4),
+                        const Icon(
+                          Icons.star_rounded,
+                          color: AppColors.accent,
+                          size: 18,
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -389,7 +408,11 @@ class _CafeDetailsScreenState extends State<CafeDetailsScreen> {
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(t.commentSent),
+        backgroundColor: AppColors.primary,
+        content: Text(
+          t.commentSent,
+          style: AppTextStyles.body.copyWith(color: Colors.white),
+        ),
       ),
     );
 
@@ -399,7 +422,9 @@ class _CafeDetailsScreenState extends State<CafeDetailsScreen> {
   Future<void> _saveRating(int rating) async {
     final user = FirebaseAuth.instance.currentUser;
 
-    if (user == null) return;final userRef = FirebaseFirestore.instance
+    if (user == null) return;
+
+    final userRef = FirebaseFirestore.instance
         .collection('users')
         .doc(user.uid);
 
@@ -432,7 +457,7 @@ class _CafeDetailsScreenState extends State<CafeDetailsScreen> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(
           top: Radius.circular(28),
@@ -457,7 +482,7 @@ class _CafeDetailsScreenState extends State<CafeDetailsScreen> {
                     width: 55,
                     height: 5,
                     decoration: BoxDecoration(
-                      color: Colors.grey.shade300,
+                      color: AppColors.divider,
                       borderRadius: BorderRadius.circular(20),
                     ),
                   ),
@@ -465,24 +490,35 @@ class _CafeDetailsScreenState extends State<CafeDetailsScreen> {
                 const SizedBox(height: 22),
                 Text(
                   t.writeComment,
-                  style: const TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                    color: CafesScreen.darkColor,
-                  ),
+                  style: AppTextStyles.headline2,
                 ),
                 const SizedBox(height: 16),
                 TextField(
                   controller: _commentController,
                   maxLines: 4,
                   textAlign: TextAlign.right,
+                  style: AppTextStyles.body,
                   decoration: InputDecoration(
                     hintText: t.commentHint,
                     filled: true,
-                    fillColor: const Color(0xFFF5F7F8),
+                    fillColor: AppColors.background,
+                    hintStyle: AppTextStyles.body.copyWith(
+                      color: AppColors.textSecondary,
+                    ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(18),
                       borderSide: BorderSide.none,
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(18),
+                      borderSide: BorderSide.none,
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(18),
+                      borderSide: const BorderSide(
+                        color: AppColors.accent,
+                        width: 1.5,
+                      ),
                     ),
                   ),
                 ),
@@ -494,14 +530,6 @@ class _CafeDetailsScreenState extends State<CafeDetailsScreen> {
                       Navigator.pop(context);
                       _sendComment();
                     },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: CafesScreen.darkColor,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(18),
-                      ),
-                    ),
                     child: Text(t.send),
                   ),
                 ),
@@ -522,71 +550,98 @@ class _CafeDetailsScreenState extends State<CafeDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final t = AppLocalizations.of(context)!;return Directionality(
+    final t = AppLocalizations.of(context)!;
+
+    return Directionality(
       textDirection: Directionality.of(context),
       child: Scaffold(
-        backgroundColor: CafesScreen.mainColor,
+        backgroundColor: AppColors.background,
         body: CustomScrollView(
           slivers: [
             SliverAppBar(
-              expandedHeight: 330,
-              pinned: true,
-              backgroundColor: CafesScreen.mainColor,
-              iconTheme: const IconThemeData(color: Colors.white),
-              flexibleSpace: FlexibleSpaceBar(
-                background: Stack(
-                  children: [
-                    PageView.builder(
-                      controller: _pageController,
-                      itemCount: _images.length,
-                      onPageChanged: (index) {
-                        setState(() => _currentImage = index);
-                      },
-                      itemBuilder: (context, index) {
-                        return Image.asset(
-                          _images[index],
-                          fit: BoxFit.cover,
-                          errorBuilder: (_, __, ___) => Container(
-                            color: Colors.grey.shade200,
-                            child: const Icon(Icons.image_not_supported),
-                          ),
-                        );
-                      },
-                    ),
-                    Positioned(
-                      bottom: 24,
-                      left: 0,
-                      right: 0,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: List.generate(
-                          _images.length,
-                          (index) => AnimatedContainer(
-                            duration: const Duration(milliseconds: 250),
-                            margin: const EdgeInsets.symmetric(horizontal: 4),
-                            width: _currentImage == index ? 18 : 7,
-                            height: 7,
-                            decoration: BoxDecoration(
-                              color: _currentImage == index
-                                  ? Colors.white
-                                  : Colors.white.withOpacity(0.55),
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
+  expandedHeight: 330,
+  pinned: true,
+  backgroundColor: AppColors.background,
+  foregroundColor: AppColors.textPrimary,
+  iconTheme: const IconThemeData(
+    color: AppColors.textPrimary,
+  ),
+  flexibleSpace: Stack(
+    fit: StackFit.expand,
+    children: [
+      PageView.builder(
+        controller: _pageController,
+        physics: const AlwaysScrollableScrollPhysics(),
+        itemCount: _images.length,
+        onPageChanged: (index) {
+          setState(() => _currentImage = index);
+        },
+        itemBuilder: (context, index) {
+          return Image.asset(
+            _images[index],
+            width: double.infinity,
+            height: double.infinity,
+            fit: BoxFit.cover,
+            errorBuilder: (_, __, ___) => Container(
+              color: AppColors.background,
+              child: const Icon(
+                Icons.image_not_supported,
+                color: AppColors.primary,
+              ),
+            ),
+          );
+        },
+      ),
+      IgnorePointer(
+        child: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                Colors.black.withOpacity(0.20),
+                Colors.black.withOpacity(0.05),
+                Colors.black.withOpacity(0.28),
+              ],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+            ),
+          ),
+        ),
+      ),
+      Positioned(
+        bottom: 24,
+        left: 0,
+        right: 0,
+        child: IgnorePointer(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: List.generate(
+              _images.length,
+              (index) => AnimatedContainer(
+                duration: const Duration(milliseconds: 250),
+                margin: const EdgeInsets.symmetric(horizontal: 4),
+                width: _currentImage == index ? 18 : 7,
+                height: 7,
+                decoration: BoxDecoration(
+                  color: _currentImage == index
+                      ? AppColors.accent
+                      : Colors.white.withOpacity(0.65),
+                  borderRadius: BorderRadius.circular(20),
                 ),
               ),
             ),
+          ),
+        ),
+      ),
+    ],
+  ),
+),
             SliverToBoxAdapter(
               child: Transform.translate(
                 offset: const Offset(0, -28),
                 child: Container(
                   padding: const EdgeInsets.fromLTRB(20, 22, 20, 28),
                   decoration: const BoxDecoration(
-                    color: Colors.white,
+                    color: AppColors.surface,
                     borderRadius: BorderRadius.vertical(
                       top: Radius.circular(34),
                     ),
@@ -599,7 +654,7 @@ class _CafeDetailsScreenState extends State<CafeDetailsScreen> {
                           width: 55,
                           height: 5,
                           decoration: BoxDecoration(
-                            color: Colors.grey.shade300,
+                            color: AppColors.divider,
                             borderRadius: BorderRadius.circular(20),
                           ),
                         ),
@@ -607,48 +662,42 @@ class _CafeDetailsScreenState extends State<CafeDetailsScreen> {
                       const SizedBox(height: 22),
                       Text(
                         widget.cafe.name,
-                        style: const TextStyle(
-                          fontSize: 28,
-                          fontWeight: FontWeight.bold,
-                          color: CafesScreen.darkColor,
-                        ),
+                        style: AppTextStyles.headline1,
+                        textAlign: TextAlign.right,
                       ),
                       const SizedBox(height: 8),
                       Text(
                         widget.cafe.subtitle,
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.grey.shade700,
-                        ),),
+                        textAlign: TextAlign.right,
+                        style: AppTextStyles.bodyLarge.copyWith(
+                          color: AppColors.textSecondary,
+                        ),
+                      ),
                       const SizedBox(height: 12),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          const Text(
-                            '4.8  ',
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: CafesScreen.darkColor,
-                              fontWeight: FontWeight.bold,
+                          Text(
+                            '${widget.cafe.googleRating}  ',
+                            style: AppTextStyles.bodyLarge.copyWith(
+                              color: AppColors.textPrimary,
+                              fontWeight: FontWeight.w700,
                             ),
                           ),
-                          const Icon(Icons.star, color: Colors.amber, size: 21),
-                          const Icon(Icons.star, color: Colors.amber, size: 21),
-                          const Icon(Icons.star, color: Colors.amber, size: 21),
-                          const Icon(Icons.star, color: Colors.amber, size: 21),
-                          const Icon(Icons.star_half, color: Colors.amber, size: 21),
+                          const _RatingStars(size: 21),
                           const SizedBox(width: 10),
                           GestureDetector(
                             onTap: _showCommentSheet,
                             child: Container(
                               padding: const EdgeInsets.all(7),
                               decoration: BoxDecoration(
-                                color: const Color(0xFFF5F7F8),
+                                color: AppColors.background,
                                 borderRadius: BorderRadius.circular(12),
+                                border: Border.all(color: AppColors.divider),
                               ),
                               child: const Icon(
                                 Icons.mode_comment_outlined,
-                                color: CafesScreen.darkColor,
+                                color: AppColors.primary,
                                 size: 20,
                               ),
                             ),
@@ -663,30 +712,21 @@ class _CafeDetailsScreenState extends State<CafeDetailsScreen> {
                       const SizedBox(height: 26),
                       Text(
                         t.aboutPlace,
-                        style: const TextStyle(
-                          fontSize: 21,
-                          fontWeight: FontWeight.bold,
-                          color: CafesScreen.darkColor,
-                        ),
+                        style: AppTextStyles.sectionTitle,
                       ),
                       const SizedBox(height: 10),
                       Text(
                         '${widget.cafe.name} ${widget.cafe.subtitle}',
                         textAlign: TextAlign.right,
-                        style: const TextStyle(
-                          fontSize: 16,
+                        style: AppTextStyles.bodyLarge.copyWith(
                           height: 1.8,
-                          color: Color(0xFF4D5D68),
+                          color: AppColors.textSecondary,
                         ),
                       ),
                       const SizedBox(height: 26),
                       Text(
                         t.ratePlace,
-                        style: const TextStyle(
-                          fontSize: 21,
-                          fontWeight: FontWeight.bold,
-                          color: CafesScreen.darkColor,
-                        ),
+                        style: AppTextStyles.sectionTitle,
                       ),
                       const SizedBox(height: 10),
                       Row(
@@ -701,10 +741,16 @@ class _CafeDetailsScreenState extends State<CafeDetailsScreen> {
                                 _userRating = rating;
                               });
 
-                              await _saveRating(rating);ScaffoldMessenger.of(context).showSnackBar(
+                              await _saveRating(rating);
+
+                              ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
+                                  backgroundColor: AppColors.primary,
                                   content: Text(
                                     '${t.ratingSaved}: $rating ${t.stars}',
+                                    style: AppTextStyles.body.copyWith(
+                                      color: Colors.white,
+                                    ),
                                   ),
                                 ),
                               );
@@ -713,7 +759,7 @@ class _CafeDetailsScreenState extends State<CafeDetailsScreen> {
                               index < _userRating
                                   ? Icons.star_rounded
                                   : Icons.star_border_rounded,
-                              color: Colors.amber,
+                              color: AppColors.accent,
                               size: 34,
                             ),
                           ),
@@ -722,11 +768,7 @@ class _CafeDetailsScreenState extends State<CafeDetailsScreen> {
                       const SizedBox(height: 28),
                       Text(
                         t.contactPlace,
-                        style: const TextStyle(
-                          fontSize: 21,
-                          fontWeight: FontWeight.bold,
-                          color: CafesScreen.darkColor,
-                        ),
+                        style: AppTextStyles.sectionTitle,
                       ),
                       const SizedBox(height: 16),
                       Row(
@@ -786,6 +828,27 @@ class _CafeDetailsScreenState extends State<CafeDetailsScreen> {
   }
 }
 
+class _RatingStars extends StatelessWidget {
+  final double size;
+
+  const _RatingStars({
+    this.size = 18,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Icon(Icons.star_rounded, color: AppColors.accent, size: size),
+        Icon(Icons.star_rounded, color: AppColors.accent, size: size),
+        Icon(Icons.star_rounded, color: AppColors.accent, size: size),
+        Icon(Icons.star_rounded, color: AppColors.accent, size: size),
+        Icon(Icons.star_half_rounded, color: AppColors.accent, size: size),
+      ],
+    );
+  }
+}
+
 class _InfoChip extends StatelessWidget {
   final IconData icon;
   final String text;
@@ -793,14 +856,17 @@ class _InfoChip extends StatelessWidget {
   const _InfoChip({
     required this.icon,
     required this.text,
-  });@override
+  });
+
+  @override
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
-        color: const Color(0xFFF5F7F8),
+        color: AppColors.background,
         borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.divider),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
@@ -809,16 +875,15 @@ class _InfoChip extends StatelessWidget {
             child: Text(
               text,
               textAlign: TextAlign.right,
-              style: const TextStyle(
-                color: Color(0xFF4D5D68),
-                fontSize: 15,
+              style: AppTextStyles.body.copyWith(
+                color: AppColors.textSecondary,
               ),
             ),
           ),
           const SizedBox(width: 10),
           Icon(
             icon,
-            color: CafesScreen.darkColor,
+            color: AppColors.primary,
             size: 22,
           ),
         ],
@@ -846,26 +911,23 @@ class _ActionButton extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 14),
         decoration: BoxDecoration(
-          color: const Color(0xFFF8FAFB),
+          color: AppColors.background,
           borderRadius: BorderRadius.circular(18),
-          border: Border.all(
-            color: Colors.grey.shade200,
-          ),
+          border: Border.all(color: AppColors.divider),
         ),
         child: Column(
           children: [
             Icon(
               icon,
-              color: CafesScreen.darkColor,
+              color: AppColors.primary,
               size: 26,
             ),
             const SizedBox(height: 7),
             Text(
               label,
-              style: const TextStyle(
-                color: CafesScreen.darkColor,
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
+              style: AppTextStyles.caption.copyWith(
+                color: AppColors.primary,
+                fontWeight: FontWeight.w700,
               ),
             ),
           ],

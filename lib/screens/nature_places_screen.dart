@@ -11,7 +11,7 @@ class NaturePlacesScreen extends StatelessWidget {
     Place(
       title: 'منازل حاتم الطائي',
       image: 'assets/images/hatem_house.png',
-      description: 'رمز الكرم العربي في حائل',
+      description: 'رمز الكرم العربي في حائل، تُعد منازل حاتم الطائي في قرية توارن من أبرز المعالم التاريخية في المنطقة، حيث تُنسب إلى الشاعر العربي الشهير حاتم الطائي الذي اشتهر بكرمه وسخائه. وتمثل هذه المنازل شاهدًا على تاريخ قبيلة طيء وإرثها الثقافي، وتستقطب الزوار المهتمين بالتاريخ والتراث العربي',
       workingHours: 'مفتوح طوال الوقت',
       modelPath: 'assets/models/hatems_home.glb',
       category: 'تاريخي',

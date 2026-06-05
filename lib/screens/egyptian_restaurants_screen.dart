@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../theme/app_theme.dart';
 import '../models/restaurant_model.dart';
 import '../services/favorites_service.dart';
 import '../l10n/app_localizations.dart';
@@ -9,7 +10,7 @@ class EgyptianRestaurantsScreen extends StatelessWidget {
   const EgyptianRestaurantsScreen({super.key});
 
   static const List<Restaurant> restaurants = [
-    Restaurant(
+Restaurant(
       name: 'مطعم كوخ القاهرة',
       googleRating: 4.7,
       image: 'assets/images/cairo_hut.jpeg',
@@ -121,8 +122,7 @@ class EgyptianRestaurantsScreen extends StatelessWidget {
         MenuItem(name: 'حواوشي', price: '0', image: 'assets/images/hawawshi.png', category: 'السندوتشات'),
         MenuItem(name: 'بيبسي', price: '0', image: 'assets/images/cola.png', category: 'المشروبات'),
       ],
-    ),
-  ];
+    ),  ];
 
   @override
   Widget build(BuildContext context) {
@@ -131,9 +131,16 @@ class EgyptianRestaurantsScreen extends StatelessWidget {
     return Directionality(
       textDirection: Directionality.of(context),
       child: Scaffold(
+        backgroundColor: AppColors.background,
         appBar: AppBar(
-          title: Text(t.egyptianRestaurants),
+          title: Text(
+            t.egyptianRestaurants,
+            style: AppTextStyles.headline2,
+          ),
           centerTitle: true,
+          backgroundColor: AppColors.background,
+          foregroundColor: AppColors.textPrimary,
+          elevation: 0,
         ),
         body: ListView.separated(
           padding: const EdgeInsets.all(16),
@@ -171,117 +178,159 @@ class _RestaurantCard extends StatelessWidget {
     required this.onTap,
   });
 
-  Future<void> _toggleFavorite(
-  List<Map<String, String>> favs,
-) async {
-  final isFav = favs.any(
-    (item) => item['title'] == restaurant.name,
-  );
-
-  if (isFav) {
-    await FavoritesService.removeFavorite(
-      restaurant.name,
+  Future<void> _toggleFavorite(List<Map<String, String>> favs) async {
+    final isFav = favs.any(
+      (item) => item['title'] == restaurant.name,
     );
-  } else {
-    await FavoritesService.addFavorite({
-      'title': restaurant.name,
-      'image': restaurant.image,
-      'subtitle': restaurant.subtitle,
-      'type': restaurant.type,
-      'category': restaurant.category,
-      'tags': restaurant.tags.join(','),
-    });
+
+    if (isFav) {
+      await FavoritesService.removeFavorite(restaurant.name);
+    } else {
+      await FavoritesService.addFavorite({
+        'title': restaurant.name,
+        'image': restaurant.image,
+        'subtitle': restaurant.subtitle,
+        'type': restaurant.type,
+        'category': restaurant.category,
+        'tags': restaurant.tags.join(','),
+      });
+    }
   }
-}
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(18),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.08),
-              blurRadius: 10,
-            ),
-          ],
-        ),
-        child: Row(
-          children: [
-            Stack(
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: Image.asset(
-                    restaurant.image,
-                    width: 80,
-                    height: 80,
-                    fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => Container(
-                      width: 80,height: 80,
-                      color: Colors.grey.shade200,
-                      child: const Icon(Icons.image_not_supported),
-                    ),
-                  ),
-                ),
-                Positioned(
-                  top: 4,
-                  left: 4,
-                  child: ValueListenableBuilder<List<Map<String, String>>>(
-                    valueListenable: FavoritesService.favorites,
-                    builder: (context, favs, _) {
-                      final isFav = favs.any(
-                        (item) => item['title'] == restaurant.name,
-                      );
-
-                      return GestureDetector(
-                        onTap: () => _toggleFavorite(favs),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.9),
-                            shape: BoxShape.circle,
-                          ),
-                          padding: const EdgeInsets.all(4),
-                          child: Icon(
-                            isFav ? Icons.favorite : Icons.favorite_border,
-                            size: 18,
-                            color: isFav ? Colors.red : Colors.grey,
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
+    return Material(
+      color: AppColors.surface,
+      borderRadius: BorderRadius.circular(22),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(22),
+        child: Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: AppColors.surface,
+            borderRadius: BorderRadius.circular(22),
+            border: Border.all(color: AppColors.divider),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.primary.withOpacity(0.07),
+                blurRadius: 14,
+                offset: const Offset(0, 6),
+              ),
+            ],
+          ),
+          child: Row(
+            children: [
+              Stack(
                 children: [
-                  Text(
-                    restaurant.name,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18,
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(16),
+                    child: Image.asset(
+                      restaurant.image,
+                      width: 88,
+                      height: 88,
+                      fit: BoxFit.cover,
+                      errorBuilder: (_,__ , ___) => Container(
+                        width: 88,
+                        height: 88,
+                        color: AppColors.background,
+                        child: const Icon(
+                          Icons.image_not_supported,
+                          color: AppColors.primary,
+                        ),
+                      ),
                     ),
-                    textAlign: TextAlign.right,
                   ),
-                  const SizedBox(height: 8),
-                  Text(
-                    restaurant.subtitle,
-                    textAlign: TextAlign.right,
+                  Positioned(
+                    top: 6,
+                    left: 6,
+child: ValueListenableBuilder<List<Map<String, String>>>(
+                      valueListenable: FavoritesService.favorites,
+                      builder: (context, favs, _) {
+                        final isFav = favs.any(
+                          (item) => item['title'] == restaurant.name,
+                        );
+
+                        return GestureDetector(
+                          onTap: () => _toggleFavorite(favs),
+                          child: Container(
+                            padding: const EdgeInsets.all(5),
+                            decoration: BoxDecoration(
+                              color: AppColors.surface.withOpacity(0.92),
+                              shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: AppColors.primary.withOpacity(0.10),
+                                  blurRadius: 8,
+                                  offset: const Offset(0, 3),
+                                ),
+                              ],
+                            ),
+                            child: Icon(
+                              isFav ? Icons.favorite : Icons.favorite_border,
+                              size: 18,
+                              color: isFav
+                                  ? AppColors.deleteRed
+                                  : AppColors.textSecondary,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
                   ),
                 ],
               ),
-            ),
-          ],
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      restaurant.name,
+                      style: AppTextStyles.bodyLarge.copyWith(
+                        fontWeight: FontWeight.w700,
+                      ),
+                      textAlign: TextAlign.right,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      restaurant.subtitle,
+                      textAlign: TextAlign.right,
+                      style: AppTextStyles.body.copyWith(
+                        color: AppColors.textSecondary,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 10),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Text(
+                          restaurant.googleRating.toString(),
+                          style: AppTextStyles.caption.copyWith(
+                            color: AppColors.textSecondary,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(width: 4),
+                        const Icon(
+                          Icons.star_rounded,
+                          color: AppColors.accent,
+                          size: 18,
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 }
+

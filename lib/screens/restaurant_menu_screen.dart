@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../theme/app_theme.dart';
 import '../models/restaurant_model.dart';
 import '../services/cart_service.dart';
 import 'cart_screen.dart';
@@ -17,9 +18,6 @@ class RestaurantMenuScreen extends StatefulWidget {
 }
 
 class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
-  static const Color darkColor = Color(0xFF3F5F73);
-  static const Color offerColor = Color(0xFF8A5A35);
-
   late String selectedCategory;
 
   List<String> get categories => [
@@ -29,7 +27,6 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
 
   List<MenuItem> get maqsedOffers {
     final menu = widget.restaurant.menu;
-
     if (menu.isEmpty) return [];
 
     return [
@@ -49,11 +46,11 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
   }
 
   @override
-void initState() {
-  super.initState();
-  selectedCategory = 'عروض مقصد';
-  CartService.setRestaurant(widget.restaurant.name);
-}
+  void initState() {
+    super.initState();
+    selectedCategory = 'عروض مقصد';
+    CartService.setRestaurant(widget.restaurant.name);
+  }
 
   void _openCart() {
     Navigator.push(
@@ -71,7 +68,11 @@ void initState() {
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('تمت إضافة ${item.name} إلى السلة'),
+        backgroundColor: AppColors.primary,
+        content: Text(
+          'تمت إضافة ${item.name} إلى السلة',
+          style: AppTextStyles.body.copyWith(color: Colors.white),
+        ),
         duration: const Duration(seconds: 1),
       ),
     );
@@ -88,13 +89,16 @@ void initState() {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.background,
         appBar: AppBar(
-          title: Text(widget.restaurant.name),
+          title: Text(
+            widget.restaurant.name,
+            style: AppTextStyles.headline2,
+          ),
           centerTitle: true,
-          backgroundColor: Colors.white,
+          backgroundColor: AppColors.background,
           elevation: 0,
-          foregroundColor: Colors.black,
+          foregroundColor: AppColors.textPrimary,
           actions: [
             ValueListenableBuilder(
               valueListenable: CartService.cartItems,
@@ -106,7 +110,10 @@ void initState() {
                   children: [
                     IconButton(
                       onPressed: _openCart,
-                      icon: const Icon(Icons.shopping_bag_outlined),
+                      icon: const Icon(
+                        Icons.shopping_bag_outlined,
+                        color: AppColors.primary,
+                      ),
                     ),
                     if (count > 0)
                       Positioned(
@@ -115,7 +122,7 @@ void initState() {
                         child: Container(
                           padding: const EdgeInsets.all(4),
                           decoration: const BoxDecoration(
-                            color: offerColor,
+                            color: AppColors.accent,
                             shape: BoxShape.circle,
                           ),
                           child: Text(
@@ -137,53 +144,56 @@ void initState() {
         body: Column(
           children: [
             SizedBox(
-  height: 62,
-  child: SingleChildScrollView(
-    scrollDirection: Axis.horizontal,
-    padding: const EdgeInsets.symmetric(horizontal: 12),
-    child: Row(
-      children: categories.map((category) {
-        final selected = category == selectedCategory;
+              height: 62,
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                child: Row(
+                  children: categories.map((category) {
+                    final selected = category == selectedCategory;
 
-        return InkWell(
-          onTap: () {
-            if (selectedCategory == category) return;
+                    return InkWell(
+                      onTap: () {
+                        if (selectedCategory == category) return;
 
-            setState(() {
-              selectedCategory = category;
-            });
-          },
-          borderRadius: BorderRadius.circular(12),
-          child: Container(
-            margin: const EdgeInsets.symmetric(
-              horizontal: 8,
-              vertical: 10,
-            ),
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            decoration: BoxDecoration(
-              border: Border(
-                bottom: BorderSide(
-                  color: selected ? Colors.black : Colors.transparent,
-                  width: 3,
+                        setState(() {
+                          selectedCategory = category;
+                        });
+                      },
+                      borderRadius: BorderRadius.circular(14),
+                      child: Container(
+                        margin: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 10,
+                        ),
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        decoration: BoxDecoration(
+                          border: Border(
+                            bottom: BorderSide(
+                              color: selected
+                                  ? AppColors.primary
+                                  : Colors.transparent,
+                              width: 3,
+                            ),
+                          ),
+                        ),
+                        child: Center(
+                          child: Text(
+                            category,
+                            style: AppTextStyles.bodyLarge.copyWith(
+                              fontWeight: FontWeight.w700,
+                              color: selected
+                                  ? AppColors.primary
+                                  : AppColors.textSecondary,
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  }).toList(),
                 ),
               ),
             ),
-            child: Center(
-              child: Text(
-                category,
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: selected ? Colors.black : Colors.grey,
-                ),
-              ),
-            ),
-          ),
-        );
-      }).toList(),
-    ),
-  ),
-),
             if (selectedCategory != 'عروض مقصد')
               _MaqsedBanner(
                 onTap: () {
@@ -197,15 +207,13 @@ void initState() {
                 padding: const EdgeInsets.all(16),
                 itemCount: filteredItems.length,
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-  crossAxisCount: 2,
-  crossAxisSpacing: 14,
-  mainAxisSpacing: 14,
-  mainAxisExtent: 260,
-),
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 14,
+                  mainAxisSpacing: 14,
+                  mainAxisExtent: 260,
+                ),
                 itemBuilder: (context, index) {
-                  final item = filteredItems[index];
-
-                  return _MenuCard(
+                  final item = filteredItems[index];return _MenuCard(
                     item: item,
                     isOffer: selectedCategory == 'عروض مقصد',
                     onAdd: () => _addToCart(item),
@@ -221,7 +229,9 @@ void initState() {
 }
 
 class _MaqsedBanner extends StatelessWidget {
-  final VoidCallback onTap;const _MaqsedBanner({
+  final VoidCallback onTap;
+
+  const _MaqsedBanner({
     required this.onTap,
   });
 
@@ -231,8 +241,16 @@ class _MaqsedBanner extends StatelessWidget {
       margin: const EdgeInsets.fromLTRB(16, 8, 16, 10),
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: const Color(0xFFF7EFE8),
-        borderRadius: BorderRadius.circular(18),
+        color: AppColors.navBarBg,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: AppColors.divider),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.primary.withOpacity(0.06),
+            blurRadius: 14,
+            offset: const Offset(0, 6),
+          ),
+        ],
       ),
       child: Row(
         children: [
@@ -241,32 +259,30 @@ class _MaqsedBanner extends StatelessWidget {
             icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 15),
             label: const Text('عرض العروض'),
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF8A5A35),
+              backgroundColor: AppColors.primary,
               foregroundColor: Colors.white,
               elevation: 0,
+              textStyle: AppTextStyles.button,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(18),
+                borderRadius: BorderRadius.circular(16),
               ),
             ),
           ),
           const Spacer(),
-          const Column(
+          Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text(
                 'عروض مقصد',
-                style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF6B4024),
+                style: AppTextStyles.headline2.copyWith(
+                  color: AppColors.primary,
                 ),
               ),
-              SizedBox(height: 6),
+              const SizedBox(height: 6),
               Text(
                 'عروض حصرية لعملاء مقصد',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Color(0xFF6B4024),
+                style: AppTextStyles.body.copyWith(
+                  color: AppColors.textSecondary,
                 ),
               ),
             ],
@@ -274,7 +290,7 @@ class _MaqsedBanner extends StatelessWidget {
           const SizedBox(width: 12),
           const Icon(
             Icons.local_offer_rounded,
-            color: Color(0xFF6B4024),
+            color: AppColors.accent,
             size: 34,
           ),
         ],
@@ -292,23 +308,20 @@ class _MenuCard extends StatelessWidget {
     required this.item,
     required this.isOffer,
     required this.onAdd,
-  });
-
-  @override
+  });@override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: isOffer ? const Color(0xFFFFFAF5) : Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        border: isOffer
-            ? Border.all(
-                color: const Color(0xFFE8D6C6),
-              )
-            : null,
+        color: isOffer ? AppColors.navBarBg : AppColors.surface,
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(
+          color: isOffer ? AppColors.divider : AppColors.divider,
+          width: 1,
+        ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.07),
-            blurRadius: 12,
+            color: AppColors.primary.withOpacity(0.07),
+            blurRadius: 14,
             offset: const Offset(0, 6),
           ),
         ],
@@ -321,7 +334,7 @@ class _MenuCard extends StatelessWidget {
               children: [
                 ClipRRect(
                   borderRadius: const BorderRadius.vertical(
-                    top: Radius.circular(20),
+                    top: Radius.circular(22),
                   ),
                   child: Image.asset(
                     item.image,
@@ -331,14 +344,12 @@ class _MenuCard extends StatelessWidget {
                     errorBuilder: (_, __, ___) => Container(
                       width: double.infinity,
                       height: double.infinity,
-                      color: const Color(0xFFF7F7F7),
+                      color: AppColors.background,
                       child: Icon(
                         isOffer
                             ? Icons.local_offer_rounded
-                            : Icons.coffee_rounded,
-                        color: isOffer
-                            ? const Color(0xFF8A5A35)
-                            : const Color(0xFF3F5F73),
+                            : Icons.restaurant_rounded,
+                        color: isOffer ? AppColors.accent : AppColors.primary,
                         size: 44,
                       ),
                     ),
@@ -353,14 +364,14 @@ class _MenuCard extends StatelessWidget {
                         horizontal: 10,
                         vertical: 5,
                       ),
-                      decoration: BoxDecoration(color: const Color(0xFF8A5A35),
+                      decoration: BoxDecoration(
+                        color: AppColors.accent,
                         borderRadius: BorderRadius.circular(14),
                       ),
-                      child: const Text(
+                      child: Text(
                         'حصري',
-                        style: TextStyle(
+                        style: AppTextStyles.caption.copyWith(
                           color: Colors.white,
-                          fontSize: 12,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -375,12 +386,19 @@ class _MenuCard extends StatelessWidget {
                       width: 40,
                       height: 40,
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: AppColors.surface,
                         borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppColors.primary.withOpacity(0.12),
+                            blurRadius: 8,
+                            offset: const Offset(0, 3),
+                          ),
+                        ],
                       ),
                       child: Icon(
                         isOffer ? Icons.redeem_rounded : Icons.add,
-                        color: Colors.black,
+                        color: AppColors.primary,
                       ),
                     ),
                   ),
@@ -398,16 +416,15 @@ class _MenuCard extends StatelessWidget {
                   textAlign: TextAlign.right,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 15,
+                  style: AppTextStyles.bodyLarge.copyWith(
+                    fontWeight: FontWeight.w700,
                   ),
                 ),
                 const SizedBox(height: 6),
-                Text(
-                  '${item.price} ر.س',
-                  style: const TextStyle(
-                    fontSize: 14,
+                Text('${item.price} ر.س',
+                  style: AppTextStyles.body.copyWith(
+                    color: AppColors.accent,
+                    fontWeight: FontWeight.w700,
                   ),
                 ),
               ],
