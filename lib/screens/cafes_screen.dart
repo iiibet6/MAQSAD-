@@ -16,6 +16,7 @@ class CafesScreen extends StatelessWidget {
   static const List<Restaurant> cafes = [
     Restaurant(
       name: 'ساكورا',
+      description: 'لمسة يابانية في قلب حائل، يقدم ساكورا كافيه تجربة تجمع بين الأجواء الأنيقة والمشروبات المتنوعة، ليمنح زواره مكانًا مثاليًا للاسترخاء والاستمتاع بأوقاتهم',
       googleRating: 4.7,
       image: 'assets/images/sakura.jpeg',
       gallery: [
@@ -51,6 +52,7 @@ class CafesScreen extends StatelessWidget {
       subtitle: 'قهوة وحلويات وبوكسات',
       type: 'مقاهي',
       category: 'قهوة وحلويات',
+      description: 'وجهة عصرية لعشاق القهوة في حائل، يقدم سنس أجواءً مريحة وتجربة مميزة تجمع بين المشروبات المتنوعة والحلويات، ليكون مكانًا مناسبًا للاسترخاء واللقاءات اليومية',
       tags: ['مقاهي', 'قهوة', 'حلويات', 'بوكسات', 'ماتشا', 'فرنش توست', 'كوفي'],
       categories: ['العروض', 'القهوة', 'الحلويات', 'البوكسات'],
       menu: [
@@ -678,38 +680,36 @@ class _CafeDetailsScreenState extends State<CafeDetailsScreen> {
                       ),
                       const SizedBox(height: 12),
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          Text(
-  widget.cafe.description.isNotEmpty
-      ? widget.cafe.description
-      : widget.cafe.subtitle,
-  textAlign: TextAlign.right,
-  style: AppTextStyles.bodyLarge.copyWith(
-    height: 1.8,
-    color: AppColors.textSecondary,
-  ),
+  mainAxisAlignment: MainAxisAlignment.end,
+  children: [
+    Text(
+      widget.cafe.googleRating.toStringAsFixed(1),
+      style: AppTextStyles.bodyLarge.copyWith(
+        color: AppColors.textPrimary,
+        fontWeight: FontWeight.w700,
+      ),
+    ),
+    const SizedBox(width: 6),
+    const _RatingStars(size: 21),
+    const SizedBox(width: 10),
+    GestureDetector(
+      onTap: _showCommentSheet,
+      child: Container(
+        padding: const EdgeInsets.all(7),
+        decoration: BoxDecoration(
+          color: AppColors.background,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: AppColors.divider),
+        ),
+        child: const Icon(
+          Icons.mode_comment_outlined,
+          color: AppColors.primary,
+          size: 20,
+        ),
+      ),
+    ),
+  ],
 ),
-                          const _RatingStars(size: 21),
-                          const SizedBox(width: 10),
-                          GestureDetector(
-                            onTap: _showCommentSheet,
-                            child: Container(
-                              padding: const EdgeInsets.all(7),
-                              decoration: BoxDecoration(
-                                color: AppColors.background,
-                                borderRadius: BorderRadius.circular(12),
-                                border: Border.all(color: AppColors.divider),
-                              ),
-                              child: const Icon(
-                                Icons.mode_comment_outlined,
-                                color: AppColors.primary,
-                                size: 20,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
                       const SizedBox(height: 24),
                       _InfoChip(
                         icon: Icons.access_time_rounded,
