@@ -16,6 +16,7 @@ class Restaurant {
   final String name;
   final String image;
   final String subtitle;
+  final String description;
   final String type;
   final String category;
   final List<String> tags;
@@ -28,6 +29,7 @@ class Restaurant {
     required this.name,
     required this.image,
     required this.subtitle,
+    this.description = '',
     required this.type,
     required this.category,
     required this.tags,

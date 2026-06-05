@@ -98,6 +98,9 @@ class CafesScreen extends StatelessWidget {
       subtitle: 'قهوة مختصة ',
       type: 'مقاهي',
       category: 'قهوة مختصة',
+      description:
+      'وجهة القهوة المختصة في حائل، يقدم تجربة مميزة تجمع بين جودة المشروبات والأجواء العصرية الهادئة ليكون مكاناً مثالياً للاسترخاء واللقاءات الاجتماعية.',
+
       tags: ['مقاهي', 'قهوة', 'مختصة', 'لاتيه', 'بارد', 'منتجات'],
       categories: ['القهوة', 'المشروبات الباردة', 'المنتجات'],
       menu: [
@@ -678,12 +681,15 @@ class _CafeDetailsScreenState extends State<CafeDetailsScreen> {
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           Text(
-                            '${widget.cafe.googleRating}  ',
-                            style: AppTextStyles.bodyLarge.copyWith(
-                              color: AppColors.textPrimary,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
+  widget.cafe.description.isNotEmpty
+      ? widget.cafe.description
+      : widget.cafe.subtitle,
+  textAlign: TextAlign.right,
+  style: AppTextStyles.bodyLarge.copyWith(
+    height: 1.8,
+    color: AppColors.textSecondary,
+  ),
+),
                           const _RatingStars(size: 21),
                           const SizedBox(width: 10),
                           GestureDetector(
@@ -716,13 +722,15 @@ class _CafeDetailsScreenState extends State<CafeDetailsScreen> {
                       ),
                       const SizedBox(height: 10),
                       Text(
-                        '${widget.cafe.name} ${widget.cafe.subtitle}',
-                        textAlign: TextAlign.right,
-                        style: AppTextStyles.bodyLarge.copyWith(
-                          height: 1.8,
-                          color: AppColors.textSecondary,
-                        ),
-                      ),
+  widget.cafe.description.isNotEmpty
+      ? widget.cafe.description
+      : widget.cafe.subtitle,
+  textAlign: TextAlign.right,
+  style: AppTextStyles.bodyLarge.copyWith(
+    height: 1.8,
+    color: AppColors.textSecondary,
+  ),
+),
                       const SizedBox(height: 26),
                       Text(
                         t.ratePlace,
