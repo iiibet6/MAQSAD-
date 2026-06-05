@@ -11,7 +11,7 @@ class EgyptianRestaurantsScreen extends StatelessWidget {
 
   static const List<Restaurant> restaurants = [
 Restaurant(
-      name: 'مطعم كوخ القاهرة',
+      name: ' كوخ القاهرة',
       googleRating: 4.7,
       image: 'assets/images/cairo_hut.jpeg',
       gallery: [
@@ -22,6 +22,7 @@ Restaurant(
       subtitle: 'أكلات مصرية وكشري وحواوشي',
       type: 'مطاعم',
       category: 'مصري',
+      description: 'نكهات مصرية أصيلة في قلب حائل، يقدم كوخ القاهرة مجموعة متنوعة من الأطباق الشعبية المصرية التي تجمع بين المذاق التقليدي والضيافة المميزة.',
       tags: ['مطاعم', 'مصري', 'كشري', 'حواوشي', 'طواجن', 'شعبي'],
       categories: ['الكشري', 'الحواوشي', 'الطواجن', 'المشروبات'],
       menu: [
@@ -32,7 +33,7 @@ Restaurant(
       ],
     ),
     Restaurant(
-      name: 'مطعم ريف القاهرة',
+      name: ' ريف القاهرة',
       googleRating: 4.7,
       image: 'assets/images/reef_cairo.png',
       gallery: [
@@ -43,6 +44,7 @@ Restaurant(
       subtitle: 'مشويات وأطباق مصرية',
       type: 'مطاعم',
       category: 'مصري',
+      description: 'تجربة مستوحاة من المطبخ المصري الأصيل، يقدم ريف القاهرة أطباقًا متنوعة بنكهات غنية تعكس تراث المطبخ المصري وتنوعه.',
       tags: ['مطاعم', 'مصري', 'مشويات', 'كفتة', 'حمام', 'بط', 'طواجن'],
       categories: ['المشويات', 'اللحوم', 'الدجاج', 'الطواجن', 'المشروبات'],
       menu: [
@@ -55,7 +57,7 @@ Restaurant(
       ],
     ),
     Restaurant(
-      name: 'مطعم كشريتا',
+      name: ' كشريتا',
       googleRating: 4.7,
       image: 'assets/images/kosharita.jpeg',
        gallery: [
@@ -66,6 +68,7 @@ Restaurant(
       subtitle: 'كشري مصري وطواجن',
       type: 'مطاعم',
       category: 'مصري',
+      description: 'وجهة لعشاق الكشري المصري، يقدم كشريتا وصفات شهية مستوحاة من أحد أشهر الأطباق الشعبية في مصر، مع إضافات ونكهات متنوعة.',
       tags: ['مطاعم', 'مصري', 'كشري', 'طواجن', 'مكرونة', 'شعبي'],
       categories: ['الكشري', 'الطواجن', 'السندوتشات', 'الحلى', 'المشروبات'],
       menu: [
@@ -80,7 +83,7 @@ Restaurant(
       ],
     ),
     Restaurant(
-      name: 'مطعم كشري وحواوشي',
+      name: ' كشري وحواوشي',
       googleRating: 4.7,
       image: 'assets/images/koshary_hawawshi.jpeg',
        gallery: [
@@ -91,6 +94,7 @@ Restaurant(
       subtitle: 'كشري وحواوشي وعصائر',
       type: 'مطاعم',
       category: 'مصري',
+      description: 'يجمع بين أشهر الأطباق المصرية التقليدية، ويقدم الكشري والحواشي بنكهات أصيلة تمنح الزوار تجربة قريبة من المطبخ المصري الشعبي.',
       tags: ['مطاعم', 'مصري', 'كشري', 'حواوشي', 'عصائر', 'شعبي'],
       categories: ['الحواوشي', 'الكشري', 'العصائر', 'المشروبات'],
       menu: [
@@ -102,7 +106,7 @@ Restaurant(
       ],
     ),
     Restaurant(
-      name: 'مطعم العمدة',
+      name: ' العمدة',
       googleRating: 4.7,
       image: 'assets/images/omda.jpeg',
       gallery: [
@@ -113,6 +117,7 @@ Restaurant(
       subtitle: 'مشويات وأكلات مصرية',
       type: 'مطاعم',
       category: 'مصري',
+      description: 'مذاق مصري بطابع شعبي مميز، يقدم العمدة تشكيلة من الأطباق المصرية التقليدية في أجواء دافئة تناسب العائلات ومحبي المأكولات الشرقية.',
       tags: ['مطاعم', 'مصري', 'مشويات', 'كفتة', 'حواوشي', 'ملوخية', 'شعبي'],
       categories: ['المشويات', 'الأطباق المصرية', 'السندوتشات', 'المشروبات'],
       menu: [

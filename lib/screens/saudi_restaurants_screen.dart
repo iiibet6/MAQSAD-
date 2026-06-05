@@ -11,7 +11,7 @@ class SaudiRestaurantsScreen extends StatelessWidget {
 
   static const List<Restaurant> restaurants = [
      Restaurant(
-      name: 'مطعم سفرة السعف',
+      name: ' سفرة السعف',
             googleRating: 4.7,
 
       image: 'assets/images/sofra.png',
@@ -23,6 +23,7 @@ class SaudiRestaurantsScreen extends StatelessWidget {
       subtitle: 'مأكولات سعودية حساوية',
       type: 'مطاعم',
       category: 'سعودي',
+      description: 'نكهات شعبية تعكس أصالة المطبخ السعودي، يقدم سفرة السعف مجموعة متنوعة من الأطباق المحلية في أجواء مستوحاة من التراث، ليمنح الزوار تجربة تجمع بين المذاق الأصيل والضيافة العربية.',
       tags: ['مطاعم', 'سعودي', 'حساوي', 'مندي', 'كبسة', 'رز', 'شعبي'],
       categories: ['الأكثر مبيعًا', 'الأطباق الرئيسية', 'المشروبات'],
       menu: [
@@ -34,7 +35,7 @@ class SaudiRestaurantsScreen extends StatelessWidget {
       ],
     ),
     Restaurant(
-      name: 'مطعم بخاري ناز',
+      name: ' بخاري ناز',
             googleRating: 4.7,
 
       image: 'assets/images/naz.png',
@@ -47,6 +48,7 @@ class SaudiRestaurantsScreen extends StatelessWidget {
       subtitle: 'بخاري ودجاج على الفحم',
       type: 'مطاعم',
       category: 'سعودي',
+      description: 'وجهة لعشاق الأرز البخاري والدجاج المشوي، يشتهر بخاري ناز بتقديم وجبات غنية بالنكهات الشرقية ووصفات تقليدية محببة تناسب مختلف الأذواق.',
       tags: ['مطاعم', 'سعودي', 'بخاري', 'دجاج', 'رز', 'مشويات'],
       categories: ['الأكثر مبيعًا', 'الأطباق الرئيسية', 'المشروبات'],
       menu: [
@@ -56,7 +58,7 @@ class SaudiRestaurantsScreen extends StatelessWidget {
       ],
     ),
     Restaurant(
-      name: 'مطعم نكهة ديرتنا',
+      name: ' نكهة ديرتنا',
             googleRating: 4.7,
 
       image: 'assets/images/dayratna.png',
@@ -69,6 +71,7 @@ class SaudiRestaurantsScreen extends StatelessWidget {
       subtitle: 'أكلات شعبية سعودية',
       type: 'مطاعم',
       category: 'سعودي',
+      description: 'مذاق يعكس تراث المنطقة وهويتها، يقدم نكهة ديرتنا أطباقًا شعبية متنوعة مستوحاة من المطبخ السعودي، في تجربة تجمع بين الأصالة والجودة.',
       tags: ['مطاعم', 'سعودي', 'شعبي', 'كبسة', 'مندي', 'لحم', 'دجاج'],
       categories: ['الأكثر مبيعًا', 'الأطباق الرئيسية', 'المشروبات'],
       menu: [
@@ -78,7 +81,7 @@ class SaudiRestaurantsScreen extends StatelessWidget {
       ],
     ),
     Restaurant(
-      name: 'مطعم ضيوف الأصالة',
+      name: ' ضيوف الأصالة',
             googleRating: 4.7,
 
       image: 'assets/images/alasala.png',
@@ -91,6 +94,7 @@ class SaudiRestaurantsScreen extends StatelessWidget {
       subtitle: 'مأكولات تراثية وأرز',
       type: 'مطاعم',
       category: 'سعودي',
+      description: 'عنوان للضيافة العربية الأصيلة، يقدم المطعم تشكيلة من الأطباق الشرقية والشعبية في أجواء عائلية مريحة تعكس قيم الكرم والترحيب.',
       tags: ['مطاعم', 'سعودي', 'تراثي', 'مضغوط', 'مظبي', 'رز', 'لحم'],
       categories: ['الأكثر مبيعًا', 'الأطباق الرئيسية', 'المشروبات'],
       menu: [
@@ -100,7 +104,7 @@ class SaudiRestaurantsScreen extends StatelessWidget {
       ],
     ),
     Restaurant(
-      name: 'مطعم السدة',
+      name: ' السدة',
             googleRating: 4.7,
 
       image: 'assets/images/alsaddah.png',
@@ -113,6 +117,7 @@ class SaudiRestaurantsScreen extends StatelessWidget {
       subtitle: 'أطباق سعودية شعبية',
       type: 'مطاعم',
       category: 'سعودي',
+      description: 'من أشهر المطاعم الشعبية في المملكة، يقدم السدة أطباق المندي والمظبي والمدفون بطرق تقليدية ونكهات غنية جعلته وجهة مفضلة لمحبي المأكولات العربية.',
       tags: ['مطاعم', 'سعودي', 'شعبي', 'مندي', 'جريش', 'دجاج', 'رز'],
       categories: ['الأكثر مبيعًا', 'الأطباق الرئيسية', 'المشروبات'],
       menu: [
@@ -122,7 +127,7 @@ class SaudiRestaurantsScreen extends StatelessWidget {
       ],
     ),
     Restaurant(
-      name: 'مطعم الوادي المبارك',
+      name: ' الوادي المبارك',
             googleRating: 4.7,
 
       image: 'assets/images/alwadi.jpeg',
@@ -135,6 +140,7 @@ class SaudiRestaurantsScreen extends StatelessWidget {
       subtitle: 'بخاري ومشويات',
       type: 'مطاعم',
       category: 'سعودي',
+      description: 'تجربة تجمع بين الأصالة وتنوع الأطباق، يقدم الوادي المبارك تشكيلة من المأكولات العربية والشعبية في أجواء مناسبة للعائلات والتجمعات المختلفة.',
       tags: ['مطاعم', 'سعودي', 'بخاري', 'مشويات', 'دجاج', 'رز', 'شواية'],
       categories: ['الأكثر مبيعًا', 'الأطباق الرئيسية', 'المشروبات'],
       menu: [
@@ -157,6 +163,7 @@ class SaudiRestaurantsScreen extends StatelessWidget {
       subtitle: 'مندي وكبسات',
       type: 'مطاعم',
       category: 'سعودي',
+      description: '',
       tags: ['مطاعم', 'سعودي', 'مندي', 'كبسة', 'رز', 'لحم', 'دجاج'],
       categories: ['الأكثر مبيعًا', 'الأطباق الرئيسية', 'المشروبات'],
       menu: [
