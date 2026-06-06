@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+
+import '../theme/app_theme.dart';
 import 'place_details_screen.dart';
 import '../models/place_model.dart';
 import '../services/favorites_service.dart';
@@ -19,7 +21,6 @@ class NaturePlacesScreen extends StatelessWidget {
       latitude: 27.5600,
       longitude: 41.6900,
     ),
-
     Place(
       title: 'قلعة أعيرف',
       image: 'assets/images/aref.png',
@@ -31,7 +32,6 @@ class NaturePlacesScreen extends StatelessWidget {
       latitude: 27.5219,
       longitude: 41.6905,
     ),
-
     Place(
       title: 'جبل محجة',
       image: 'assets/images/mhaja.png',
@@ -57,7 +57,6 @@ class NaturePlacesScreen extends StatelessWidget {
           latitude: 27.5600,
           longitude: 41.6900,
         ),
-
         Place(
           title: t.aerifCastle,
           image: 'assets/images/aref.png',
@@ -69,7 +68,6 @@ class NaturePlacesScreen extends StatelessWidget {
           latitude: 27.5219,
           longitude: 41.6905,
         ),
-
         Place(
           title: t.mahjaMountain,
           image: 'assets/images/mhaja.png',
@@ -81,7 +79,6 @@ class NaturePlacesScreen extends StatelessWidget {
           latitude: 27.5114,
           longitude: 41.7208,
         ),
-
         Place(
           title: t.oqdahTouristArea,
           image: 'assets/images/oqda.png',
@@ -93,7 +90,6 @@ class NaturePlacesScreen extends StatelessWidget {
           latitude: 27.5300,
           longitude: 41.7000,
         ),
-
         Place(
           title: t.faydHistoricalCity,
           image: 'assets/images/fayd.png',
@@ -105,7 +101,6 @@ class NaturePlacesScreen extends StatelessWidget {
           latitude: 27.4430,
           longitude: 42.1040,
         ),
-
         Place(
           title: t.masharPark,
           image: 'assets/images/mashar.png',
@@ -117,19 +112,19 @@ class NaturePlacesScreen extends StatelessWidget {
           latitude: 27.5200,
           longitude: 41.7500,
         ),
-
         Place(
           title: t.tawaranValley,
           image: 'assets/images/Twarn.jpg',
-          description: t.tawaranValleyDescription,
-          workingHours: t.openAllDay,
+          description: t.tawaranValleyDescription,workingHours: t.openAllDay,
           modelPath: 'assets/models/aref_castle.glb',
           category: t.natural,
           locationName: t.tawaranLocation,
           latitude: 27.5219,
           longitude: 41.6905,
         ),
-      ];@override
+      ];
+
+  @override
   Widget build(BuildContext context) {
     final t = AppLocalizations.of(context)!;
     final places = _places(t);
@@ -137,50 +132,33 @@ class NaturePlacesScreen extends StatelessWidget {
     return Directionality(
       textDirection: Directionality.of(context),
       child: Scaffold(
+        backgroundColor: AppColors.background,
         appBar: AppBar(
           centerTitle: true,
+          backgroundColor: AppColors.background,
+          foregroundColor: AppColors.textPrimary,
+          elevation: 0,
           title: Text(
             t.natureAndTourismPlaces,
-            style: const TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
+            style: AppTextStyles.headline2,
           ),
         ),
-
-        body: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                Color(0xFFE8EDF3),
-                Color(0xFFD9E1EC),
-              ],
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-            ),
-          ),
-
-          child: SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-
-              child: GridView.builder(
-                itemCount: places.length,
-
-                gridDelegate:
-                    const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 16,
-                  crossAxisSpacing: 16,
-                  childAspectRatio: 0.85,
-                ),
-
-                itemBuilder: (context, index) {
-                  return _PlaceCard(
-                    place: places[index],
-                  );
-                },
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: GridView.builder(
+              itemCount: places.length,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                mainAxisSpacing: 16,
+                crossAxisSpacing: 16,
+                childAspectRatio: 0.85,
               ),
+              itemBuilder: (context, index) {
+                return _PlaceCard(
+                  place: places[index],
+                );
+              },
             ),
           ),
         ),
@@ -207,31 +185,30 @@ class _PlaceCard extends StatelessWidget {
   }
 
   void _toggleFavorite(
-  BuildContext context,
-  List<Map<String, String>> favs,
-) {
-  final isFav = favs.any(
-    (item) => item['title'] == place.title,
-  );
+    BuildContext context,
+    List<Map<String, String>> favs,
+  ) {
+    final isFav = favs.any(
+      (item) => item['title'] == place.title,
+    );
 
-  if (isFav) {
-    FavoritesService.favorites.value = List.from(favs)
-      ..removeWhere(
-        (item) => item['title'] == place.title,
-      );
-  } else {
-    FavoritesService.favorites.value = List.from(favs)
-      ..add({
-        'title': place.title,
-        'image': place.image,
-        'subtitle': _subtitle(context),
-        'type': AppLocalizations.of(context)!.tourism,
-        'category': place.category,
-        'tags':
-            '${AppLocalizations.of(context)!.tourism},${place.category}',
-      });
+    if (isFav) {
+      FavoritesService.favorites.value = List.from(favs)
+        ..removeWhere(
+          (item) => item['title'] == place.title,
+        );
+    } else {
+      FavoritesService.favorites.value = List.from(favs)
+        ..add({
+          'title': place.title,
+          'image': place.image,
+          'subtitle': _subtitle(context),
+          'type': AppLocalizations.of(context)!.tourism,
+          'category': place.category,
+          'tags': '${AppLocalizations.of(context)!.tourism},${place.category}',
+        });
+    }
   }
-}
 
   @override
   Widget build(BuildContext context) {
@@ -246,23 +223,20 @@ class _PlaceCard extends StatelessWidget {
           ),
         );
       },
-
       child: Container(
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(18),
-
+          borderRadius: BorderRadius.circular(22),
+          border: Border.all(color: AppColors.divider),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.15),
-              blurRadius: 12,
+              color: AppColors.primary.withOpacity(0.07),
+              blurRadius: 14,
               offset: const Offset(0, 6),
             ),
           ],
         ),
-
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(18),
-
+          borderRadius: BorderRadius.circular(22),
           child: Stack(
             children: [
               Positioned.fill(
@@ -271,39 +245,27 @@ class _PlaceCard extends StatelessWidget {
                   fit: BoxFit.cover,
                 ),
               ),
-
               Positioned(
                 top: 10,
                 left: 10,
-
-                child:
-                    ValueListenableBuilder<List<Map<String, String>>>(
+                child: ValueListenableBuilder<List<Map<String, String>>>(
                   valueListenable: FavoritesService.favorites,
-
                   builder: (context, favs, _) {
                     final isFav = favs.any(
                       (item) => item['title'] == place.title,
-                    );
-
-                    return GestureDetector(
-                      onTap: () =>
-                          _toggleFavorite(context, favs),child: Container(
+                    );return GestureDetector(
+                      onTap: () => _toggleFavorite(context, favs),
+                      child: Container(
                         padding: const EdgeInsets.all(6),
-
                         decoration: BoxDecoration(
-                          color:
-                              Colors.white.withOpacity(0.9),
+                          color: AppColors.surface.withOpacity(0.92),
                           shape: BoxShape.circle,
                         ),
-
                         child: Icon(
-                          isFav
-                              ? Icons.favorite
-                              : Icons.favorite_border,
-
-                          color:
-                              isFav ? Colors.red : Colors.grey,
-
+                          isFav ? Icons.favorite : Icons.favorite_border,
+                          color: isFav
+                              ? AppColors.deleteRed
+                              : AppColors.textSecondary,
                           size: 18,
                         ),
                       ),
@@ -311,22 +273,16 @@ class _PlaceCard extends StatelessWidget {
                   },
                 ),
               ),
-
               Align(
                 alignment: Alignment.bottomCenter,
-
                 child: Container(
                   width: double.infinity,
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 8),
-
-                  color: Colors.white,
-
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  color: AppColors.surface,
                   child: Text(
                     place.title,
                     textAlign: TextAlign.center,
-
-                    style: const TextStyle(
+                    style: AppTextStyles.body.copyWith(
                       fontWeight: FontWeight.w600,
                     ),
                   ),

@@ -357,18 +357,22 @@ class _RestaurantDetailsScreenState extends State<RestaurantDetailsScreen> {
                       ),
                       const SizedBox(height: 26),
                       Text(
-                        t.aboutPlace,
-                        style: AppTextStyles.sectionTitle,
-                      ),
+  t.aboutPlace,
+  style: AppTextStyles.sectionTitle,
+),
+const SizedBox(height: 10),
+Text(
+  widget.restaurant.description.isNotEmpty
+      ? widget.restaurant.description
+      : widget.restaurant.subtitle,
+  textAlign: TextAlign.right,
+  style: AppTextStyles.bodyLarge.copyWith(
+    height: 1.8,
+    color: AppColors.textSecondary,
+  ),
+),
                       const SizedBox(height: 10),
-                      Text(
-                        '${widget.restaurant.name} ${widget.restaurant.subtitle}',
-                        textAlign: TextAlign.right,
-                        style: AppTextStyles.bodyLarge.copyWith(
-                          height: 1.8,
-                          color: AppColors.textSecondary,
-                        ),
-                      ),
+                     
                       const SizedBox(height: 26),
                       Text(
                         t.ratePlace,

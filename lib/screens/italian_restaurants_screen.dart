@@ -14,7 +14,7 @@ Restaurant(
       name: 'بيكوال',
       image: 'assets/images/picual.jpeg',
       gallery: [
-  'assets/images/picual1.png',
+  'assets/images/picual1.jpg',
   'assets/images/picual2.png',
   'assets/images/picual3.png',
 ],
